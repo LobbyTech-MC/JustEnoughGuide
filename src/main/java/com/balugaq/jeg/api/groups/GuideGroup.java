@@ -196,7 +196,7 @@ public abstract class GuideGroup extends FlexItemGroup {
 
             menu.open(player);
         } else {
-            player.sendMessage("§cJEG 模块未启用。你不能打开 JEG 使用指南。");
+            player.sendMessage("§c粘液科技菜单模块未启用。你不能打开粘液科技菜单使用指南。");
         }
     }
 

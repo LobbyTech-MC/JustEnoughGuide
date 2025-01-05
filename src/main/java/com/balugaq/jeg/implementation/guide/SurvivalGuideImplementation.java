@@ -389,7 +389,7 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
             String lore;
 
             if (VaultIntegration.isEnabled()) {
-                lore = String.format("%.2f", research.getCurrencyCost()) + " 游戏币";
+                lore = String.format("%.2f", research.getCurrencyCost()) + " &e⛁";
             } else {
                 lore = research.getLevelCost() + " 级经验";
             }
@@ -947,7 +947,7 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
     }
 
     @NotNull public ChestMenu create(@NotNull Player p) {
-        ChestMenu menu = new ChestMenu("&2&lSlimefun 指南 (生存模式)         &e&l爱来自 JustEnoughGuide");
+        ChestMenu menu = new ChestMenu("&2&l粘液科技指南 (生存模式)");
 
         menu.setEmptySlotsClickable(false);
         menu.addMenuOpeningHandler(SoundEffect.GUIDE_BUTTON_CLICK_SOUND::playFor);
@@ -957,7 +957,7 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
     @ParametersAreNonnullByDefault
     private void printErrorMessage(Player p, Throwable x) {
         p.sendMessage(ChatColor.DARK_RED + "服务器发生了一个内部错误. 请联系管理员处理.");
-        JustEnoughGuide.getInstance().getLogger().log(Level.SEVERE, "在打开指南书里的 Slimefun 物品时发生了意外!", x);
+        JustEnoughGuide.getInstance().getLogger().log(Level.SEVERE, "在打开指南书里的粘液科技物品时发生了意外!", x);
         JustEnoughGuide.getInstance().getLogger().warning("我们正在尝试恢复玩家 \"" + p.getName() + "\" 的指南...");
         PlayerProfile profile = PlayerProfile.find(p).orElse(null);
         if (profile == null) {

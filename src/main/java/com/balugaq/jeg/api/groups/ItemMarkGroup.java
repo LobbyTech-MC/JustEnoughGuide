@@ -52,7 +52,7 @@ import org.jetbrains.annotations.NotNull;
 @NotDisplayInCheatMode
 public class ItemMarkGroup extends FlexItemGroup {
     private static final ItemStack ICON_BACKGROUND =
-            new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a&l添加收藏物", "", "&7左键物品添加到收藏中");
+            new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a&l添加收藏物", "", "&7左键上方物品将其添加到收藏中");
     private static final JavaPlugin JAVA_PLUGIN = JustEnoughGuide.getInstance();
     private final int BACK_SLOT;
     private final int SEARCH_SLOT;
@@ -261,7 +261,7 @@ public class ItemMarkGroup extends FlexItemGroup {
                     String lore;
 
                     if (VaultIntegration.isEnabled()) {
-                        lore = String.format("%.2f", research.getCurrencyCost()) + " 游戏币";
+                        lore = String.format("%.2f", research.getCurrencyCost()) + " &e⛁";
                     } else {
                         lore = research.getLevelCost() + " 级经验";
                     }
@@ -386,7 +386,7 @@ public class ItemMarkGroup extends FlexItemGroup {
     @ParametersAreNonnullByDefault
     private void printErrorMessage(Player p, Throwable x) {
         p.sendMessage("&4服务器发生了一个内部错误. 请联系管理员处理.");
-        JAVA_PLUGIN.getLogger().log(Level.SEVERE, "在打开指南书里的 Slimefun 物品时发生了意外!", x);
+        JAVA_PLUGIN.getLogger().log(Level.SEVERE, "在打开指南书里的粘液科技物品时发生了意外!", x);
     }
 
     /**

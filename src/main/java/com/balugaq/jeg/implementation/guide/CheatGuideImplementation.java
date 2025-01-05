@@ -433,7 +433,7 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
             String lore;
 
             if (VaultIntegration.isEnabled()) {
-                lore = String.format("%.2f", research.getCurrencyCost()) + " 游戏币";
+                lore = String.format("%.2f", research.getCurrencyCost()) + " &e⛁";
             } else {
                 lore = research.getLevelCost() + " 级经验";
             }
@@ -1017,7 +1017,7 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
     }
 
     @NotNull public ChestMenu create(@NotNull Player p) {
-        ChestMenu menu = new ChestMenu("&c&lSlimefun 指南 (作弊模式)         &e&l爱来自 JustEnoughGuide");
+        ChestMenu menu = new ChestMenu("&c&l粘液科技指南 (作弊模式)");
 
         menu.setEmptySlotsClickable(false);
         menu.addMenuOpeningHandler(SoundEffect.GUIDE_BUTTON_CLICK_SOUND::playFor);
@@ -1027,7 +1027,7 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
     @ParametersAreNonnullByDefault
     private void printErrorMessage(Player p, Throwable x) {
         p.sendMessage(ChatColor.DARK_RED + "服务器发生了一个内部错误. 请联系管理员处理.");
-        JustEnoughGuide.getInstance().getLogger().log(Level.SEVERE, "在打开指南书里的 Slimefun 物品时发生了意外!", x);
+        JustEnoughGuide.getInstance().getLogger().log(Level.SEVERE, "在打开指南书里的粘液科技物品时发生了意外!", x);
     }
 
     @ParametersAreNonnullByDefault

@@ -237,7 +237,7 @@ public class BookmarkGroup extends FlexItemGroup {
                     String lore;
 
                     if (VaultIntegration.isEnabled()) {
-                        lore = String.format("%.2f", research.getCurrencyCost()) + " 游戏币";
+                        lore = String.format("%.2f", research.getCurrencyCost()) + " &e⛁";
                     } else {
                         lore = research.getLevelCost() + " 级经验";
                     }
@@ -386,7 +386,7 @@ public class BookmarkGroup extends FlexItemGroup {
     @ParametersAreNonnullByDefault
     private void printErrorMessage(@NotNull Player p, @NotNull Throwable x) {
         p.sendMessage("&4服务器发生了一个内部错误. 请联系管理员处理.");
-        JAVA_PLUGIN.getLogger().log(Level.SEVERE, "在打开指南书里的 Slimefun 物品时发生了意外!", x);
+        JAVA_PLUGIN.getLogger().log(Level.SEVERE, "在打开指南书里的粘液科技物品时发生了意外!", x);
     }
 
     /**
