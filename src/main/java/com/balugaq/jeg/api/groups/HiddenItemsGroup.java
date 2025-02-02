@@ -1,9 +1,6 @@
 package com.balugaq.jeg.api.groups;
 
 import city.norain.slimefun4.VaultIntegration;
-import com.balugaq.jeg.api.interfaces.BookmarkRelocation;
-import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
-import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
 import com.balugaq.jeg.api.interfaces.NotDisplayInSurvivalMode;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.GuideUtil;
@@ -13,11 +10,11 @@ import com.balugaq.jeg.utils.LocalHelper;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
@@ -36,108 +33,74 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * This class used to create groups to mark items into {@link BookmarkGroup} in the guide.
- * Will not display Item Mark Button in {@link NestedItemGroup}
+ * This class used to create groups to display all the marked items in the guide.
+ * Displayed items are already marked in {@link ItemMarkGroup}
+ * Players can't open this group if players haven't marked any item.
  *
  * @author balugaq
  * @since 1.1
  */
 @SuppressWarnings({"deprecation", "unused"})
 @NotDisplayInSurvivalMode
-@NotDisplayInCheatMode
-public class ItemMarkGroup extends FlexItemGroup {
-    private static final ItemStack ICON_BACKGROUND =
-            new CustomItemStack(Material.GREEN_STAINED_GLASS_PANE, "&a&l添加收藏物", "", "&7左键上方物品将其添加到收藏中");
+public class HiddenItemsGroup extends FlexItemGroup {
+    private static final List<SlimefunItem> ALL_SLIMEFUN_ITEMS = Slimefun.getRegistry().getAllSlimefunItems();
+    private static final int BACK_SLOT = 1;
+    private static final int SEARCH_SLOT = 7;
+    private static final int PREVIOUS_SLOT = 46;
+    private static final int NEXT_SLOT = 52;
+    private static final int[] BORDER = new int[]{0, 2, 3, 4, 5, 6, 8, 45, 47, 48, 49, 50, 51, 53};
+    private static final int[] MAIN_CONTENT = new int[]{
+            9, 10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29, 30, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41, 42, 43, 44
+    };
+
     private static final JavaPlugin JAVA_PLUGIN = JustEnoughGuide.getInstance();
-    private final int BACK_SLOT;
-    private final int SEARCH_SLOT;
-    private final int PREVIOUS_SLOT;
-    private final int NEXT_SLOT;
-    private final int[] BORDER;
-    private final int[] MAIN_CONTENT;
-    private final JEGSlimefunGuideImplementation implementation;
-    private final Player player;
-    private final @NotNull ItemGroup itemGroup;
     private final int page;
-    private final @NotNull List<SlimefunItem> slimefunItemList;
-    private Map<Integer, ItemMarkGroup> pageMap = new LinkedHashMap<>();
+    private final List<SlimefunItem> slimefunItemList;
+    private Map<Integer, HiddenItemsGroup> pageMap = new LinkedHashMap<>();
 
-    /**
-     * Create a new instance of ItemMarkGroup.
-     *
-     * @param implementation The implementation of JEGSlimefunGuideImplementation.
-     * @param itemGroup      The item group to mark items.
-     * @param player         The player who open the guide.
-     */
-    public ItemMarkGroup(JEGSlimefunGuideImplementation implementation, @NotNull ItemGroup itemGroup, Player player) {
-        this(implementation, itemGroup, player, 1);
-    }
-
-    /**
-     * Create a new instance of ItemMarkGroup.
-     *
-     * @param implementation The implementation of JEGSlimefunGuideImplementation.
-     * @param itemGroup      The item group to mark items.
-     * @param player         The player who open the guide.
-     * @param page           The page number to display.
-     */
-    public ItemMarkGroup(
-            JEGSlimefunGuideImplementation implementation, @NotNull ItemGroup itemGroup, Player player, int page) {
-        super(
-                new NamespacedKey(JAVA_PLUGIN, "jeg_item_mark_group_" + UUID.randomUUID()),
-                new ItemStack(Material.BARRIER));
-        this.page = page;
-        this.player = player;
-        this.itemGroup = itemGroup;
-        this.slimefunItemList = itemGroup.getItems();
-        this.implementation = implementation;
-        this.pageMap.put(page, this);
-
-        if (itemGroup instanceof BookmarkRelocation bookmarkRelocation) {
-            BACK_SLOT = bookmarkRelocation.getBackButton(implementation, player);
-            SEARCH_SLOT = bookmarkRelocation.getSearchButton(implementation, player);
-            PREVIOUS_SLOT = bookmarkRelocation.getPreviousButton(implementation, player);
-            NEXT_SLOT = bookmarkRelocation.getNextButton(implementation, player);
-            BORDER = bookmarkRelocation.getBorder(implementation, player);
-            MAIN_CONTENT = bookmarkRelocation.getMainContents(implementation, player);
-        } else {
-            BACK_SLOT = 1;
-            SEARCH_SLOT = 7;
-            PREVIOUS_SLOT = 46;
-            NEXT_SLOT = 52;
-            BORDER = new int[]{0, 2, 3, 4, 5, 6, 8, 45, 47, 48, 49, 50, 51, 53};
-            MAIN_CONTENT = new int[]{
-                    9, 10, 11, 12, 13, 14, 15, 16, 17,
-                    18, 19, 20, 21, 22, 23, 24, 25, 26,
-                    27, 28, 29, 30, 31, 32, 33, 34, 35,
-                    36, 37, 38, 39, 40, 41, 42, 43, 44
-            };
+    @ParametersAreNonnullByDefault
+    public HiddenItemsGroup(NamespacedKey key, ItemStack icon) {
+        super(key, icon);
+        this.page = 1;
+        List<SlimefunItem> slimefunItemList = new ArrayList<>();
+        for (SlimefunItem item : ALL_SLIMEFUN_ITEMS) {
+            if (!item.isDisabled() && item.isHidden()) {
+                slimefunItemList.add(item);
+            }
         }
+        this.slimefunItemList = slimefunItemList;
+        this.pageMap.put(1, this);
     }
 
     /**
-     * Get the page number of this group.
+     * Constructor of hiddenItemsGroup.
      *
-     * @param itemMarkGroup The ItemMarkGroup instance.
-     * @param page          The page number to get.
+     * @param hiddenItemsGroup The hiddenItemsGroup to copy.
+     * @param page             The page number to display.
      */
-    protected ItemMarkGroup(@NotNull ItemMarkGroup itemMarkGroup, int page) {
-        this(itemMarkGroup.implementation, itemMarkGroup.itemGroup, itemMarkGroup.player, page);
+    protected HiddenItemsGroup(@NotNull HiddenItemsGroup hiddenItemsGroup, int page) {
+        super(hiddenItemsGroup.key, new ItemStack(Material.BARRIER));
+        this.page = page;
+        this.slimefunItemList = hiddenItemsGroup.slimefunItemList;
+        this.pageMap.put(page, this);
     }
 
     /**
-     * Always return false.
+     * Always returns false.
      *
-     * @param player            The player who open the guide.
-     * @param playerProfile     The player profile.
-     * @param slimefunGuideMode The slimefun guide mode.
+     * @param player            The player who opened the group.
+     * @param playerProfile     The player's profile.
+     * @param slimefunGuideMode The Slimefun guide mode.
      * @return false.
      */
     @Override
@@ -145,15 +108,15 @@ public class ItemMarkGroup extends FlexItemGroup {
             @NotNull Player player,
             @NotNull PlayerProfile playerProfile,
             @NotNull SlimefunGuideMode slimefunGuideMode) {
-        return false;
+        return true;
     }
 
     /**
      * Opens the group for the player.
      *
-     * @param player            The player who open the guide.
-     * @param playerProfile     The player profile.
-     * @param slimefunGuideMode The slimefun guide mode.
+     * @param player            The player who opened the group.
+     * @param playerProfile     The player's profile.
+     * @param slimefunGuideMode The Slimefun guide mode.
      */
     @Override
     public void open(
@@ -165,11 +128,11 @@ public class ItemMarkGroup extends FlexItemGroup {
     }
 
     /**
-     * Refresh the group for the player.
+     * Reopens the menu for the player.
      *
-     * @param player            The player who open the guide.
-     * @param playerProfile     The player profile.
-     * @param slimefunGuideMode The slimefun guide mode.
+     * @param player            The player who opened the group.
+     * @param playerProfile     The player's profile.
+     * @param slimefunGuideMode The Slimefun guide mode.
      */
     public void refresh(
             @NotNull Player player,
@@ -180,19 +143,19 @@ public class ItemMarkGroup extends FlexItemGroup {
     }
 
     /**
-     * Get the ItemMarkGroup instance by page number.
+     * Generates the menu for the player.
      *
-     * @param player            The player who open the guide.
-     * @param playerProfile     The player profile.
-     * @param slimefunGuideMode The slimefun guide mode.
-     * @return The ItemMarkGroup instance by page number.
+     * @param player            The player who opened the group.
+     * @param playerProfile     The player's profile.
+     * @param slimefunGuideMode The Slimefun guide mode.
+     * @return The generated menu.
      */
     @NotNull
     private ChestMenu generateMenu(
             @NotNull Player player,
             @NotNull PlayerProfile playerProfile,
             @NotNull SlimefunGuideMode slimefunGuideMode) {
-        ChestMenu chestMenu = new ChestMenu("添加收藏物 - JEG");
+        ChestMenu chestMenu = new ChestMenu("隐藏物品");
 
         chestMenu.setEmptySlotsClickable(false);
         chestMenu.addMenuOpeningHandler(pl -> pl.playSound(pl.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1, 1));
@@ -203,10 +166,12 @@ public class ItemMarkGroup extends FlexItemGroup {
             if (action.isShiftClicked()) {
                 SlimefunGuide.openMainMenu(playerProfile, slimefunGuideMode, guideHistory.getMainMenuPage());
             } else {
-                guideHistory.goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE));
+                guideHistory.goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.CHEAT_MODE));
             }
             return false;
         });
+
+        SlimefunGuideImplementation implementation = Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.CHEAT_MODE);
 
         // Search feature!
         chestMenu.addItem(SEARCH_SLOT, ItemStackUtil.getCleanItem(ChestMenuUtils.getSearchButton(player)));
@@ -229,8 +194,8 @@ public class ItemMarkGroup extends FlexItemGroup {
                         player, this.page, (this.slimefunItemList.size() - 1) / MAIN_CONTENT.length + 1)));
         chestMenu.addMenuClickHandler(PREVIOUS_SLOT, (p, slot, item, action) -> {
             GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
-            ItemMarkGroup itemMarkGroup = this.getByPage(Math.max(this.page - 1, 1));
-            itemMarkGroup.open(player, playerProfile, slimefunGuideMode);
+            HiddenItemsGroup hiddenItemsGroup = this.getByPage(Math.max(this.page - 1, 1));
+            hiddenItemsGroup.open(player, playerProfile, slimefunGuideMode);
             return false;
         });
 
@@ -240,14 +205,14 @@ public class ItemMarkGroup extends FlexItemGroup {
                         player, this.page, (this.slimefunItemList.size() - 1) / MAIN_CONTENT.length + 1)));
         chestMenu.addMenuClickHandler(NEXT_SLOT, (p, slot, item, action) -> {
             GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
-            ItemMarkGroup itemMarkGroup = this.getByPage(
+            HiddenItemsGroup hiddenItemsGroup = this.getByPage(
                     Math.min(this.page + 1, (this.slimefunItemList.size() - 1) / MAIN_CONTENT.length + 1));
-            itemMarkGroup.open(player, playerProfile, slimefunGuideMode);
+            hiddenItemsGroup.open(player, playerProfile, slimefunGuideMode);
             return false;
         });
 
         for (int slot : BORDER) {
-            chestMenu.addItem(slot, ItemStackUtil.getCleanItem(ICON_BACKGROUND));
+            chestMenu.addItem(slot, ItemStackUtil.getCleanItem(ChestMenuUtils.getBackground()));
             chestMenu.addMenuClickHandler(slot, ChestMenuUtils.getEmptyClickHandler());
         }
 
@@ -264,7 +229,7 @@ public class ItemMarkGroup extends FlexItemGroup {
                     String lore;
 
                     if (VaultIntegration.isEnabled()) {
-                        lore = String.format("%.2f", research.getCurrencyCost()) + " &e⛁";
+                        lore = String.format("%.2f", research.getCurrencyCost()) + " 游戏币";
                     } else {
                         lore = research.getLevelCost() + " 级经验";
                     }
@@ -280,7 +245,8 @@ public class ItemMarkGroup extends FlexItemGroup {
                             "&7需要 &b",
                             lore));
                     handler = (pl, slot, item, action) -> {
-                        research.unlockFromGuide(implementation, pl, playerProfile, slimefunItem, itemGroup, page);
+                        research.unlockFromGuide(
+                                implementation, pl, playerProfile, slimefunItem, slimefunItem.getItemGroup(), page);
                         return false;
                     };
                 } else {
@@ -290,8 +256,7 @@ public class ItemMarkGroup extends FlexItemGroup {
                                 "",
                                 ChatColor.DARK_GRAY + "\u21E8 " + ChatColor.WHITE
                                         + (LocalHelper.getAddonName(itemGroup, slimefunItem.getId())) + " - "
-                                        + itemGroup.getDisplayName(player),
-                                ChatColor.YELLOW + "左键点击以收藏物品");
+                                        + itemGroup.getDisplayName(player));
                         if (meta.hasLore() && meta.getLore() != null) {
                             List<String> lore = meta.getLore();
                             lore.addAll(additionLore);
@@ -307,9 +272,13 @@ public class ItemMarkGroup extends FlexItemGroup {
                     }));
                     handler = (pl, slot, itm, action) -> {
                         try {
-                            JustEnoughGuide.getBookmarkManager().addBookmark(pl, slimefunItem);
-                            pl.sendMessage(ChatColor.GREEN + "已添加到收藏列表!");
-                            pl.playSound(pl.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
+                            if (implementation.getMode() != SlimefunGuideMode.SURVIVAL_MODE
+                                    && (pl.isOp() || pl.hasPermission("slimefun.cheat.items"))) {
+                                pl.getInventory()
+                                        .addItem(slimefunItem.getItem().clone());
+                            } else {
+                                implementation.displayItem(playerProfile, slimefunItem, true);
+                            }
                         } catch (Exception | LinkageError x) {
                             printErrorMessage(pl, slimefunItem, x);
                         }
@@ -335,7 +304,12 @@ public class ItemMarkGroup extends FlexItemGroup {
 
         chestMenu.addItem(49, ItemStackUtil.getCleanItem(GuideUtil.getBookMarkMenuButton()));
         chestMenu.addMenuClickHandler(49, (pl, s, is, action) -> {
-            implementation.openBookMarkGroup(pl, playerProfile);
+            GuideHistory guideHistory = playerProfile.getGuideHistory();
+            if (action.isShiftClicked()) {
+                SlimefunGuide.openMainMenu(playerProfile, slimefunGuideMode, guideHistory.getMainMenuPage());
+            } else {
+                guideHistory.goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE));
+            }
             return false;
         });
 
@@ -343,13 +317,13 @@ public class ItemMarkGroup extends FlexItemGroup {
     }
 
     /**
-     * Get the ItemMarkGroup instance by page number.
+     * Gets the hiddenItemsGroup by page.
      *
-     * @param page The page number to get.
-     * @return The ItemMarkGroup instance by page number.
+     * @param page The page number.
+     * @return The hiddenItemsGroup by page.
      */
     @NotNull
-    private ItemMarkGroup getByPage(int page) {
+    private HiddenItemsGroup getByPage(int page) {
         if (this.pageMap.containsKey(page)) {
             return this.pageMap.get(page);
         } else {
@@ -358,52 +332,62 @@ public class ItemMarkGroup extends FlexItemGroup {
                     return this.pageMap.get(page);
                 }
 
-                ItemMarkGroup itemMarkGroup = new ItemMarkGroup(this, page);
-                itemMarkGroup.pageMap = this.pageMap;
-                this.pageMap.put(page, itemMarkGroup);
-                return itemMarkGroup;
+                HiddenItemsGroup hiddenItemsGroup = new HiddenItemsGroup(this, page);
+                hiddenItemsGroup.pageMap = this.pageMap;
+                this.pageMap.put(page, hiddenItemsGroup);
+                return hiddenItemsGroup;
             }
         }
     }
 
     /**
-     * Get the ItemMarkGroup instance by page number.
+     * Checks if the item group is accessible for the player.
      *
-     * @param p            The player who open the guide.
-     * @param slimefunItem The SlimefunItem to check.
-     * @return The ItemMarkGroup instance by page number.
+     * @param p            The player.
+     * @param slimefunItem The Slimefun item.
+     * @return True if the item group is accessible for the player.
      */
     @ParametersAreNonnullByDefault
-    private boolean isItemGroupAccessible(Player p, SlimefunItem slimefunItem) {
+    private boolean isItemGroupAccessible(@NotNull Player p, @NotNull SlimefunItem slimefunItem) {
         return Slimefun.getConfigManager().isShowHiddenItemGroupsInSearch()
                 || slimefunItem.getItemGroup().isAccessible(p);
     }
 
     /**
-     * Print error message to player.
+     * Prints an error message to the player.
      *
-     * @param p The player who open the guide.
-     * @param x The exception to print.
+     * @param p The player.
+     * @param x The exception.
      */
     @ParametersAreNonnullByDefault
-    private void printErrorMessage(Player p, Throwable x) {
+    private void printErrorMessage(@NotNull Player p, @NotNull Throwable x) {
         p.sendMessage("&4服务器发生了一个内部错误. 请联系管理员处理.");
-        JAVA_PLUGIN.getLogger().log(Level.SEVERE, "在打开指南书里的粘液科技物品时发生了意外!", x);
+        JAVA_PLUGIN.getLogger().log(Level.SEVERE, "在打开指南书里的 Slimefun 物品时发生了意外!", x);
     }
 
     /**
-     * Print error message to player.
+     * Prints an error message to the player.
      *
-     * @param p    The player who open the guide.
-     * @param item The SlimefunItem to print.
-     * @param x    The exception to print.
+     * @param p    The player.
+     * @param item The Slimefun item.
+     * @param x    The exception.
      */
     @ParametersAreNonnullByDefault
-    private void printErrorMessage(Player p, SlimefunItem item, Throwable x) {
+    private void printErrorMessage(@NotNull Player p, @NotNull SlimefunItem item, @NotNull Throwable x) {
         p.sendMessage(ChatColor.DARK_RED
                 + "An internal server error has occurred. Please inform an admin, check the console for"
                 + " further info.");
         item.error(
                 "This item has caused an error message to be thrown while viewing it in the Slimefun" + " guide.", x);
+    }
+
+    @Override
+    public boolean isCrossAddonItemGroup() {
+        return true;
+    }
+
+    @Override
+    public int getTier() {
+        return Integer.MAX_VALUE;
     }
 }

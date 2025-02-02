@@ -13,10 +13,6 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import org.bukkit.Material;
@@ -25,6 +21,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is the base class for all guide groups.
@@ -42,9 +44,11 @@ import org.jetbrains.annotations.Range;
 @Getter
 @NotDisplayInCheatMode
 public abstract class GuideGroup extends FlexItemGroup {
-    private final Set<Integer> slots = new HashSet<>();
-    private final Map<Integer, ItemStack> contents = new HashMap<>();
-    private final Map<Integer, ChestMenu.MenuClickHandler> clickHandlers = new HashMap<>();
+    private static final int PREVIOUS_SLOT = 46;
+    private static final int NEXT_SLOT = 52;
+    private final Map<Integer, Set<Integer>> slots = new HashMap<>();
+    private final Map<Integer, Map<Integer, ItemStack>> contents = new HashMap<>();
+    private final Map<Integer, Map<Integer, ChestMenu.MenuClickHandler>> clickHandlers = new HashMap<>();
 
     /**
      * Creates a new guide group with the given key and icon.
@@ -70,12 +74,15 @@ public abstract class GuideGroup extends FlexItemGroup {
     /**
      * Adds a guide to the group.
      *
+     * @param page      The page where the guide should be placed.
      * @param slot      The slot where the guide should be placed.
      * @param itemStack The item stack representing the guide.
      * @param handler   The click handler for the guide.
      * @return The group itself.
      */
-    @NotNull public GuideGroup addGuide(
+    @NotNull
+    public GuideGroup addGuide(
+            @Range(from = 1, to = Byte.MAX_VALUE) int page,
             @Range(from = 9, to = 44) int slot,
             @NotNull ItemStack itemStack,
             @NotNull ChestMenu.MenuClickHandler handler) {
@@ -87,10 +94,26 @@ public abstract class GuideGroup extends FlexItemGroup {
         Preconditions.checkArgument(
                 slots.size() <= getContentSlots().length, "Too many guides in this group. Maximum of 36 allowed.");
 
-        slots.add(slot);
-        contents.put(slot, itemStack);
-        clickHandlers.put(slot, handler);
+        slots.computeIfAbsent(page, k -> new HashSet<>()).add(slot);
+        contents.computeIfAbsent(page, k -> new LinkedHashMap<>()).put(slot, itemStack);
+        clickHandlers.computeIfAbsent(page, k -> new LinkedHashMap<>()).put(slot, handler);
         return this;
+    }
+
+    /**
+     * Adds a guide to the group.
+     *
+     * @param slot      The slot where the guide should be placed.
+     * @param itemStack The item stack representing the guide.
+     * @param handler   The click handler for the guide.
+     * @return The group itself.
+     */
+    @NotNull
+    public GuideGroup addGuide(
+            @Range(from = 9, to = 44) int slot,
+            @NotNull ItemStack itemStack,
+            @NotNull ChestMenu.MenuClickHandler handler) {
+        return addGuide(1, slot, itemStack, handler);
     }
 
     /**
@@ -100,7 +123,8 @@ public abstract class GuideGroup extends FlexItemGroup {
      * @param itemStack The item stack representing the guide.
      * @return The group itself.
      */
-    @NotNull public GuideGroup addGuide(@Range(from = 9, to = 44) int slot, @NotNull ItemStack itemStack) {
+    @NotNull
+    public GuideGroup addGuide(@Range(from = 9, to = 44) int slot, @NotNull ItemStack itemStack) {
         return addGuide(slot, itemStack, ChestMenuUtils.getEmptyClickHandler());
     }
 
@@ -111,8 +135,9 @@ public abstract class GuideGroup extends FlexItemGroup {
      * @param handler   The click handler for the guide.
      * @return The group itself.
      */
-    @NotNull public GuideGroup addGuide(@NotNull ItemStack itemStack, @NotNull ChestMenu.MenuClickHandler handler) {
-        return addGuide(findEmptySlot(), itemStack, handler);
+    @NotNull
+    public GuideGroup addGuide(@NotNull ItemStack itemStack, @NotNull ChestMenu.MenuClickHandler handler, @Range(from = 1, to = Byte.MAX_VALUE) int page) {
+        return addGuide(findEmptySlot(page), itemStack, handler);
     }
 
     /**
@@ -121,18 +146,20 @@ public abstract class GuideGroup extends FlexItemGroup {
      * @param itemStack The item stack representing the guide.
      * @return The group itself.
      */
-    @NotNull public GuideGroup addGuide(@NotNull ItemStack itemStack) {
-        return addGuide(itemStack, ChestMenuUtils.getEmptyClickHandler());
+    @NotNull
+    public GuideGroup addGuide(@NotNull ItemStack itemStack, @Range(from = 1, to = Byte.MAX_VALUE) int page) {
+        return addGuide(itemStack, ChestMenuUtils.getEmptyClickHandler(), page);
     }
 
     /**
      * Finds an empty slot in the chest menu.
      *
+     * @param page The page to search in.
      * @return An empty slot in the chest menu, or -1 if no slot is available.
      */
-    private int findEmptySlot() {
+    private int findEmptySlot(int page) {
         for (int i = 0; i < 54; i++) {
-            if (!slots.contains(i)) {
+            if (!slots.getOrDefault(page, new HashSet<>()).contains(i)) {
                 return i;
             }
         }
@@ -155,20 +182,35 @@ public abstract class GuideGroup extends FlexItemGroup {
         return true;
     }
 
+    @Override
+    public void open(
+            @NotNull Player player,
+            @NotNull PlayerProfile playerProfile,
+            @NotNull SlimefunGuideMode slimefunGuideMode
+    ) {
+        open(player, playerProfile, slimefunGuideMode, 1);
+    }
+
     /**
      * Opens the customized group for the given player.
      *
      * @param player            The player to open the group for.
      * @param playerProfile     The player profile of the player.
      * @param slimefunGuideMode The guide mode of the player.
+     * @param page              The page to open.
      */
-    @Override
     public void open(
             @NotNull Player player,
             @NotNull PlayerProfile playerProfile,
-            @NotNull SlimefunGuideMode slimefunGuideMode) {
+            @NotNull SlimefunGuideMode slimefunGuideMode,
+            @Range(from = 1, to = Byte.MAX_VALUE) int page) {
+        if (page < 1 || page > this.contents.size()) {
+            // Do nothing if the page is out of range.
+            return;
+        }
+
         SlimefunGuideImplementation guide = GuideUtil.getGuide(player, slimefunGuideMode);
-        playerProfile.getGuideHistory().add(this, 1);
+        playerProfile.getGuideHistory().add(this, page);
         if (guide instanceof JEGSlimefunGuideImplementation jeg) {
             ChestMenu menu = new ChestMenu(getDisplayName(player));
             menu.setSize(getSize());
@@ -186,13 +228,39 @@ public abstract class GuideGroup extends FlexItemGroup {
                 return false;
             });
 
-            for (Map.Entry<Integer, ItemStack> entry : contents.entrySet()) {
+            for (Map.Entry<Integer, ItemStack> entry : contents.getOrDefault(page, new LinkedHashMap<>()).entrySet()) {
                 menu.addItem(entry.getKey(), entry.getValue());
             }
 
-            for (Map.Entry<Integer, ChestMenu.MenuClickHandler> entry : clickHandlers.entrySet()) {
+            for (Map.Entry<Integer, ChestMenu.MenuClickHandler> entry : clickHandlers.getOrDefault(page, new LinkedHashMap<>()).entrySet()) {
                 menu.addMenuClickHandler(entry.getKey(), entry.getValue());
             }
+
+            menu.addItem(
+                    PREVIOUS_SLOT,
+                    ItemStackUtil.getCleanItem(ChestMenuUtils.getPreviousButton(
+                            player, page, (this.contents.size() - 1) / 36 + 1)));
+            menu.addMenuClickHandler(PREVIOUS_SLOT, (p, slot, item, action) -> {
+                if (page - 1 < 1) {
+                    return false;
+                }
+                GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
+                open(player, playerProfile, slimefunGuideMode, Math.max(1, page - 1));
+                return false;
+            });
+
+            menu.addItem(
+                    NEXT_SLOT,
+                    ItemStackUtil.getCleanItem(ChestMenuUtils.getNextButton(
+                            player, page, (this.contents.size() - 1) / 36 + 1)));
+            menu.addMenuClickHandler(NEXT_SLOT, (p, slot, item, action) -> {
+                if (page + 1 > this.contents.size()) {
+                    return false;
+                }
+                GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
+                open(player, playerProfile, slimefunGuideMode, Math.min(this.contents.size(), page + 1));
+                return false;
+            });
 
             menu.open(player);
         } else {

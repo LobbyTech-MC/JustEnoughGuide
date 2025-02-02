@@ -18,15 +18,16 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.CheatSheetSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
-import java.lang.reflect.Field;
-import java.text.MessageFormat;
-import java.util.EnumMap;
-import java.util.Map;
 import lombok.Getter;
 import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.text.MessageFormat;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * This is the main class of the JustEnoughGuide plugin.
@@ -44,12 +45,12 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     private final @NotNull String username;
     private final @NotNull String repo;
     private final @NotNull String branch;
-    private BookmarkManager bookmarkManager;
-    private CommandManager commandManager;
-    private ConfigManager configManager;
-    private IntegrationManager integrationManager;
-    private ListenerManager listenerManager;
-    private MinecraftVersion minecraftVersion;
+    private @Nullable BookmarkManager bookmarkManager;
+    private @Nullable CommandManager commandManager;
+    private @Nullable ConfigManager configManager;
+    private @Nullable IntegrationManager integrationManager;
+    private @Nullable ListenerManager listenerManager;
+    private @Nullable MinecraftVersion minecraftVersion;
     private int javaVersion;
 
     public JustEnoughGuide() {
@@ -228,12 +229,14 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         getLogger().info("成功禁用此附属");
     }
 
-    @NotNull @Override
+    @NotNull
+    @Override
     public JavaPlugin getJavaPlugin() {
         return this;
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public String getBugTrackerURL() {
         return MessageFormat.format("https://github.com/{0}/{1}/issues/", this.username, this.repo);
     }
@@ -258,18 +261,20 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
 
         if (minecraftVersion == MinecraftVersion.UNKNOWN) {
             getLogger().warning("无法识别到 Minecraft 版本！");
-            return false;
         }
 
         if (!minecraftVersion.isAtLeast(RECOMMENDED_MC_VERSION)) {
-            return false;
+            getLogger().warning("Minecraft 版本过低，请使用 Minecraft 1." + RECOMMENDED_MC_VERSION.getMajor() + "." + RECOMMENDED_MC_VERSION.getMinor() + " 或以上版本！");
         }
 
         if (javaVersion < RECOMMENDED_JAVA_VERSION) {
             getLogger().warning("Java 版本过低，请使用 Java " + RECOMMENDED_JAVA_VERSION + " 或以上版本！");
-            return false;
         }
 
         return true;
+    }
+
+    public boolean isDebug() {
+        return getConfigManager().isDebug();
     }
 }

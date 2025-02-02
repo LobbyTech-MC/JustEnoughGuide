@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.balugaq.jeg</groupId>
     <artifactId>JustEnoughGuide</artifactId>
-    <version>40</version>
+    <version>64</version>
 
     <pluginRepositories>
         <pluginRepository>
@@ -34,8 +34,9 @@
     </pluginRepositories>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -44,8 +45,24 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.34</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.4.1</version>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
                     <filters>
@@ -178,6 +195,15 @@
             <artifactId>GuizhanLibPlugin</artifactId>
             <version>1.7.6</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Special Menu Provider -->
+        <dependency>
+            <groupId>me.matl114</groupId>
+            <artifactId>LogiTech</artifactId>
+            <version>1.0.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/original-LogiTech v1.0.3.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

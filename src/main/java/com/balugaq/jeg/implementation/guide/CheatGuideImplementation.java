@@ -9,6 +9,8 @@ import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.ItemStackUtil;
+import com.balugaq.jeg.utils.LocalHelper;
+import com.balugaq.jeg.utils.SpecialMenuProvider;
 import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
 import com.github.houbb.pinyin.util.PinyinHelper;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
@@ -40,13 +42,6 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.recipes.MinecraftRecip
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.github.thebusybiscuit.slimefun4.utils.itemstack.SlimefunGuideItem;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.logging.Level;
-import javax.annotation.ParametersAreNonnullByDefault;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu.MenuClickHandler;
 import org.bukkit.ChatColor;
@@ -61,6 +56,15 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.logging.Level;
+
 /**
  * This is JEG's implementation of the Cheat Guide.
  * It extends {@link CheatSheetSlimefunGuide} to compatibly
@@ -74,7 +78,11 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings({"deprecation", "unused"})
 public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements JEGSlimefunGuideImplementation {
+    private static final int RTS_SLOT = 6;
+    private static final ItemStack RTS_ITEM = new CustomItemStack(Material.ANVIL, "&b实时搜索", "", "&c&l暂未完成");
     private static final int MAX_ITEM_GROUPS = 36;
+    private static final int SPECIAL_MENU_SLOT = 26;
+    private static final ItemStack SPECIAL_MENU_ITEM = new CustomItemStack(Material.COMPASS, "&b超大配方", "", "&a点击打开超大配方(若有)");
     private final int[] recipeSlots = {3, 4, 5, 12, 13, 14, 21, 22, 23};
     private final @NotNull ItemStack item;
 
@@ -110,20 +118,18 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
             ItemGroup itemGroup = slimefunItem.getItemGroup();
             String lore = hasPermission(p, slimefunItem)
                     ? String.format(
-                            "&f需要在 %s 中解锁",
-                            (itemGroup.getAddon() == null
-                                            ? "Slimefun"
-                                            : itemGroup.getAddon().getName()) + " - " + itemGroup.getDisplayName(p))
+                    "&f需要在 %s 中解锁",
+                    (LocalHelper.getAddonName(itemGroup, slimefunItem.getId())) + " - " + itemGroup.getDisplayName(p))
                     : "&f无权限";
             return ItemStackUtil.getCleanItem(
                     slimefunItem.canUse(p, false)
                             ? item
                             : new CustomItemStack(
-                                    Material.BARRIER,
-                                    ItemUtils.getItemName(item),
-                                    "&4&l" + Slimefun.getLocalization().getMessage(p, "guide.locked"),
-                                    "",
-                                    lore));
+                            Material.BARRIER,
+                            ItemUtils.getItemName(item),
+                            "&4&l" + Slimefun.getLocalization().getMessage(p, "guide.locked"),
+                            "",
+                            lore));
         } else {
             return item;
         }
@@ -166,12 +172,14 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
                 }
                 if (group.getClass().isAnnotationPresent(DisplayInCheatMode.class)) {
                     groups.add(group);
+                    continue;
                 }
                 if (group instanceof FlexItemGroup flexItemGroup) {
                     NamespacedKey key = group.getKey();
                     String namespace = key.getNamespace();
                     if (namespace.equalsIgnoreCase("networks") || namespace.equalsIgnoreCase("networks-changed")) {
-                        if (group.getClass().getName().equalsIgnoreCase("com.balugaq.netex.api.groups.MainItemGroup")) {
+                        if (group.getClass().getName()
+                                .equalsIgnoreCase("com.balugaq.netex.api.groups.MainItemGroup")) {
                             continue;
                         }
                         if (group instanceof NestedItemGroup) {
@@ -180,13 +188,29 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
                         }
                     }
                     if (namespace.equalsIgnoreCase("finaltech") || namespace.equalsIgnoreCase("finaltech-changed")) {
-                        if (group.getClass()
-                                .getName()
+                        if (group.getClass().getName()
                                 .equalsIgnoreCase("io.taraxacum.finaltech.core.group.MainItemGroup")) {
                             continue;
                         }
                         if (group instanceof NestedItemGroup) {
                             groups.add(group);
+                            continue;
+                        }
+                    }
+                    if (namespace.equalsIgnoreCase("mobengineering")) {
+                        if (group.getClass().getName()
+                                .equalsIgnoreCase("io.github.ytdd9527.mobengineering.implementation.slimefun.groups.MainItemGroup")) {
+                            continue;
+                        }
+
+                        if (group instanceof NestedItemGroup) {
+                            groups.add(group);
+                            continue;
+                        }
+                    }
+                    if (namespace.equalsIgnoreCase("nexcavate")) {
+                        if (group.getClass().getName()
+                                .equalsIgnoreCase("me.char321.nexcavate.slimefun.NEItemGroup")) {
                             continue;
                         }
                     }
@@ -238,11 +262,9 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
             return;
         }
 
-        if (!isCheatMode()) {
-            GuideHistory history = profile.getGuideHistory();
-            history.clear();
-            history.setMainMenuPage(page);
-        }
+        GuideHistory history = profile.getGuideHistory();
+        history.clear();
+        history.setMainMenuPage(page);
 
         ChestMenu menu = create(p);
         List<ItemGroup> itemGroups = getVisibleItemGroups(p, profile);
@@ -352,7 +374,7 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
         }
 
         if (itemGroup instanceof FlexItemGroup flexItemGroup) {
-            flexItemGroup.open(p, profile, SlimefunGuideMode.CHEAT_MODE);
+            flexItemGroup.open(p, profile, getMode());
             return;
         }
 
@@ -583,17 +605,17 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
             recipeType = new RecipeType(optional.get());
             result = recipe.getResult();
         } else {
-            recipeItems = new ItemStack[] {
-                null,
-                null,
-                null,
-                null,
-                ItemStackUtil.getCleanItem(
-                        new CustomItemStack(Material.BARRIER, "&4We are somehow unable to show you this Recipe :/")),
-                null,
-                null,
-                null,
-                null
+            recipeItems = new ItemStack[]{
+                    null,
+                    null,
+                    null,
+                    null,
+                    ItemStackUtil.getCleanItem(
+                            new CustomItemStack(Material.BARRIER, "&4We are somehow unable to show you this Recipe :/")),
+                    null,
+                    null,
+                    null,
+                    null
             };
         }
 
@@ -667,6 +689,11 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
     @Override
     @ParametersAreNonnullByDefault
     public void displayItem(PlayerProfile profile, SlimefunItem item, boolean addToHistory) {
+        displayItem(profile, item, addToHistory, true);
+    }
+
+    @ParametersAreNonnullByDefault
+    public void displayItem(PlayerProfile profile, SlimefunItem item, boolean addToHistory, boolean maybeSpecial) {
         Player p = profile.getPlayer();
 
         if (p == null) {
@@ -708,6 +735,18 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
 
         if (item instanceof RecipeDisplayItem recipeDisplayItem) {
             displayRecipes(p, profile, menu, recipeDisplayItem, 0);
+        }
+
+
+        if (maybeSpecial && SpecialMenuProvider.isSpecialItem(item)) {
+            menu.addItem(SPECIAL_MENU_SLOT, SPECIAL_MENU_ITEM, (pl, slot, itemstack, action) -> {
+                try {
+                    SpecialMenuProvider.open(profile.getPlayer(), profile, getMode(), item);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            });
         }
 
         menu.open(p);
@@ -787,6 +826,10 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
         menu.addItem(1, ItemStackUtil.getCleanItem(ChestMenuUtils.getMenuButton(p)));
         menu.addMenuClickHandler(1, (pl, slot, item, action) -> {
             SlimefunGuideSettings.openSettings(pl, pl.getInventory().getItemInMainHand());
+            return false;
+        });
+
+        menu.addItem(RTS_SLOT, ItemStackUtil.getCleanItem(RTS_ITEM), (pl, slot, itemstack, action) -> {
             return false;
         });
 
@@ -1016,8 +1059,9 @@ public class CheatGuideImplementation extends CheatSheetSlimefunGuide implements
         }
     }
 
-    @NotNull public ChestMenu create(@NotNull Player p) {
-        ChestMenu menu = new ChestMenu("&c&l粘液科技指南 (作弊模式)");
+    @NotNull
+    public ChestMenu create(@NotNull Player p) {
+        ChestMenu menu = new ChestMenu(JustEnoughGuide.getConfigManager().getCheatGuideTitle());
 
         menu.setEmptySlotsClickable(false);
         menu.addMenuOpeningHandler(SoundEffect.GUIDE_BUTTON_CLICK_SOUND::playFor);
