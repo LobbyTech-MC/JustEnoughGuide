@@ -1043,7 +1043,6 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
         }
     }
 
-    @NotNull
     public ChestMenu create(@NotNull Player p) {
         ChestMenu menu = new ChestMenu(JustEnoughGuide.getConfigManager().getSurvivalGuideTitle());
 
