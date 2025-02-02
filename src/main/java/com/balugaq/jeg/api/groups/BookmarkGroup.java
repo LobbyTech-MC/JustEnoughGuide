@@ -165,7 +165,7 @@ public class BookmarkGroup extends FlexItemGroup {
             @NotNull Player player,
             @NotNull PlayerProfile playerProfile,
             @NotNull SlimefunGuideMode slimefunGuideMode) {
-        ChestMenu chestMenu = new ChestMenu("收藏页 - JEG");
+        ChestMenu chestMenu = new ChestMenu("收藏页");
 
         chestMenu.setEmptySlotsClickable(false);
         chestMenu.addMenuOpeningHandler(pl -> pl.playSound(pl.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1, 1));

@@ -19,7 +19,7 @@ public class GroupSetup {
     public static void setup() {
         guideGroup = new JEGGuideGroup(
                 new NamespacedKey(JustEnoughGuide.getInstance(), "jeg_guide_group"),
-                new CustomItemStack(Material.KNOWLEDGE_BOOK, "&bJEG 使用指南"));
+                new CustomItemStack(Material.KNOWLEDGE_BOOK, "&b粘液科技指南操作提示"));
         guideGroup.register(JustEnoughGuide.getInstance());
     }
 

@@ -38,8 +38,8 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings("unused")
 @Getter
 public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
-    private static final int RECOMMENDED_JAVA_VERSION = 17;
-    private static final MinecraftVersion RECOMMENDED_MC_VERSION = MinecraftVersion.MINECRAFT_1_16;
+    private static final int RECOMMENDED_JAVA_VERSION = 21;
+    private static final MinecraftVersion RECOMMENDED_MC_VERSION = MinecraftVersion.MINECRAFT_1_21;
     private static @Nullable JustEnoughGuide instance;
     private final @NotNull String username;
     private final @NotNull String repo;

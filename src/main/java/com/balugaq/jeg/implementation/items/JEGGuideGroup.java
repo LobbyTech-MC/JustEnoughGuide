@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 @NotDisplayInCheatMode
 public class JEGGuideGroup extends ClassicGuideGroup {
     private static final ItemStack HEADER = new CustomItemStack(
-            Material.BEACON, "&bJEG 使用指南", "&b作者: 大香蕉", "&bJEG 优化了粘液科技的指南，使其更人性化。", "&b查看以下指南书以快速上手 JEG 增加的功能。");
+            Material.BEACON, "&b粘液科技指南使用帮助","&b人性化操作的优化版粘液科技的指南", "&b阅读以下指南说明以快速上手人性化功能");
     private static final int[] GUIDE_SLOTS = {
         19, 20, 21, 22, 23, 24, 25,
         28, 29, 30, 31, 32, 33, 34,
@@ -60,7 +60,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                         try {
                             p.performCommand("sf search ding");
                         } catch (Throwable e) {
-                            p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                            p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             e.printStackTrace();
                         }
                         return false;
@@ -74,7 +74,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     try {
                         p.performCommand("sf search a");
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                         e.printStackTrace();
                     }
                     return false;
@@ -93,12 +93,12 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     (p, s, i, a) -> {
                         try {
                             if (Slimefun.instance() == null) {
-                                p.sendMessage("§c无法获取 Slimefun 实例，无法使用此功能。");
+                                p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             }
 
                             SlimefunGuideImplementation guide = GuideUtil.getGuide(p, SlimefunGuideMode.SURVIVAL_MODE);
                             if (guide == null) {
-                                p.sendMessage("§c无法获取指南，请检查是否正确安装 Slimefun。");
+                                p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                                 return false;
                             }
 
@@ -109,7 +109,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
 
                             PlayerProfile profile = PlayerProfile.find(p).orElse(null);
                             if (profile == null) {
-                                p.sendMessage("§c无法获取玩家资料，请检查是否正确安装 Slimefun。");
+                                p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                                 return false;
                             }
 
@@ -122,7 +122,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                                 }
                             }
                         } catch (Throwable e) {
-                            p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                            p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             e.printStackTrace();
                         }
                         return false;
@@ -142,12 +142,12 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     (p, s, i, a) -> {
                         try {
                             if (Slimefun.instance() == null) {
-                                p.sendMessage("§c无法获取 Slimefun 实例，无法使用此功能。");
+                                p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             }
 
                             SlimefunGuideImplementation guide = GuideUtil.getGuide(p, SlimefunGuideMode.SURVIVAL_MODE);
                             if (guide == null) {
-                                p.sendMessage("§c无法获取指南，请检查是否正确安装 Slimefun。");
+                                p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                                 return false;
                             }
 
@@ -158,13 +158,13 @@ public class JEGGuideGroup extends ClassicGuideGroup {
 
                             PlayerProfile profile = PlayerProfile.find(p).orElse(null);
                             if (profile == null) {
-                                p.sendMessage("§c无法获取玩家资料，请检查是否正确安装 Slimefun。");
+                                p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                                 return false;
                             }
 
                             jegGuide.openBookMarkGroup(p, profile);
                         } catch (Throwable e) {
-                            p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                            p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             e.printStackTrace();
                         }
                         return false;
@@ -182,13 +182,13 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                 (p, s, i, a) -> {
                     try {
                         if (Slimefun.instance() == null) {
-                            p.sendMessage("§c无法获取 Slimefun 实例，无法使用此功能。");
+                            p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             return false;
                         }
 
                         SlimefunGuideImplementation guide = GuideUtil.getGuide(p, SlimefunGuideMode.SURVIVAL_MODE);
                         if (guide == null) {
-                            p.sendMessage("§c无法获取指南，请检查是否正确安装 Slimefun。");
+                            p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             return false;
                         }
 
@@ -199,19 +199,19 @@ public class JEGGuideGroup extends ClassicGuideGroup {
 
                         PlayerProfile profile = PlayerProfile.find(p).orElse(null);
                         if (profile == null) {
-                            p.sendMessage("§c无法获取玩家资料，请检查是否正确安装 Slimefun。");
+                            p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             return false;
                         }
 
                         SlimefunItem exampleItem = SlimefunItems.ELECTRIC_DUST_WASHER_3.getItem();
                         if (exampleItem == null) {
-                            p.sendMessage("§c无法获取示例物品，请检查是否正确安装 Slimefun。");
+                            p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                             return false;
                         }
 
                         jegGuide.displayItem(profile, exampleItem, true);
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                         e.printStackTrace();
                     }
                     return false;
@@ -229,7 +229,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     try {
                         p.performCommand("sf search 硫酸");
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                         e.printStackTrace();
                     }
                     return false;
@@ -257,7 +257,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                             p.performCommand("sf search #r电池");
                         }
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请联系服主获取帮助。");
                         e.printStackTrace();
                     }
                     return false;

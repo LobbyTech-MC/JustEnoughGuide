@@ -389,7 +389,7 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
             String lore;
 
             if (VaultIntegration.isEnabled()) {
-                lore = String.format("%.2f", research.getCurrencyCost()) + " &e⛁";
+                lore = "&a" + String.format("%.2f", research.getCurrencyCost()) + " &e⛁";
             } else {
                 lore = research.getLevelCost() + " 级经验";
             }
@@ -716,12 +716,14 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
                     ChestMenuUtils.getEmptyClickHandler());
         }
 
+        /*
         // Settings Panel
         menu.addItem(1, ItemStackUtil.getCleanItem(ChestMenuUtils.getMenuButton(p)));
         menu.addMenuClickHandler(1, (pl, slot, item, action) -> {
             SlimefunGuideSettings.openSettings(pl, pl.getInventory().getItemInMainHand());
             return false;
         });
+        */
 
         // Search feature!
         menu.addItem(7, ItemStackUtil.getCleanItem(ChestMenuUtils.getSearchButton(p)));
@@ -947,7 +949,7 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
     }
 
     @NotNull public ChestMenu create(@NotNull Player p) {
-        ChestMenu menu = new ChestMenu("&2&l粘液科技指南 (生存模式)");
+        ChestMenu menu = new ChestMenu("&8粘液科技指南");
 
         menu.setEmptySlotsClickable(false);
         menu.addMenuOpeningHandler(SoundEffect.GUIDE_BUTTON_CLICK_SOUND::playFor);
