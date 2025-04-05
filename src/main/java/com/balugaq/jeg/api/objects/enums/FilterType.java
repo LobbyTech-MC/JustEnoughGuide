@@ -1,21 +1,23 @@
 package com.balugaq.jeg.api.objects.enums;
 
+import java.lang.ref.Reference;
+import java.util.List;
+import java.util.Set;
+
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import com.balugaq.jeg.api.groups.SearchGroup;
 import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.LocalHelper;
 import com.balugaq.jeg.utils.SpecialMenuProvider;
+
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import lombok.Getter;
-import me.matl114.logitech.SlimefunItem.CustomSlimefunItem;
+import me.matl114.logitech.core.CustomSlimefunItem;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.lang.ref.Reference;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 public enum FilterType {
