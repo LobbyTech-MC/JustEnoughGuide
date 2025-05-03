@@ -10,6 +10,8 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import lombok.experimental.UtilityClass;
+import me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenu;
+import me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenuHandler;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Bukkit;
@@ -650,9 +652,9 @@ public class SpecialMenuProvider {
      * @author balugaq
      * @since 1.3
      */
-    public class CustomMenuHandlerImpl_Utils implements me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenuHandler {
+    public class CustomMenuHandlerImpl_Utils implements CustomMenuHandler {
         @Override
-        public ChestMenu.@NotNull MenuClickHandler getInstance(me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenu menu) {
+        public ChestMenu.@NotNull MenuClickHandler getInstance(CustomMenu menu) {
             return (p, s, i, a) -> {
                 PlayerProfile.find(p).ifPresent(playerProfile -> {
                     playerProfile.getGuideHistory().goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE));

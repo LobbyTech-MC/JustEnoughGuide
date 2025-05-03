@@ -34,7 +34,7 @@
     </pluginRepositories>
 
     <properties>
-        <LogiTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib/original-LogiTech v1.0.3.jar</LogiTech-systemPath>
+        <LogiTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib/original-LogiTech v1.0.4.jar</LogiTech-systemPath>
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -219,22 +219,13 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Special Menu Provider me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenu -->
-        <dependency>
-            <groupId>me.matl114</groupId>
-            <artifactId>LogiTech1</artifactId>
-            <version>1.0.3</version>
-            <scope>system</scope>
-            <systemPath>${LogiTech-systemPath}</systemPath>
-        </dependency>
-
         <!-- Special Menu Provider me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenu -->
         <dependency>
             <groupId>me.matl114</groupId>
             <artifactId>LogiTech2</artifactId>
             <version>1.0.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/original-LogiTech v1.0.4.jar</systemPath>
+            <systemPath>${LogiTech-systemPath}</systemPath>
         </dependency>
 
         <!-- AnvilGUI 1.16- Paper 1.21.2 / Spigot 1.21.3 -->
