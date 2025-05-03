@@ -5,7 +5,7 @@ import com.balugaq.jeg.api.groups.NexcavateItemsGroup;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.SlimefunItemUtil;
 import com.balugaq.jeg.utils.SpecialMenuProvider;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import com.balugaq.jeg.utils.compatibility.Converter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
@@ -20,23 +20,29 @@ public class GroupSetup {
     public static HiddenItemsGroup hiddenItemsGroup;
     public static NexcavateItemsGroup nexcavateItemsGroup;
 
+    /**
+     * Registers all the JEG groups.
+     */
     public static void setup() {
         guideGroup = new JEGGuideGroup(
                 new NamespacedKey(JustEnoughGuide.getInstance(), "jeg_guide_group"),
-                new CustomItemStack(Material.KNOWLEDGE_BOOK, "&b粘液科技指南操作提示"));
+                Converter.getItem(Material.KNOWLEDGE_BOOK, "&b粘液科技指南操作提示"));
         guideGroup.register(JustEnoughGuide.getInstance());
         hiddenItemsGroup = new HiddenItemsGroup(
                 new NamespacedKey(JustEnoughGuide.getInstance(), "hidden_items_group"),
-                new CustomItemStack(Material.BARRIER, "&c隐藏物品"));
+                Converter.getItem(Material.BARRIER, "&c隐藏物品"));
         hiddenItemsGroup.register(JustEnoughGuide.getInstance());
         if (SpecialMenuProvider.ENABLED_Nexcavate) {
             nexcavateItemsGroup = new NexcavateItemsGroup(
                     new NamespacedKey(JustEnoughGuide.getInstance(), "nexvacate_items_group"),
-                    new CustomItemStack(Material.BLACKSTONE, "&6Nexvacate 物品"));
+                    Converter.getItem(Material.BLACKSTONE, "&6Nexvacate 物品"));
             nexcavateItemsGroup.register(JustEnoughGuide.getInstance());
         }
     }
 
+    /**
+     * Unregisters all the JEG groups.
+     */
     public static void shutdown() {
         SlimefunItemUtil.unregisterItemGroup(guideGroup);
         SlimefunItemUtil.unregisterItemGroup(hiddenItemsGroup);

@@ -7,12 +7,13 @@ import com.balugaq.jeg.core.listeners.GuideListener;
 import com.balugaq.jeg.core.listeners.RTSListener;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.Models;
+import com.balugaq.jeg.utils.compatibility.Converter;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -44,7 +45,7 @@ import java.util.function.Function;
 @NotDisplayInCheatMode
 @Getter
 public class RTSSearchGroup extends FlexItemGroup {
-    public static final ItemStack PLACEHOLDER = new CustomItemStack(new CustomItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&a", "&a", "&a"), meta -> {
+    public static final ItemStack PLACEHOLDER = Converter.getItem(Converter.getItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&a", "&a", "&a"), meta -> {
         meta.getPersistentDataContainer().set(RTSListener.FAKE_ITEM_KEY, PersistentDataType.STRING, "____JEG_FAKE_ITEM____");
     });
     // Use RTS_SEARCH_GROUPS, RTS_PAGES, RTS_PLAYERS or RTS_SEARCH_TERMS must be by keyword "synchronized"
@@ -53,14 +54,7 @@ public class RTSSearchGroup extends FlexItemGroup {
     public static final Map<Player, AnvilInventory> RTS_PLAYERS = new ConcurrentHashMap<>();
     public static final Map<Player, String> RTS_SEARCH_TERMS = new ConcurrentHashMap<>();
     public static final Function<Player, ItemStack> BACK_ICON = (player) -> ChestMenuUtils.getBackButton(player, "", "&f左键: &7返回上一页", "&fShift + 左键: &7返回主菜单");
-    public static final ItemStack INPUT_TEXT_ICON = new CustomItemStack(
-            Material.PAPER,
-            "&f搜索: &7在上方输入搜索词",
-            "&fNote:",
-            "&7 - &e左侧物品为返回键",
-            "&7 - &e中间物品为按键上一页",
-            "&7 - &e右侧物品为按键下一页"
-    );
+    public static final ItemStack INPUT_TEXT_ICON = Models.INPUT_TEXT_ICON;
     public static final ItemStack AIR_ICON = new ItemStack(Material.AIR);
     private static final JavaPlugin JAVA_PLUGIN = JustEnoughGuide.getInstance();
 
@@ -113,10 +107,23 @@ public class RTSSearchGroup extends FlexItemGroup {
     private final String presetSearchTerm;
     private final int page;
 
+    /**
+     * Creates a new RTS search group for a player with a specific preset search term.
+     *
+     * @param anvilInventory   The anvil inventory used for the search.
+     * @param presetSearchTerm The preset search term to initialize the search with.
+     */
     public RTSSearchGroup(AnvilInventory anvilInventory, String presetSearchTerm) {
         this(anvilInventory, presetSearchTerm, 1);
     }
 
+    /**
+     * Creates a new RTS search group for a player with a specific preset search term and page.
+     *
+     * @param anvilInventory   The anvil inventory used for the search.
+     * @param presetSearchTerm The preset search term to initialize the search with.
+     * @param page             The initial page number for the search results.
+     */
     public RTSSearchGroup(AnvilInventory anvilInventory, String presetSearchTerm, int page) {
         super(new NamespacedKey(JAVA_PLUGIN, "jeg_rts_search_group_" + UUID.randomUUID()), new ItemStack(Material.BARRIER));
         this.anvilInventory = anvilInventory;
@@ -124,6 +131,13 @@ public class RTSSearchGroup extends FlexItemGroup {
         this.page = page;
     }
 
+    /**
+     * Creates a new RTS inventory for a player in a specific guide mode.
+     *
+     * @param player    The player for whom the inventory is created.
+     * @param guideMode The guide mode (e.g., CHEAT_MODE, SURVIVAL_MODE).
+     * @return The created inventory.
+     */
     public static Inventory newRTSInventoryFor(Player player, SlimefunGuideMode guideMode) {
         return newRTSInventoryFor(player, guideMode, null);
     }
@@ -182,6 +196,13 @@ public class RTSSearchGroup extends FlexItemGroup {
         return false;
     }
 
+    /**
+     * Opens the RTS search group for a player with a specific guide mode.
+     *
+     * @param player            The player who is opening the search group.
+     * @param playerProfile     The player profile associated with the player.
+     * @param slimefunGuideMode The guide mode (e.g., CHEAT_MODE, SURVIVAL_MODE).
+     */
     @Override
     public void open(@NotNull Player player, @NotNull PlayerProfile playerProfile, @NotNull SlimefunGuideMode slimefunGuideMode) {
         GuideUtil.removeLastEntry(playerProfile.getGuideHistory());

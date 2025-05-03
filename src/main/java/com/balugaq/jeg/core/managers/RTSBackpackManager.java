@@ -2,10 +2,10 @@ package com.balugaq.jeg.core.managers;
 
 import com.balugaq.jeg.api.managers.AbstractManager;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.compatibility.Converter;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -47,6 +47,11 @@ public class RTSBackpackManager extends AbstractManager {
         return contents;
     }
 
+    /**
+     * Saves the player's inventory backup to a backpack.
+     *
+     * @param player the player whose inventory to backup
+     */
     public void saveInventoryBackupFor(@NotNull Player player) {
         PlayerProfile profile = PlayerProfile.find(player).orElse(null);
         if (profile == null) {
@@ -93,6 +98,11 @@ public class RTSBackpackManager extends AbstractManager {
         b.setInventory(inventory);
     }
 
+    /**
+     * Clears the player's inventory.
+     *
+     * @param player the player whose inventory to clear
+     */
     public void clearInventoryFor(@NotNull Player player) {
         ItemStack[] newContents = new ItemStack[player.getInventory().getStorageContents().length];
         for (int i = 0; i < newContents.length; i++) {
@@ -101,6 +111,11 @@ public class RTSBackpackManager extends AbstractManager {
         player.getInventory().setStorageContents(newContents);
     }
 
+    /**
+     * Restores the player's inventory from a backpack.
+     *
+     * @param player the player whose inventory to restore
+     */
     public void restoreInventoryFor(@NotNull Player player) {
         PlayerProfile profile = PlayerProfile.find(player).orElse(null);
         if (profile == null) {
@@ -155,12 +170,27 @@ public class RTSBackpackManager extends AbstractManager {
         }
     }
 
+    /**
+     * Sets the identifier item in the inventory.
+     *
+     * @param player    the player
+     * @param inventory the inventory
+     * @param slot      the slot to set the identifier item
+     * @param open      whether the identifier item should indicate an open status
+     */
     public void setIdentifier(@NotNull Player player, @NotNull Inventory inventory, int slot, boolean open) {
         inventory.setItem(slot, getIdentifierItem(player, open));
     }
 
+    /**
+     * Creates and returns the identifier item.
+     *
+     * @param player the player
+     * @param open   whether the identifier item should indicate an open status
+     * @return the identifier item
+     */
     public @NotNull ItemStack getIdentifierItem(@NotNull Player player, boolean open) {
-        return new CustomItemStack(new CustomItemStack(Material.DIRT, "[RTS]", "[RTS]", "[RTS]", "[RTS]", UUID.randomUUID().toString()), meta -> {
+        return Converter.getItem(Converter.getItem(Material.DIRT, "[RTS]", "[RTS]", "[RTS]", "[RTS]", UUID.randomUUID().toString()), meta -> {
             meta.getPersistentDataContainer().set(OWNER_KEY, PersistentDataType.STRING, player.getUniqueId().toString());
             meta.getPersistentDataContainer().set(SERVER_KEY, PersistentDataType.STRING, JustEnoughGuide.getServerUUID().toString());
             if (open) {
@@ -171,6 +201,13 @@ public class RTSBackpackManager extends AbstractManager {
         });
     }
 
+    /**
+     * Checks if the item is a valid identifier for the player.
+     *
+     * @param item   the item to check
+     * @param player the player
+     * @return true if the item is a valid identifier, false otherwise
+     */
     public boolean isIdentifier(@Nullable ItemStack item, @NotNull Player player) {
         if (item == null || item.getType() == Material.AIR) {
             return false;
@@ -197,6 +234,12 @@ public class RTSBackpackManager extends AbstractManager {
         return true;
     }
 
+    /**
+     * Checks if the identifier item indicates an open status.
+     *
+     * @param item the identifier item to check
+     * @return true if the identifier item indicates an open status, false otherwise
+     */
     public boolean isOpenIdentifier(@Nullable ItemStack item) {
         if (item == null || item.getType() == Material.AIR) {
             return false;

@@ -42,6 +42,9 @@ import com.balugaq.jeg.utils.JEGVersionedItemFlag;
 import com.balugaq.jeg.utils.LocalHelper;
 import com.balugaq.jeg.utils.ReflectionUtil;
 import com.balugaq.jeg.utils.SpecialMenuProvider;
+import com.balugaq.jeg.utils.clickhandler.BeginnerUtils;
+import com.balugaq.jeg.utils.clickhandler.GroupLinker;
+import com.balugaq.jeg.utils.compatibility.Converter;
 import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
 import com.github.houbb.pinyin.util.PinyinHelper;
 
@@ -50,6 +53,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
@@ -59,10 +63,8 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.RandomizedSet;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import me.matl114.logitech.core.CustomSlimefunItem;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
@@ -84,6 +86,7 @@ public class SearchGroup extends FlexItemGroup {
     public static final Map<Character, Reference<Set<SlimefunItem>>> CACHE2 = new HashMap<>(); // fast way for by display item name
     public static final Map<String, Reference<Set<String>>> SPECIAL_CACHE = new HashMap<>();
     public static final Set<String> SHARED_CHARS = new HashSet<>();
+    public static final Set<String> BLACKLIST = new HashSet<>();
     public static final Boolean SHOW_HIDDEN_ITEM_GROUPS = Slimefun.getConfigManager().isShowHiddenItemGroupsInSearch();
     public static final Integer DEFAULT_HASH_SIZE = 5000;
     public static final Map<SlimefunItem, Integer> ENABLED_ITEMS = new HashMap<>(DEFAULT_HASH_SIZE);
@@ -176,10 +179,10 @@ public class SearchGroup extends FlexItemGroup {
     /**
      * Checks if the search filter is applicable.
      *
-     * @param slimefunItem The Slimefun item.
+     * @param slimefunItem The Slimefun item to check.
      * @param searchTerm   The search term.
      * @param pinyin       Whether the search term is in Pinyin.
-     * @return True if the search filter is applicable.
+     * @return True if the search filter is applicable, false otherwise.
      */
     @ParametersAreNonnullByDefault
     public static boolean isSearchFilterApplicable(SlimefunItem slimefunItem, String searchTerm, boolean pinyin) {
@@ -193,10 +196,10 @@ public class SearchGroup extends FlexItemGroup {
     /**
      * Checks if the search filter is applicable.
      *
-     * @param itemStack  The item stack.
+     * @param itemStack  The item stack to check.
      * @param searchTerm The search term.
      * @param pinyin     Whether the search term is in Pinyin.
-     * @return True if the search filter is applicable.
+     * @return True if the search filter is applicable, false otherwise.
      */
     @ParametersAreNonnullByDefault
     public static boolean isSearchFilterApplicable(ItemStack itemStack, String searchTerm, boolean pinyin) {
@@ -211,10 +214,10 @@ public class SearchGroup extends FlexItemGroup {
     /**
      * Checks if the search filter is applicable.
      *
-     * @param itemName   The item name.
+     * @param itemName   The item name to check.
      * @param searchTerm The search term.
      * @param pinyin     Whether the search term is in Pinyin.
-     * @return True if the search filter is applicable.
+     * @return True if the search filter is applicable, false otherwise.
      */
     @ParametersAreNonnullByDefault
     public static boolean isSearchFilterApplicable(String itemName, String searchTerm, boolean pinyin) {
@@ -236,22 +239,48 @@ public class SearchGroup extends FlexItemGroup {
         return false;
     }
 
+    /**
+     * Filters items based on the given filter type, filter value, and pinyin flag.
+     *
+     * @param player      The player.
+     * @param filterType  The filter type.
+     * @param filterValue The filter value.
+     * @param pinyin      Whether the search term is in Pinyin.
+     * @param items       The list of items to filter.
+     * @return The filtered list of items.
+     */
     public static @NotNull List<SlimefunItem> filterItems(Player player, @NotNull FilterType filterType, @NotNull String filterValue, boolean pinyin, @NotNull List<SlimefunItem> items) {
         String lowerFilterValue = filterValue.toLowerCase();
         return items.stream().filter(item -> filterType.getFilter().apply(player, item, lowerFilterValue, pinyin)).toList();
     }
 
+    /**
+     * Filters items based on the given filter type, filter value, and pinyin flag.
+     *
+     * @param player      The player.
+     * @param filterType  The filter type.
+     * @param filterValue The filter value.
+     * @param pinyin      Whether the search term is in Pinyin.
+     * @param items       The set of items to filter.
+     * @return The filtered set of items.
+     */
     public static @NotNull Set<SlimefunItem> filterItems(Player player, @NotNull FilterType filterType, @NotNull String filterValue, boolean pinyin, @NotNull Set<SlimefunItem> items) {
         String lowerFilterValue = filterValue.toLowerCase();
         return items.stream().filter(item -> filterType.getFilter().apply(player, item, lowerFilterValue, pinyin)).collect(Collectors.toSet());
     }
 
+    /**
+     * Initializes the search group by populating caches and preparing data.
+     */
     public static void init() {
         if (!LOADED) {
             LOADED = true;
             Debug.debug("Initializing Search Group...");
             Timer.start();
             Bukkit.getScheduler().runTaskAsynchronously(JAVA_PLUGIN, () -> {
+                // Blacklist
+                BLACKLIST.add("快捷");
+
                 // Initialize asynchronously
                 int i = 0;
                 for (SlimefunItem item : Slimefun.getRegistry().getEnabledSlimefunItems()) {
@@ -498,9 +527,9 @@ public class SearchGroup extends FlexItemGroup {
                             } catch (Throwable e) {
                                 Debug.trace(e, "searching");
                             }
-                        } else if (SpecialMenuProvider.ENABLED_LogiTech && slimefunItem instanceof CustomSlimefunItem csi) {
+                        } else if (SpecialMenuProvider.ENABLED_LogiTech && SpecialMenuProvider.classLogiTech_CustomSlimefunItem != null && SpecialMenuProvider.classLogiTech_CustomSlimefunItem.isInstance(slimefunItem) && slimefunItem instanceof RecipeDisplayItem rdi) {
                             try {
-                                displayRecipes = csi.getDisplayRecipes();
+                                displayRecipes = rdi.getDisplayRecipes();
                             } catch (Throwable e) {
                                 Debug.trace(e, "searching");
                             }
@@ -519,7 +548,9 @@ public class SearchGroup extends FlexItemGroup {
                                                 set = new HashSet<>();
                                                 CACHE2.put(d, new SoftReference<>(set));
                                             }
-                                            set.add(slimefunItem);
+                                            if (!inBlacklist(slimefunItem)) {
+                                                set.add(slimefunItem);
+                                            }
                                         }
                                     }
                                 }
@@ -540,7 +571,9 @@ public class SearchGroup extends FlexItemGroup {
                                             if (ref != null) {
                                                 Set<SlimefunItem> set = ref.get();
                                                 if (set != null) {
-                                                    set.add(slimefunItem);
+                                                    if (!inBlacklist(slimefunItem)) {
+                                                        set.add(slimefunItem);
+                                                    }
                                                 }
                                             }
                                         }
@@ -625,13 +658,18 @@ public class SearchGroup extends FlexItemGroup {
                             if (ref != null) {
                                 Set<SlimefunItem> set = ref.get();
                                 if (set != null) {
-                                    set.addAll(sharedItems2);
+                                    for (SlimefunItem slimefunItem : sharedItems2) {
+                                        if (!inBlacklist(slimefunItem)) {
+                                            set.add(slimefunItem);
+                                        }
+                                    }
                                     Debug.debug("Shared cache added to CACHE2 char \"" + c + "\" (" + sharedItems2.size() + " items)");
                                 }
                             }
                         }
                     }
                 }
+
                 Debug.debug("Cache initialized.");
 
                 Timer.log();
@@ -646,6 +684,13 @@ public class SearchGroup extends FlexItemGroup {
         }
     }
 
+    /**
+     * Checks if the given Slimefun item is an instance of the specified class.
+     *
+     * @param item            The Slimefun item.
+     * @param classSimpleName The simple name of the class to check against.
+     * @return True if the item is an instance of the specified class, false otherwise.
+     */
     public static boolean isInstance(@NotNull SlimefunItem item, String classSimpleName) {
         Class<?> clazz = item.getClass();
         while (clazz != SlimefunItem.class) {
@@ -653,6 +698,19 @@ public class SearchGroup extends FlexItemGroup {
                 return true;
             }
             clazz = clazz.getSuperclass();
+        }
+        return false;
+    }
+
+    public static boolean inBlacklist(SlimefunItem slimefunItem) {
+        return inBlacklist(slimefunItem.getItemName());
+    }
+
+    public static boolean inBlacklist(String itemName) {
+        for (String s : BLACKLIST) {
+            if (ChatColor.stripColor(itemName).contains(s)) {
+                return true;
+            }
         }
         return false;
     }
@@ -781,7 +839,7 @@ public class SearchGroup extends FlexItemGroup {
             int index = i + this.page * MAIN_CONTENT.length - MAIN_CONTENT.length;
             if (index < this.slimefunItemList.size()) {
                 SlimefunItem slimefunItem = slimefunItemList.get(index);
-                ItemStack itemstack = ItemStackUtil.getCleanItem(new CustomItemStack(slimefunItem.getItem(), meta -> {
+                ItemStack itemstack = ItemStackUtil.getCleanItem(Converter.getItem(slimefunItem.getItem(), meta -> {
                     ItemGroup itemGroup = slimefunItem.getItemGroup();
                     List<String> additionLore = List.of(
                             "",
@@ -815,6 +873,8 @@ public class SearchGroup extends FlexItemGroup {
 
                     return false;
                 });
+                BeginnerUtils.applyBeginnersGuide(implementation, chestMenu, MAIN_CONTENT[i]);
+                GroupLinker.applyGroupLinker(implementation, chestMenu, MAIN_CONTENT[i]);
             }
         }
 
@@ -846,7 +906,7 @@ public class SearchGroup extends FlexItemGroup {
     }
 
     /**
-     * Gets all matched items.
+     * Gets all matched items based on the search term and pinyin flag.
      *
      * @param p          The player.
      * @param searchTerm The search term.
@@ -886,6 +946,14 @@ public class SearchGroup extends FlexItemGroup {
                 "This item has caused an error message to be thrown while viewing it in the Slimefun" + " guide.", x);
     }
 
+    /**
+     * Filters items based on the search term and pinyin flag.
+     *
+     * @param player     The player.
+     * @param searchTerm The search term.
+     * @param pinyin     Whether the search term is in Pinyin.
+     * @return The matched items.
+     */
     public @NotNull List<SlimefunItem> filterItems(@NotNull Player player, @NotNull String searchTerm, boolean pinyin) {
         StringBuilder actualSearchTermBuilder = new StringBuilder();
         String[] split = searchTerm.split(" ");
@@ -893,9 +961,9 @@ public class SearchGroup extends FlexItemGroup {
         for (String s : split) {
             boolean isFilter = false;
             for (FilterType filterType : FilterType.values()) {
-                if (s.startsWith(filterType.getFlag()) && s.length() > filterType.getFlag().length()) {
+                if (s.startsWith(filterType.getSymbol()) && s.length() > filterType.getSymbol().length()) {
                     isFilter = true;
-                    String filterValue = s.substring(filterType.getFlag().length());
+                    String filterValue = s.substring(filterType.getSymbol().length());
                     filters.put(filterType, filterValue);
                     break;
                 }
@@ -908,7 +976,7 @@ public class SearchGroup extends FlexItemGroup {
 
         String actualSearchTerm = actualSearchTermBuilder.toString().trim();
         for (FilterType filterType : FilterType.values()) {
-            String flag = filterType.getFlag();
+            String flag = filterType.getSymbol();
             // Quote the flag to be used as a literal replacement
             actualSearchTerm = actualSearchTerm.replaceAll(Pattern.quote(flag), Matcher.quoteReplacement(flag));
         }
@@ -995,11 +1063,29 @@ public class SearchGroup extends FlexItemGroup {
         return merge.stream().sorted((a, b) -> ENABLED_ITEMS.get(a) < ENABLED_ITEMS.get(b) ? -1 : 1).toList();
     }
 
+    /**
+     * Filters items based on the given filter type, filter value, and pinyin flag.
+     *
+     * @param filterType  The filter type.
+     * @param filterValue The filter value.
+     * @param pinyin      Whether the search term is in Pinyin.
+     * @param items       The list of items to filter.
+     * @return The filtered list of items.
+     */
     public @NotNull List<SlimefunItem> filterItems(@NotNull FilterType filterType, @NotNull String filterValue, boolean pinyin, @NotNull List<SlimefunItem> items) {
         String lowerFilterValue = filterValue.toLowerCase();
         return items.stream().filter(item -> filterType.getFilter().apply(player, item, lowerFilterValue, pinyin)).toList();
     }
 
+    /**
+     * Filters items based on the given filter type, filter value, and pinyin flag.
+     *
+     * @param filterType  The filter type.
+     * @param filterValue The filter value.
+     * @param pinyin      Whether the search term is in Pinyin.
+     * @param items       The set of items to filter.
+     * @return The filtered set of items.
+     */
     public @NotNull Set<SlimefunItem> filterItems(@NotNull FilterType filterType, @NotNull String filterValue, boolean pinyin, @NotNull Set<SlimefunItem> items) {
         String lowerFilterValue = filterValue.toLowerCase();
         return items.stream().filter(item -> filterType.getFilter().apply(player, item, lowerFilterValue, pinyin)).collect(Collectors.toSet());

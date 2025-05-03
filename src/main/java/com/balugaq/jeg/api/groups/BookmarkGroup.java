@@ -8,6 +8,7 @@ import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.ItemStackUtil;
 import com.balugaq.jeg.utils.JEGVersionedItemFlag;
 import com.balugaq.jeg.utils.LocalHelper;
+import com.balugaq.jeg.utils.compatibility.Converter;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
@@ -19,7 +20,6 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
@@ -245,7 +245,7 @@ public class BookmarkGroup extends FlexItemGroup {
                         lore = research.getLevelCost() + " 级经验";
                     }
 
-                    itemstack = ItemStackUtil.getCleanItem(new CustomItemStack(
+                    itemstack = ItemStackUtil.getCleanItem(Converter.getItem(
                             ChestMenuUtils.getNoPermissionItem(),
                             "&f" + ItemUtils.getItemName(slimefunItem.getItem()),
                             "&7" + slimefunItem.getId(),
@@ -261,7 +261,7 @@ public class BookmarkGroup extends FlexItemGroup {
                         return false;
                     };
                 } else {
-                    itemstack = ItemStackUtil.getCleanItem(new CustomItemStack(slimefunItem.getItem(), meta -> {
+                    itemstack = ItemStackUtil.getCleanItem(Converter.getItem(slimefunItem.getItem(), meta -> {
                         ItemGroup itemGroup = slimefunItem.getItemGroup();
                         List<String> additionLore = List.of(
                                 "",
