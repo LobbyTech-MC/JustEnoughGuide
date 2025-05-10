@@ -34,6 +34,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class JEGGuideGroup extends ClassicGuideGroup {
     private static final ItemStack HEADER = Converter.getItem(
             Material.BEACON,
+            "&bJEG 使用指南",
+            "&b作者: 大香蕉",
             "&b粘液科技指南使用帮助",
             "&b阅读以下说明了解指南功能。"
     );
