@@ -309,13 +309,13 @@ public class JEGGuideGroup extends ClassicGuideGroup {
 
                         PlayerProfile profile = PlayerProfile.find(p).orElse(null);
                         if (profile == null) {
-                            p.sendMessage("§c无法获取玩家资料，请检查是否正确安装 Slimefun。");
+                            p.sendMessage("§c无法获取玩家资料，请检查是否正确安装粘液科技。");
                             return false;
                         }
 
                         SlimefunItem exampleItem = SlimefunItems.ELECTRIC_DUST_WASHER_3.getItem();
                         if (exampleItem == null) {
-                            p.sendMessage("§c无法获取示例物品，请检查是否正确安装 Slimefun。");
+                            p.sendMessage("§c无法获取示例物品，请检查是否正确安装粘液科技。");
                             return false;
                         }
 
