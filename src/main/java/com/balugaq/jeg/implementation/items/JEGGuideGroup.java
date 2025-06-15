@@ -65,8 +65,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class JEGGuideGroup extends ClassicGuideGroup {
     public static final ItemStack HEADER = Converter.getItem(
             Material.BEACON,
-            "&b粘液科技指南使用帮助",
-            "&b阅读以下说明了解指南功能。"
+            "&bJEG 粘液科技指南",
+            "&b作者: 大香蕉",
+            "&bJEG 优化版的粘液科技指南，功能更多样化。",
+            "&b查看以下指南书以快速上手 JEG 增加的功能。"
     );
     public static final int[] GUIDE_SLOTS = Formats.helper.getChars('h').stream().mapToInt(i -> i).toArray();
 
@@ -159,7 +161,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                             }
                         }
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请检查粘液科技是否正确安装。");
                         Debug.trace(e);
                     }
                     return false;
@@ -360,7 +362,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     try {
                         p.performCommand("sf search " + flag_recipe_item_name + "电池");
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请检查粘液科技是否正确安装。");
                         Debug.trace(e);
                     }
                     return false;
@@ -381,7 +383,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     try {
                         p.performCommand("sf search " + flag_recipe_type_name + "工作台");
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请检查粘液科技是否正确安装。");
                         Debug.trace(e);
                     }
                     return false;
@@ -402,7 +404,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     try {
                         p.performCommand("sf search " + flag_display_item_name + "铜粉");
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请检查粘液科技是否正确安装。");
                         Debug.trace(e);
                     }
                     return false;
@@ -423,7 +425,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     try {
                         p.performCommand("sf search " + flag_addon_name + "粘液科技");
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请检查粘液科技是否正确安装。");
                         Debug.trace(e);
                     }
                     return false;
@@ -444,7 +446,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                     try {
                         p.performCommand("sf search " + flag_item_name + "电池");
                     } catch (Throwable e) {
-                        p.sendMessage("§c无法执行操作，请检查 Slimefun 是否正确安装。");
+                        p.sendMessage("§c无法执行操作，请检查粘液科技是否正确安装。");
                         Debug.trace(e);
                     }
                     return false;
