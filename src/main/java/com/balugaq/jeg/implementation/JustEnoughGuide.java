@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2024-2025 balugaq
+ *
+ * This file is part of JustEnoughGuide, available under MIT license.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * - The above copyright notice and this permission notice shall be included in
+ *   all copies or substantial portions of the Software.
+ * - The author's name (balugaq or 大香蕉) and project name (JustEnoughGuide or JEG) shall not be
+ *   removed or altered from any source distribution or documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.balugaq.jeg.implementation;
 
 import com.balugaq.jeg.core.managers.BookmarkManager;
@@ -10,6 +37,7 @@ import com.balugaq.jeg.implementation.guide.CheatGuideImplementation;
 import com.balugaq.jeg.implementation.guide.SurvivalGuideImplementation;
 import com.balugaq.jeg.implementation.items.GroupSetup;
 import com.balugaq.jeg.implementation.option.BeginnersGuideOption;
+import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.MinecraftVersion;
 import com.balugaq.jeg.utils.ReflectionUtil;
 import com.balugaq.jeg.utils.UUIDUtils;
@@ -51,9 +79,9 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     public static final int RECOMMENDED_JAVA_VERSION = 21;
     public static final MinecraftVersion RECOMMENDED_MC_VERSION = MinecraftVersion.MINECRAFT_1_21;
     @Getter
-    private static JustEnoughGuide instance;
+    private static JustEnoughGuide instance = null;
     @Getter
-    private static UUID serverUUID;
+    private static UUID serverUUID = null;
     @Getter
     private final @NotNull String username;
     @Getter
@@ -61,21 +89,21 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     @Getter
     private final @NotNull String branch;
     @Getter
-    private BookmarkManager bookmarkManager;
+    private BookmarkManager bookmarkManager = null;
     @Getter
-    private CommandManager commandManager;
+    private CommandManager commandManager = null;
     @Getter
-    private ConfigManager configManager;
+    private ConfigManager configManager = null;
     @Getter
-    private IntegrationManager integrationManager;
+    private IntegrationManager integrationManager = null;
     @Getter
-    private ListenerManager listenerManager;
+    private ListenerManager listenerManager = null;
     @Getter
-    private RTSBackpackManager rtsBackpackManager;
+    private RTSBackpackManager rtsBackpackManager = null;
     @Getter
-    private MinecraftVersion minecraftVersion;
+    private MinecraftVersion minecraftVersion = null;
     @Getter
-    private int javaVersion;
+    private int javaVersion = 0;
 
     public JustEnoughGuide() {
         this.username = "balugaq";
@@ -117,7 +145,6 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
      */
     @Override
     public void onEnable() {
-        Preconditions.checkArgument(instance == null, "JustEnoughGuide 已被启用！");
         instance = this;
 
         getLogger().info("正在加载配置文件...");
@@ -227,7 +254,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             }
         } catch (NoClassDefFoundError | NullPointerException | UnsupportedClassVersionError e) {
             getLogger().info("自动更新失败: " + e.getMessage());
-            e.printStackTrace();
+            Debug.trace(e);
         }
     }
 
@@ -236,7 +263,6 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
      */
     @Override
     public void onDisable() {
-        Preconditions.checkArgument(instance != null, "JustEnoughGuide 未被启用！");
         GroupSetup.shutdown();
 
         Field field = ReflectionUtil.getField(Slimefun.getRegistry().getClass(), "guides");
@@ -299,7 +325,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
      * @return the JavaPlugin instance
      */
     @Override
-    public JavaPlugin getJavaPlugin() {
+    public @NotNull JavaPlugin getJavaPlugin() {
         return this;
     }
 

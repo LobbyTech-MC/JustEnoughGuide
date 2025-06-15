@@ -1,3 +1,30 @@
+/*
+ * Copyright (c) 2024-2025 balugaq
+ *
+ * This file is part of JustEnoughGuide, available under MIT license.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * - The above copyright notice and this permission notice shall be included in
+ *   all copies or substantial portions of the Software.
+ * - The author's name (balugaq or 大香蕉) and project name (JustEnoughGuide or JEG) shall not be
+ *   removed or altered from any source distribution or documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package com.balugaq.jeg.utils;
 
 import com.balugaq.jeg.implementation.JustEnoughGuide;
@@ -7,10 +34,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+
+/**
+ * @author balugaq
+ * @since 1.0
+ */
 @SuppressWarnings({"unused"})
 public class Debug {
     private static final String debugPrefix = "[Debug] ";
-    private static JavaPlugin plugin;
+    private static JavaPlugin plugin = null;
 
     public static void debug(Object @NotNull ... objects) {
         StringBuilder sb = new StringBuilder();
@@ -26,7 +59,7 @@ public class Debug {
 
     public static void debug(@NotNull Throwable e) {
         debug(e.getMessage());
-        e.printStackTrace();
+        trace(e);
     }
 
     public static void debug(@NotNull Object object) {
@@ -80,7 +113,7 @@ public class Debug {
         try {
             throw new Error();
         } catch (Throwable e) {
-            Debug.log(e);
+            trace(e);
         }
     }
 
@@ -113,7 +146,7 @@ public class Debug {
     }
 
     public static void log(@NotNull Throwable e) {
-        e.printStackTrace();
+        Debug.trace(e);
     }
 
     public static void log() {
@@ -148,5 +181,29 @@ public class Debug {
         }
 
         e.printStackTrace();
+    }
+
+    public static void traceExactly(@NotNull Throwable e, @Nullable String doing, @Nullable Integer code) {
+        init();
+        plugin.getLogger().severe("====================AN FATAL OCCURRED" + (doing != null ? (" WHEN " + doing.toUpperCase()) : "") + "====================");
+        plugin.getLogger().severe("DO NOT REPORT THIS ERROR TO JustEnoughGuide DEVELOPERS!!! THIS IS NOT A JustEnoughGuide BUG!");
+        if (code != null) {
+            plugin.getLogger().severe("Error code: " + code);
+        }
+        plugin.getLogger().severe("If you are sure that this is a JustEnoughGuide bug, please report to " + JustEnoughGuide.getInstance().getBugTrackerURL());
+        if (doing != null) {
+            plugin.getLogger().severe("An unexpected error occurred while " + doing);
+        } else {
+            plugin.getLogger().severe("An unexpected error occurred.");
+        }
+
+        e.printStackTrace();
+
+        plugin.getLogger().severe("ALL EXCEPTION INFORMATION IS BELOW:");
+        plugin.getLogger().severe("message: " + e.getMessage());
+        plugin.getLogger().severe("localizedMessage: " + e.getLocalizedMessage());
+        plugin.getLogger().severe("cause: " + e.getCause());
+        plugin.getLogger().severe("stackTrace: " + Arrays.toString(e.getStackTrace()));
+        plugin.getLogger().severe("suppressed: " + Arrays.toString(e.getSuppressed()));
     }
 }
