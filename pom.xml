@@ -157,14 +157,15 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>1.21.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.SlimefunGuguProject</groupId>
             <artifactId>Slimefun4</artifactId>
             <version>38953fe13a</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\Slimefun.jar</systemPath>
         </dependency>
 
         <!-- Tools etc. -->
@@ -214,7 +215,7 @@
         <dependency>
             <groupId>net.guizhanss</groupId>
             <artifactId>GuizhanLibPlugin</artifactId>
-            <version>1.7.6</version>
+            <version>2.1.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -224,7 +225,7 @@
             <artifactId>LogiTech1</artifactId>
             <version>1.0.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/original-LogiTech v1.0.3.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</systemPath>
         </dependency>
 
         <!-- Special Menu Provider me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenu -->
@@ -233,7 +234,7 @@
             <artifactId>LogiTech2</artifactId>
             <version>1.0.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/original-LogiTech v1.0.4.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.4.jar</systemPath>
         </dependency>
 
         <!-- AnvilGUI 1.16- Paper 1.21.2 / Spigot 1.21.3 -->
