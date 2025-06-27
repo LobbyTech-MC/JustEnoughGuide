@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2024-2025 balugaq
  *
  * This file is part of JustEnoughGuide, available under MIT license.
