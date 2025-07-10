@@ -29,11 +29,10 @@ package com.balugaq.jeg.utils.clickhandler;
 
 import com.balugaq.jeg.api.clickhandler.JEGClickHandler;
 import com.balugaq.jeg.api.clickhandler.Processor;
-import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.api.objects.cooldown.FrequencyWatcher;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.api.objects.collection.cooldown.FrequencyWatcher;
 import com.balugaq.jeg.utils.ClipboardUtil;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
@@ -64,8 +63,8 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("deprecation")
 public class NamePrinter implements Applier {
-    public static final MessageFormat SHARED_ITEM_MESSAGE = new MessageFormat(ChatColor.translateAlternateColorCodes('&', "&a{0} &e分享了物品 &7[{1}&r&7]" + "&e <点击搜索>"));
-    public static final String CLICK_TO_SEARCH = ChatColor.translateAlternateColorCodes('&', "&e点击搜索物品");
+    public static final MessageFormat SHARED_ITEM_MESSAGE = new MessageFormat(ChatColors.color("&a{0} &e分享了物品 &7[{1}&r&7]&e <点击搜索>"));
+    public static final String CLICK_TO_SEARCH = ChatColors.color("&e点击搜索物品");
     private static final NamePrinter instance = new NamePrinter();
     private static final FrequencyWatcher<UUID> watcher = new FrequencyWatcher<>(
             1,
@@ -77,7 +76,7 @@ public class NamePrinter implements Applier {
     private NamePrinter() {
     }
 
-    public static void applyWith(SlimefunGuideImplementation guide, ChestMenu menu, int slot) {
+    public static void applyWith(@NotNull SlimefunGuideImplementation guide, @NotNull ChestMenu menu, int slot) {
         instance.apply(guide, menu, slot);
     }
 
@@ -85,13 +84,10 @@ public class NamePrinter implements Applier {
     private static void shareSlimefunItem(Player player, String itemName) {
         String playerName = player.getName();
 
-        String sharedMessage = SHARED_ITEM_MESSAGE.format(new Object[]{playerName, itemName});
+        String sharedMessage = SHARED_ITEM_MESSAGE.format(new Object[]{playerName, ChatColors.color(itemName)});
         TextComponent msg = new TextComponent(sharedMessage);
         msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(CLICK_TO_SEARCH)));
         String s = ChatColor.stripColor(itemName);
-        if (JustEnoughGuide.getConfigManager().isPinyinSearch()) {
-            s = SearchGroup.getPinyin(s);
-        }
         msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/sf search " + s));
 
         Bukkit.getOnlinePlayers().forEach(p -> {
@@ -103,7 +99,7 @@ public class NamePrinter implements Applier {
         });
     }
 
-    public static boolean checkCooldown(Player player) {
+    public static boolean checkCooldown(@NotNull Player player) {
         FrequencyWatcher.Result result = watcher.checkCooldown(player.getUniqueId());
         if (result == FrequencyWatcher.Result.TOO_FREQUENT) {
             player.sendMessage(ChatColor.RED + "你的使用频率过高，请稍后使用!");

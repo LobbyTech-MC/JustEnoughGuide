@@ -31,6 +31,7 @@ import com.balugaq.jeg.api.groups.RTSSearchGroup;
 import com.balugaq.jeg.api.groups.SearchGroup;
 import com.balugaq.jeg.api.interfaces.BookmarkRelocation;
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
 import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.api.objects.events.RTSEvents;
 import com.balugaq.jeg.core.listeners.RTSListener;
@@ -57,10 +58,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class contains utility methods for the guide system.
@@ -69,8 +73,10 @@ import java.lang.reflect.Method;
  * @author balugaq
  * @since 1.0
  */
+@SuppressWarnings("unused")
 @UtilityClass
 public final class GuideUtil {
+    private static final List<ItemGroup> forceHiddens = new ArrayList<>();
     private static final ItemStack BOOK_MARK_MENU_BUTTON =
             ItemStackUtil.getCleanItem(Converter.getItem(Material.NETHER_STAR, "&e&l收藏物列表"));
     private static final ItemStack ITEM_MARK_MENU_BUTTON =
@@ -157,10 +163,10 @@ public final class GuideUtil {
     }
 
     @SuppressWarnings("deprecation")
-    public static void addRTSButton(ChestMenu menu, Player p, PlayerProfile profile, Format format, SlimefunGuideMode mode, SlimefunGuideImplementation implementation) {
+    public static void addRTSButton(@NotNull ChestMenu menu, @NotNull Player p, @NotNull PlayerProfile profile, @NotNull Format format, SlimefunGuideMode mode, @NotNull SlimefunGuideImplementation implementation) {
         if (JustEnoughGuide.getConfigManager().isRTSSearch()) {
-            for (var ss : format.getChars('R')) {
-                menu.addItem(ss, ItemStackUtil.getCleanItem(Models.RTS_ITEM), (pl, slot, itemstack, action) -> EventUtil.callEvent(new GuideEvents.RTSButtonClickEvent(pl, itemstack, slot, action, menu, implementation)).ifSuccess(() -> {
+            for (int ss : format.getChars('R')) {
+                menu.addItem(ss, PatchScope.RealTimeSearch.patch(p, Models.RTS_ITEM), (pl, slot, itemstack, action) -> EventUtil.callEvent(new GuideEvents.RTSButtonClickEvent(pl, itemstack, slot, action, menu, implementation)).ifSuccess(() -> {
                     try {
                         RTSSearchGroup.newRTSInventoryFor(pl, mode, (s, stateSnapshot) -> {
                             if (s == AnvilGUI.Slot.INPUT_LEFT) {
@@ -171,7 +177,6 @@ public final class GuideUtil {
                                 } else {
                                     history.goBack(implementation);
                                 }
-                                return;
                             } else if (s == AnvilGUI.Slot.INPUT_RIGHT) {
                                 // previous page button clicked
                                 SearchGroup rts = RTSSearchGroup.RTS_SEARCH_GROUPS.get(pl);
@@ -202,34 +207,34 @@ public final class GuideUtil {
                                 }
                             }
                         }, new int[]{AnvilGUI.Slot.INPUT_LEFT, AnvilGUI.Slot.INPUT_RIGHT, AnvilGUI.Slot.OUTPUT}, null);
-                    } catch (Throwable ignored) {
+                    } catch (Exception ignored) {
                         p.sendMessage(ChatColor.RED + "不兼容的版本! 无法使用实时搜索");
                     }
                     return false;
                 }));
             }
         } else {
-            for (var ss : format.getChars('R')) {
+            for (int ss : format.getChars('R')) {
                 menu.addItem(ss, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
             }
         }
     }
 
     @SuppressWarnings("deprecation")
-    public static void addBookMarkButton(ChestMenu menu, Player p, PlayerProfile profile, Format format, JEGSlimefunGuideImplementation implementation, ItemGroup itemGroup) {
+    public static void addBookMarkButton(@NotNull ChestMenu menu, @NotNull Player p, @NotNull PlayerProfile profile, @NotNull Format format, @NotNull JEGSlimefunGuideImplementation implementation, ItemGroup itemGroup) {
         if (JustEnoughGuide.getConfigManager().isBookmark()) {
             BookmarkRelocation b = itemGroup instanceof BookmarkRelocation bookmarkRelocation ? bookmarkRelocation : null;
-            for (var s : b != null ? b.getBookMark(implementation, p) : format.getChars('C')) {
+            for (int s : b != null ? b.getBookMark(implementation, p) : format.getChars('C')) {
                 menu.addItem(
                         s,
-                        ItemStackUtil.getCleanItem(getBookMarkMenuButton()),
+                        PatchScope.BookMark.patch(p, getBookMarkMenuButton()),
                         (pl, slot, itemstack, action) -> EventUtil.callEvent(new GuideEvents.BookMarkButtonClickEvent(pl, itemstack, slot, action, menu, implementation)).ifSuccess(() -> {
                             implementation.openBookMarkGroup(pl, profile);
                             return false;
                         }));
             }
         } else {
-            for (var s : format.getChars('C')) {
+            for (int s : format.getChars('C')) {
                 menu.addItem(
                         s,
                         ChestMenuUtils.getBackground(),
@@ -240,22 +245,43 @@ public final class GuideUtil {
     }
 
     @SuppressWarnings("deprecation")
-    public static void addItemMarkButton(ChestMenu menu, Player p, PlayerProfile profile, Format format, JEGSlimefunGuideImplementation implementation, ItemGroup itemGroup) {
+    public static void addItemMarkButton(@NotNull ChestMenu menu, @NotNull Player p, @NotNull PlayerProfile profile, @NotNull Format format, @NotNull JEGSlimefunGuideImplementation implementation, @Nullable ItemGroup itemGroup) {
         if (itemGroup != null && JustEnoughGuide.getConfigManager().isBookmark() && isTaggedGroupType(itemGroup)) {
             BookmarkRelocation b = itemGroup instanceof BookmarkRelocation relocation ? relocation : null;
-            for (var ss : b != null ? b.getItemMark(implementation, p) : format.getChars('c')) {
+            for (int ss : b != null ? b.getItemMark(implementation, p) : format.getChars('c')) {
                 menu.addItem(
                         ss,
-                        ItemStackUtil.getCleanItem(getItemMarkMenuButton()),
+                        PatchScope.ItemMark.patch(p, getItemMarkMenuButton()),
                         (pl, slot, itemstack, action) -> EventUtil.callEvent(new GuideEvents.ItemMarkButtonClickEvent(pl, itemstack, slot, action, menu, implementation)).ifSuccess(() -> {
                             implementation.openItemMarkGroup(itemGroup, pl, profile);
                             return false;
                         }));
             }
         } else {
-            for (var ss : format.getChars('c')) {
+            for (int ss : format.getChars('c')) {
                 menu.addItem(ss, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
             }
         }
+    }
+
+    public static void setForceHiddens(@NotNull ItemGroup itemGroup, boolean forceHidden) {
+        if (forceHidden) {
+            forceHiddens.add(itemGroup);
+        } else {
+            forceHiddens.remove(itemGroup);
+        }
+    }
+
+    @NotNull
+    public static List<ItemGroup> getForceHiddens() {
+        return new ArrayList<>(forceHiddens);
+    }
+
+    public static boolean isForceHidden(@NotNull ItemGroup group) {
+        return forceHiddens.contains(group);
+    }
+
+    public static void shutdown() {
+        forceHiddens.clear();
     }
 }

@@ -32,6 +32,7 @@ import com.balugaq.jeg.api.interfaces.BookmarkRelocation;
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
 import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
 import com.balugaq.jeg.api.interfaces.NotDisplayInSurvivalMode;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
 import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.EventUtil;
@@ -79,7 +80,7 @@ import java.util.logging.Level;
  * @author balugaq
  * @since 1.1
  */
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings({"deprecation", "unused", "UnnecessaryUnicodeEscape"})
 @NotDisplayInSurvivalMode
 @NotDisplayInCheatMode
 public class ItemMarkGroup extends FlexItemGroup {
@@ -87,17 +88,24 @@ public class ItemMarkGroup extends FlexItemGroup {
             Converter.getItem(Material.GREEN_STAINED_GLASS_PANE, "&a&l添加收藏物", "", "&7左键物品添加到收藏中");
     private static final JavaPlugin JAVA_PLUGIN = JustEnoughGuide.getInstance();
     @Deprecated
-    private final int BACK_SLOT;
+    private final int BACK_SLOT = 1;
     @Deprecated
-    private final int SEARCH_SLOT;
+    private final int SEARCH_SLOT = 7;
     @Deprecated
-    private final int PREVIOUS_SLOT;
+    private final int PREVIOUS_SLOT = 46;
     @Deprecated
-    private final int NEXT_SLOT;
+    private final int NEXT_SLOT = 52;
     @Deprecated
-    private final int[] BORDER;
+    private final int[] BORDER = new int[]{0, 2, 3, 4, 5, 6, 8, 45, 47, 48, 49, 50, 51, 53};
     @Deprecated
-    private final int[] MAIN_CONTENT;
+    private final int[] MAIN_CONTENT = new int[]{
+            9, 10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29, 30, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41, 42, 43, 44
+    };
+
+
     private final JEGSlimefunGuideImplementation implementation;
     private final Player player;
     private final @NotNull ItemGroup itemGroup;
@@ -135,18 +143,6 @@ public class ItemMarkGroup extends FlexItemGroup {
         this.slimefunItemList = itemGroup.getItems();
         this.implementation = implementation;
         this.pageMap.put(page, this);
-
-        BACK_SLOT = 1;
-        SEARCH_SLOT = 7;
-        PREVIOUS_SLOT = 46;
-        NEXT_SLOT = 52;
-        BORDER = new int[]{0, 2, 3, 4, 5, 6, 8, 45, 47, 48, 49, 50, 51, 53};
-        MAIN_CONTENT = new int[]{
-                9, 10, 11, 12, 13, 14, 15, 16, 17,
-                18, 19, 20, 21, 22, 23, 24, 25, 26,
-                27, 28, 29, 30, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 44
-        };
     }
 
     /**
@@ -224,10 +220,10 @@ public class ItemMarkGroup extends FlexItemGroup {
         chestMenu.setEmptySlotsClickable(false);
         chestMenu.addMenuOpeningHandler(pl -> pl.playSound(pl.getLocation(), Sounds.GUIDE_BUTTON_CLICK_SOUND, 1, 1));
 
-        for (var ss : itemGroup instanceof BookmarkRelocation relocation ?
+        for (int ss : itemGroup instanceof BookmarkRelocation relocation ?
                 relocation.getBackButton(implementation, player) :
                 Formats.sub.getChars('b')) {
-            chestMenu.addItem(ss, ItemStackUtil.getCleanItem(ChestMenuUtils.getBackButton(player)));
+            chestMenu.addItem(ss, PatchScope.Back.patch(player, ChestMenuUtils.getBackButton(player)));
             chestMenu.addMenuClickHandler(ss, (pl, s, is, action) -> EventUtil.callEvent(new GuideEvents.BackButtonClickEvent(pl, is, s, action, chestMenu, implementation)).ifSuccess(() -> {
                 GuideHistory guideHistory = playerProfile.getGuideHistory();
                 if (action.isShiftClicked()) {
@@ -240,10 +236,10 @@ public class ItemMarkGroup extends FlexItemGroup {
         }
 
         // Search feature!
-        for (var ss : itemGroup instanceof BookmarkRelocation relocation ?
+        for (int ss : itemGroup instanceof BookmarkRelocation relocation ?
                 relocation.getSearchButton(implementation, player) :
                 Formats.sub.getChars('S')) {
-            chestMenu.addItem(ss, ItemStackUtil.getCleanItem(ChestMenuUtils.getSearchButton(player)));
+            chestMenu.addItem(ss, PatchScope.Search.patch(player, ChestMenuUtils.getSearchButton(player)));
             chestMenu.addMenuClickHandler(ss, (pl, slot, item, action) -> EventUtil.callEvent(new GuideEvents.SearchButtonClickEvent(pl, item, slot, action, chestMenu, implementation)).ifSuccess(() -> {
                 pl.closeInventory();
 
@@ -258,12 +254,12 @@ public class ItemMarkGroup extends FlexItemGroup {
             }));
         }
 
-        for (var ss : itemGroup instanceof BookmarkRelocation relocation ?
+        for (int ss : itemGroup instanceof BookmarkRelocation relocation ?
                 relocation.getPreviousButton(implementation, player) :
                 Formats.sub.getChars('P')) {
             chestMenu.addItem(
                     ss,
-                    ItemStackUtil.getCleanItem(ChestMenuUtils.getPreviousButton(
+                    PatchScope.PreviousPage.patch(player, ChestMenuUtils.getPreviousButton(
                             player, this.page, (this.slimefunItemList.size() - 1) / Formats.sub.getChars('i').size() + 1)));
             chestMenu.addMenuClickHandler(ss, (p, slot, item, action) -> EventUtil.callEvent(new GuideEvents.PreviousButtonClickEvent(p, item, slot, action, chestMenu, implementation)).ifSuccess(() -> {
                 GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
@@ -273,12 +269,12 @@ public class ItemMarkGroup extends FlexItemGroup {
             }));
         }
 
-        for (var ss : itemGroup instanceof BookmarkRelocation relocation ?
+        for (int ss : itemGroup instanceof BookmarkRelocation relocation ?
                 relocation.getNextButton(implementation, player) :
                 Formats.sub.getChars('N')) {
             chestMenu.addItem(
                     ss,
-                    ItemStackUtil.getCleanItem(ChestMenuUtils.getNextButton(
+                    PatchScope.NextPage.patch(player, ChestMenuUtils.getNextButton(
                             player, this.page, (this.slimefunItemList.size() - 1) / Formats.sub.getChars('i').size() + 1)));
             chestMenu.addMenuClickHandler(ss, (p, slot, item, action) -> EventUtil.callEvent(new GuideEvents.NextButtonClickEvent(p, item, slot, action, chestMenu, implementation)).ifSuccess(() -> {
                 GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
@@ -289,14 +285,14 @@ public class ItemMarkGroup extends FlexItemGroup {
             }));
         }
 
-        for (var ss : itemGroup instanceof BookmarkRelocation relocation ?
+        for (int ss : itemGroup instanceof BookmarkRelocation relocation ?
                 relocation.getBorder(implementation, player) :
                 Formats.sub.getChars('B')) {
-            chestMenu.addItem(ss, ItemStackUtil.getCleanItem(ICON_BACKGROUND));
+            chestMenu.addItem(ss, PatchScope.Background.patch(player, ICON_BACKGROUND));
             chestMenu.addMenuClickHandler(ss, ChestMenuUtils.getEmptyClickHandler());
         }
 
-        var contentSlots = itemGroup instanceof BookmarkRelocation relocation ?
+        List<Integer> contentSlots = itemGroup instanceof BookmarkRelocation relocation ?
                 relocation.getMainContents(implementation, player) :
                 Formats.sub.getChars('i');
 
@@ -367,7 +363,7 @@ public class ItemMarkGroup extends FlexItemGroup {
                     });
                 }
 
-                chestMenu.addItem(contentSlots.get(i), ItemStackUtil.getCleanItem(itemstack), handler);
+                chestMenu.addItem(contentSlots.get(i), PatchScope.ItemMarkItem.patch(player, itemstack), handler);
             }
         }
 
@@ -375,6 +371,7 @@ public class ItemMarkGroup extends FlexItemGroup {
         GuideUtil.addBookMarkButton(chestMenu, player, playerProfile, Formats.sub, implementation, this);
         GuideUtil.addItemMarkButton(chestMenu, player, playerProfile, Formats.sub, implementation, this);
 
+        Formats.sub.renderCustom(chestMenu);
         return chestMenu;
     }
 

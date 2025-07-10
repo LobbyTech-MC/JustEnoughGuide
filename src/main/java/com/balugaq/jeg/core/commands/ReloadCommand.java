@@ -46,6 +46,7 @@ import java.util.List;
  * @author balugaq
  * @since 1.1
  */
+@SuppressWarnings({"ClassCanBeRecord", "deprecation", "SwitchStatementWithTooFewBranches"})
 @Getter
 public class ReloadCommand implements JEGCommand {
     private final Plugin plugin;
@@ -75,9 +76,7 @@ public class ReloadCommand implements JEGCommand {
             @NotNull String @NotNull [] args) {
         if (sender.isOp()) {
             if (args.length == 1) {
-                if ("reload".equalsIgnoreCase(args[0])) {
-                    return true;
-                }
+                return "reload".equalsIgnoreCase(args[0]);
             }
         }
         return false;
@@ -99,14 +98,14 @@ public class ReloadCommand implements JEGCommand {
 
             plugin.onDisable();
             plugin.onEnable();
-            plugin.reloadConfig();
+            plugin.reloadConfig(); // 1st reload
             SearchGroup.LOADED = false;
             SearchGroup.init();
+            plugin.reloadConfig(); // 2nd reload
             sender.sendMessage(ChatColor.GREEN + "plugin has been reloaded.");
-        } catch (Throwable e) {
+        } catch (Exception e) {
             sender.sendMessage(ChatColor.RED + "Failed to reload plugin.");
             Debug.trace(e);
-            return;
         }
     }
 }

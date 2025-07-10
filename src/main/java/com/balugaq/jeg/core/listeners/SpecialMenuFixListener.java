@@ -45,6 +45,7 @@ import java.util.Optional;
  * @see SpecialMenuProvider
  * @since 1.3
  */
+@SuppressWarnings("unused")
 public class SpecialMenuFixListener implements Listener {
     /**
      * Fixes the bug where the special menu is not closed properly.
@@ -80,7 +81,7 @@ public class SpecialMenuFixListener implements Listener {
                         return;
                     }
                 } while (!queue.isEmpty());
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 Debug.debug(e);
             }
         }

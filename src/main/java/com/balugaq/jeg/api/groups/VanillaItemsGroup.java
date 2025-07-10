@@ -29,16 +29,22 @@ package com.balugaq.jeg.api.groups;
 
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
 import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
+import com.balugaq.jeg.api.interfaces.VanillaItemShade;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
 import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.implementation.items.GroupSetup;
+import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.EventUtil;
 import com.balugaq.jeg.utils.GuideUtil;
-import com.balugaq.jeg.utils.ItemStackUtil;
 import com.balugaq.jeg.utils.compatibility.Sounds;
 import com.balugaq.jeg.utils.formatter.Formats;
+import com.google.common.base.Preconditions;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
@@ -46,7 +52,9 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -73,21 +81,29 @@ import java.util.logging.Level;
  * @see JustEnoughGuide#vanillaItemsGroupIsDisplayableFor(Player)
  * @since 1.7
  */
-@SuppressWarnings({"deprecation", "unused"})
+@SuppressWarnings({"deprecation", "unused", "ConstantValue"})
 @NotDisplayInCheatMode
 public class VanillaItemsGroup extends FlexItemGroup {
-    // todo: load SlimefunItem instances during runtime and try disable the annoying error message
-    // todo: and avoid that player search them out.
-    public static final List<ItemStack> itemStacks = new ArrayList<>();
+    public static final List<SlimefunItem> slimefunItems = new ArrayList<>();
+    @Deprecated
     private static final @NotNull Set<Player> displayableFor = ConcurrentHashMap.newKeySet();
     private static final JavaPlugin JAVA_PLUGIN = JustEnoughGuide.getInstance();
 
     static {
-        for (Material material : Material.values()) {
-            if (!material.isAir() && material.isItem() && !material.isLegacy()) {
-                itemStacks.add(new ItemStack(material));
+        Bukkit.getScheduler().runTaskLater(JAVA_PLUGIN, () -> {
+            boolean before = JustEnoughGuide.disableAutomaticallyLoadItems();
+            try {
+                for (Material material : Material.values()) {
+                    if (!material.isAir() && material.isItem() && !material.isLegacy()) {
+                        slimefunItems.add(createSlimefunItem(material));
+                    }
+                }
+            } catch (Exception e) {
+                Debug.trace(e);
+            } finally {
+                JustEnoughGuide.setAutomaticallyLoadItems(before);
             }
-        }
+        }, 1L);
     }
 
     private final int page;
@@ -99,6 +115,7 @@ public class VanillaItemsGroup extends FlexItemGroup {
         this.page = 1;
         this.pageMap.put(1, this);
     }
+
     /**
      * Constructor of hiddenItemsGroup.
      *
@@ -114,6 +131,7 @@ public class VanillaItemsGroup extends FlexItemGroup {
     /**
      * @see JustEnoughGuide#vanillaItemsGroupDisplayableFor(Player, boolean)
      */
+    @Deprecated
     public static void displayableFor(@NotNull Player player, boolean displayable) {
         if (displayable) {
             displayableFor.add(player);
@@ -125,8 +143,21 @@ public class VanillaItemsGroup extends FlexItemGroup {
     /**
      * @see JustEnoughGuide#vanillaItemsGroupIsDisplayableFor(Player)
      */
+    @Deprecated
     public static boolean isDisplayableFor(@NotNull Player player) {
         return displayableFor.contains(player);
+    }
+
+    @ParametersAreNonnullByDefault
+    private static @NotNull VanillaItem createSlimefunItem(Material material) {
+        Preconditions.checkArgument(material != null, "The material cannot be null.");
+        Preconditions.checkArgument(!material.isAir(), "The material cannot be air.");
+        Preconditions.checkArgument(material.isItem(), "The material must be an item.");
+        Preconditions.checkArgument(!material.isLegacy(), "The material cannot be legacy.");
+
+        VanillaItem vi = VanillaItem.create(material);
+        vi.register(JustEnoughGuide.getInstance());
+        return vi;
     }
 
     /**
@@ -142,7 +173,7 @@ public class VanillaItemsGroup extends FlexItemGroup {
             @NotNull Player player,
             @NotNull PlayerProfile playerProfile,
             @NotNull SlimefunGuideMode slimefunGuideMode) {
-        return displayableFor.contains(player);
+        return true;
     }
 
     /**
@@ -196,22 +227,22 @@ public class VanillaItemsGroup extends FlexItemGroup {
 
         SlimefunGuideImplementation implementation = Slimefun.getRegistry().getSlimefunGuide(slimefunGuideMode);
 
-        for (var ss : Formats.sub.getChars('b')) {
-            chestMenu.addItem(ss, ItemStackUtil.getCleanItem(ChestMenuUtils.getBackButton(player)));
+        for (int ss : Formats.sub.getChars('b')) {
+            chestMenu.addItem(ss, PatchScope.Back.patch(player, ChestMenuUtils.getBackButton(player)));
             chestMenu.addMenuClickHandler(ss, (pl, s, is, action) -> EventUtil.callEvent(new GuideEvents.BackButtonClickEvent(pl, is, s, action, chestMenu, implementation)).ifSuccess(() -> {
                 GuideHistory guideHistory = playerProfile.getGuideHistory();
                 if (action.isShiftClicked()) {
                     SlimefunGuide.openMainMenu(playerProfile, slimefunGuideMode, guideHistory.getMainMenuPage());
                 } else {
-                    guideHistory.goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.CHEAT_MODE));
+                    guideHistory.goBack(Slimefun.getRegistry().getSlimefunGuide(slimefunGuideMode));
                 }
                 return false;
             }));
         }
 
         // Search feature!
-        for (var ss : Formats.sub.getChars('S')) {
-            chestMenu.addItem(ss, ItemStackUtil.getCleanItem(ChestMenuUtils.getSearchButton(player)));
+        for (int ss : Formats.sub.getChars('S')) {
+            chestMenu.addItem(ss, PatchScope.Search.patch(player, ChestMenuUtils.getSearchButton(player)));
             chestMenu.addMenuClickHandler(ss, (pl, slot, item, action) -> EventUtil.callEvent(new GuideEvents.SearchButtonClickEvent(pl, item, slot, action, chestMenu, implementation)).ifSuccess(() -> {
                 pl.closeInventory();
 
@@ -226,11 +257,11 @@ public class VanillaItemsGroup extends FlexItemGroup {
             }));
         }
 
-        for (var ss : Formats.sub.getChars('P')) {
+        for (int ss : Formats.sub.getChars('P')) {
             chestMenu.addItem(
                     ss,
-                    ItemStackUtil.getCleanItem(ChestMenuUtils.getPreviousButton(
-                            player, this.page, (itemStacks.size() - 1) / Formats.sub.getChars('i').size() + 1)));
+                    PatchScope.PreviousPage.patch(player, ChestMenuUtils.getPreviousButton(
+                            player, this.page, (slimefunItems.size() - 1) / Formats.sub.getChars('i').size() + 1)));
             chestMenu.addMenuClickHandler(ss, (p, slot, item, action) -> EventUtil.callEvent(new GuideEvents.PreviousButtonClickEvent(p, item, slot, action, chestMenu, implementation)).ifSuccess(() -> {
                 GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
                 VanillaItemsGroup hiddenItemsGroup = this.getByPage(Math.max(this.page - 1, 1));
@@ -239,31 +270,51 @@ public class VanillaItemsGroup extends FlexItemGroup {
             }));
         }
 
-        for (var ss : Formats.sub.getChars('N')) {
+        for (int ss : Formats.sub.getChars('N')) {
             chestMenu.addItem(
                     ss,
-                    ItemStackUtil.getCleanItem(ChestMenuUtils.getNextButton(
-                            player, this.page, (itemStacks.size() - 1) / Formats.sub.getChars('i').size() + 1)));
+                    PatchScope.NextPage.patch(player, ChestMenuUtils.getNextButton(
+                            player, this.page, (slimefunItems.size() - 1) / Formats.sub.getChars('i').size() + 1)));
             chestMenu.addMenuClickHandler(ss, (p, slot, item, action) -> EventUtil.callEvent(new GuideEvents.NextButtonClickEvent(p, item, slot, action, chestMenu, implementation)).ifSuccess(() -> {
                 GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
                 VanillaItemsGroup hiddenItemsGroup = this.getByPage(
-                        Math.min(this.page + 1, (itemStacks.size() - 1) / Formats.sub.getChars('i').size() + 1));
+                        Math.min(this.page + 1, (slimefunItems.size() - 1) / Formats.sub.getChars('i').size() + 1));
                 hiddenItemsGroup.open(player, playerProfile, slimefunGuideMode);
                 return false;
             }));
         }
 
-        for (var ss : Formats.sub.getChars('B')) {
-            chestMenu.addItem(ss, ItemStackUtil.getCleanItem(ChestMenuUtils.getBackground()));
+        for (int ss : Formats.sub.getChars('B')) {
+            chestMenu.addItem(ss, PatchScope.Background.patch(player, ChestMenuUtils.getBackground()));
             chestMenu.addMenuClickHandler(ss, ChestMenuUtils.getEmptyClickHandler());
         }
 
-        var contentSlots = Formats.sub.getChars('i');
+        List<Integer> contentSlots = Formats.sub.getChars('i');
         for (int i = 0; i < contentSlots.size(); i++) {
             int index = i + this.page * contentSlots.size() - contentSlots.size();
-            if (index < itemStacks.size()) {
-                ItemStack itemStack = itemStacks.get(index);
-                chestMenu.addItem(contentSlots.get(i), ItemStackUtil.getCleanItem(itemStack), ChestMenuUtils.getEmptyClickHandler());
+            if (index < slimefunItems.size()) {
+                SlimefunItem slimefunItem = slimefunItems.get(index);
+                ItemStack itemStack;
+                if (slimefunItem instanceof VanillaItemShade vis) {
+                    itemStack = vis.getCustomIcon();
+                } else {
+                    itemStack = slimefunItem.getItem();
+                }
+                chestMenu.addItem(contentSlots.get(i), PatchScope.SlimefunItem.patch(player, itemStack), (pl, slot, itm, action) -> EventUtil.callEvent(new GuideEvents.ItemButtonClickEvent(pl, itm, slot, action, chestMenu, implementation)).ifSuccess(() -> {
+                    try {
+                        if (implementation.getMode() != SlimefunGuideMode.SURVIVAL_MODE
+                                && (pl.isOp() || pl.hasPermission("slimefun.cheat.items"))) {
+                            pl.getInventory()
+                                    .addItem(itemStack.clone());
+                        } else {
+                            implementation.displayItem(playerProfile, slimefunItem, true);
+                        }
+                    } catch (Exception | LinkageError x) {
+                        printErrorMessage(pl, slimefunItem, x);
+                    }
+
+                    return false;
+                }));
             }
         }
 
@@ -273,6 +324,7 @@ public class VanillaItemsGroup extends FlexItemGroup {
             GuideUtil.addItemMarkButton(chestMenu, player, playerProfile, Formats.sub, jeg, this);
         }
 
+        Formats.sub.renderCustom(chestMenu);
         return chestMenu;
     }
 
@@ -344,5 +396,27 @@ public class VanillaItemsGroup extends FlexItemGroup {
     @Override
     public int getTier() {
         return Integer.MAX_VALUE;
+    }
+
+    @Getter
+    public static class VanillaItem extends SlimefunItem implements VanillaItemShade {
+        private final @NotNull ItemStack customIcon;
+
+        public VanillaItem(@NotNull SlimefunItemStack item, @NotNull ItemStack customIcon) {
+            super(GroupSetup.vanillaItemsGroup, item, RecipeType.NULL, new ItemStack[0], customIcon);
+            this.customIcon = customIcon.clone();
+        }
+
+        @NotNull
+        public static VanillaItem create(@NotNull Material material) {
+            ItemStack icon = new ItemStack(material);
+            return new VanillaItem(
+                    new SlimefunItemStack(
+                            "JEG_VANILLA_" + material.name(),
+                            icon.clone()
+                    ),
+                    icon
+            );
+        }
     }
 }

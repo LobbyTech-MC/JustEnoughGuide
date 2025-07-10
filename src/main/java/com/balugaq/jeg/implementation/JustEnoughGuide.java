@@ -27,7 +27,11 @@
 
 package com.balugaq.jeg.implementation;
 
+import com.balugaq.jeg.api.CustomGroupConfigurations;
+import com.balugaq.jeg.api.editor.GroupResorter;
+import com.balugaq.jeg.api.groups.SearchGroup;
 import com.balugaq.jeg.api.groups.VanillaItemsGroup;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import com.balugaq.jeg.core.managers.BookmarkManager;
 import com.balugaq.jeg.core.managers.CommandManager;
 import com.balugaq.jeg.core.managers.ConfigManager;
@@ -37,15 +41,18 @@ import com.balugaq.jeg.core.managers.RTSBackpackManager;
 import com.balugaq.jeg.implementation.guide.CheatGuideImplementation;
 import com.balugaq.jeg.implementation.guide.SurvivalGuideImplementation;
 import com.balugaq.jeg.implementation.items.GroupSetup;
+import com.balugaq.jeg.implementation.items.ItemsSetup;
 import com.balugaq.jeg.implementation.option.BeginnersGuideOption;
 import com.balugaq.jeg.utils.Debug;
+import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.MinecraftVersion;
 import com.balugaq.jeg.utils.ReflectionUtil;
+import com.balugaq.jeg.utils.SlimefunRegistryUtil;
 import com.balugaq.jeg.utils.UUIDUtils;
-import com.google.common.base.Preconditions;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettings;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.CheatSheetSlimefunGuide;
@@ -53,6 +60,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunG
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import lombok.Getter;
 import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -60,13 +68,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * This is the main class of the JustEnoughGuide plugin.
@@ -75,7 +85,7 @@ import java.util.UUID;
  * @author balugaq
  * @since 1.0
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "Lombok", "deprecation", "ResultOfMethodCallIgnored"})
 @Getter
 public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     public static final int RECOMMENDED_JAVA_VERSION = 17;
@@ -133,26 +143,66 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         return getInstance().listenerManager;
     }
 
+    @Deprecated
     public static MinecraftVersion getMCVersion() {
         return getInstance().minecraftVersion;
     }
 
+    public static MinecraftVersion getMinecraftVersion() {
+        return getInstance().minecraftVersion;
+    }
+
     public static @NotNull JustEnoughGuide getInstance() {
-        Preconditions.checkArgument(instance != null, "JustEnoughGuide 未被启用！");
         return JustEnoughGuide.instance;
+    }
+
+    /// //////////////////////////////////////////////////////////////////////////////
+    ///                                                                           ///
+    /// JEG Recipe Complete Compatible                                            ///
+    ///                                                                           ///
+    /// Related-addons:                                                           ///
+    /// - NetworksExpansion                                                       ///
+    /// - SlimeAEPlugin                                                           ///
+    /// Author balugaq                                                            ///
+    /// Since 1.7                                                                 ///
+    ///                                                                           ///
+    /// //////////////////////////////////////////////////////////////////////////////
+
+    @Deprecated
+    public static void vanillaItemsGroupDisplayableFor(@NotNull Player player, boolean displayable) {
+        VanillaItemsGroup.displayableFor(player, displayable);
+    }
+
+    @Deprecated
+    public static boolean vanillaItemsGroupIsDisplayableFor(@NotNull Player player) {
+        return VanillaItemsGroup.isDisplayableFor(player);
+    }
+
+    public static void postServerStartup(@NotNull Runnable runnable) {
+        Bukkit.getScheduler().runTask(getInstance(), runnable);
+    }
+
+    public static void postServerStartupAsynchronously(Runnable runnable) {
+        Bukkit.getScheduler().runTaskLaterAsynchronously(getInstance(), runnable, 1L);
+    }
+
+    public static boolean disableAutomaticallyLoadItems() {
+        boolean before = Slimefun.getConfigManager().isAutoLoadingEnabled();
+        Slimefun.getConfigManager().setAutoLoadingMode(false);
+        return before;
+    }
+
+    public static void setAutomaticallyLoadItems(boolean value) {
+        Slimefun.getConfigManager().setAutoLoadingMode(value);
     }
 
     /**
      * Initializes the plugin and sets up all necessary components.
      */
+    @SuppressWarnings("DuplicateExpressions")
     @Override
     public void onEnable() {
         instance = this;
-
-        getLogger().info("正在加载配置文件...");
-        saveDefaultConfig();
-        this.configManager = new ConfigManager(this);
-        this.configManager.load();
 
         // Checking environment compatibility
         boolean isCompatible = environmentCheck();
@@ -162,6 +212,11 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             onDisable();
             return;
         }
+
+        getLogger().info("正在加载配置文件...");
+        saveDefaultConfig();
+        this.configManager = new ConfigManager(this);
+        this.configManager.load();
 
         getLogger().info("正在适配其他插件...");
         this.integrationManager = new IntegrationManager(this);
@@ -187,22 +242,18 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         if (survivalOverride || cheatOverride) {
             getLogger().info("已开启指南替换！");
             getLogger().info("正在替换指南...");
-            Field field = ReflectionUtil.getField(Slimefun.getRegistry().getClass(), "guides");
-            if (field != null) {
-                field.setAccessible(true);
+            Map<SlimefunGuideMode, SlimefunGuideImplementation> newGuides = new EnumMap<>(SlimefunGuideMode.class);
+            newGuides.put(
+                    SlimefunGuideMode.SURVIVAL_MODE,
+                    survivalOverride ? new SurvivalGuideImplementation() : new SurvivalSlimefunGuide());
+            newGuides.put(
+                    SlimefunGuideMode.CHEAT_MODE,
+                    cheatOverride ? new CheatGuideImplementation() : new CheatSheetSlimefunGuide());
 
-                Map<SlimefunGuideMode, SlimefunGuideImplementation> newGuides = new EnumMap<>(SlimefunGuideMode.class);
-                newGuides.put(
-                        SlimefunGuideMode.SURVIVAL_MODE,
-                        survivalOverride ? new SurvivalGuideImplementation() : new SurvivalSlimefunGuide());
-                newGuides.put(
-                        SlimefunGuideMode.CHEAT_MODE,
-                        cheatOverride ? new CheatGuideImplementation() : new CheatSheetSlimefunGuide());
-                try {
-                    field.set(Slimefun.getRegistry(), newGuides);
-                } catch (IllegalAccessException ignored) {
-
-                }
+            try {
+                ReflectionUtil.setValue(Slimefun.getRegistry(), "guides", newGuides);
+            } catch (Exception e) {
+                Debug.trace(e);
             }
             getLogger().info(survivalOverride ? "已开启替换生存指南" : "未开启替换生存指南");
             getLogger().info(cheatOverride ? "已开启替换作弊指南" : "未开启替换作弊指南");
@@ -211,16 +262,21 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             this.bookmarkManager = new BookmarkManager(this);
             this.bookmarkManager.load();
 
-            getLogger().info("正在加载教学物品组...");
+            getLogger().info("正在加载物品组...");
             GroupSetup.setup();
-            getLogger().info("教学物品组加载完毕！");
+            if (survivalOverride) {
+                Bukkit.getScheduler().runTaskLaterAsynchronously(JustEnoughGuide.getInstance(), CustomGroupConfigurations::load, 1L);
+            }
+            getLogger().info("物品组加载完毕！");
 
             if (getConfigManager().isBeginnerOption()) {
                 getLogger().info("正在加载新手指南选项...");
-                SlimefunGuideSettings.addOption(new BeginnersGuideOption());
+                SlimefunGuideSettings.addOption(BeginnersGuideOption.instance());
                 getLogger().info("新手指南选项加载完毕！");
             }
         }
+
+        ItemsSetup.setup(this);
 
         this.rtsBackpackManager = new RTSBackpackManager(this);
         this.rtsBackpackManager.load();
@@ -243,21 +299,9 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             }
         }
 
-        getLogger().info("成功启用此附属");
-    }
+        SearchGroup.init();
 
-    /**
-     * Attempts to update the plugin if auto-update is enabled.
-     */
-    public void tryUpdate() {
-        try {
-            if (configManager.isAutoUpdate() && getDescription().getVersion().startsWith("Build")) {
-                GuizhanUpdater.start(this, getFile(), username, repo, branch);
-            }
-        } catch (NoClassDefFoundError | NullPointerException | UnsupportedClassVersionError e) {
-            getLogger().info("自动更新失败: " + e.getMessage());
-            Debug.trace(e);
-        }
+        getLogger().info("成功启用此附属");
     }
 
     /**
@@ -265,20 +309,43 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
      */
     @Override
     public void onDisable() {
+        CustomGroupConfigurations.unload();
+        GroupResorter.rollback();
+
+        getIntegrationManager().shutdownIntegrations();
+
         GroupSetup.shutdown();
+        RecipeCompleteProvider.shutdown();
+        GuideUtil.shutdown();
 
-        Field field = ReflectionUtil.getField(Slimefun.getRegistry().getClass(), "guides");
-        if (field != null) {
-            field.setAccessible(true);
+        /**
+         * Unregister all {@link SlimefunItem}
+         *
+         * @see VanillaItemsGroup
+         * @see ItemsSetup#RECIPE_COMPLETE_GUIDE
+         */
+        SlimefunRegistryUtil.unregisterItems(JustEnoughGuide.getInstance());
 
+        try {
             Map<SlimefunGuideMode, SlimefunGuideImplementation> newGuides = new EnumMap<>(SlimefunGuideMode.class);
             newGuides.put(SlimefunGuideMode.SURVIVAL_MODE, new SurvivalSlimefunGuide());
             newGuides.put(SlimefunGuideMode.CHEAT_MODE, new CheatSheetSlimefunGuide());
-            try {
-                field.set(Slimefun.getRegistry(), newGuides);
-            } catch (IllegalAccessException ignored) {
+            ReflectionUtil.setValue(Slimefun.getRegistry(), "guides", newGuides);
+        } catch (Exception e) {
+            Debug.trace(e);
+        }
 
+        try {
+            @SuppressWarnings("unchecked") List<SlimefunGuideOption<?>> l = (List<SlimefunGuideOption<?>>) ReflectionUtil.getStaticValue(SlimefunGuideSettings.class, "options");
+            if (l != null) {
+                List<SlimefunGuideOption<?>> copy = new ArrayList<>(l);
+                for (SlimefunGuideOption<?> option : copy) {
+                    if (option.getAddon().equals(JustEnoughGuide.getInstance())) {
+                        l.remove(option);
+                    }
+                }
             }
+        } catch (Exception ignored) {
         }
 
         // Managers
@@ -371,20 +438,24 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         this.minecraftVersion = MinecraftVersion.getCurrentVersion();
         this.javaVersion = NumberUtils.getJavaVersion();
         if (minecraftVersion == null) {
-            getLogger().warning("无法获取到 Minecraft 版本！");
+            getLogger().warning("无法获取到 Minecraft 版本!");
             return false;
         }
 
         if (minecraftVersion == MinecraftVersion.UNKNOWN) {
-            getLogger().warning("无法识别到 Minecraft 版本！");
-        }
-
-        if (!minecraftVersion.isAtLeast(RECOMMENDED_MC_VERSION)) {
-            getLogger().warning("Minecraft 版本过低，请使用 Minecraft 1." + RECOMMENDED_MC_VERSION.getMajor() + "." + RECOMMENDED_MC_VERSION.getMinor() + " 或以上版本！");
+            getLogger().warning("无法识别当前的 Minecraft 版本! (" + javaVersion + ")");
+        } else if (!minecraftVersion.isAtLeast(RECOMMENDED_MC_VERSION)) {
+            getLogger().warning("当前 Minecraft 版本过低(" + minecraftVersion.humanize() + "), 请使用 Minecraft " + RECOMMENDED_MC_VERSION.humanize() + " 或以上版本!");
         }
 
         if (javaVersion < RECOMMENDED_JAVA_VERSION) {
-            getLogger().warning("Java 版本过低，请使用 Java " + RECOMMENDED_JAVA_VERSION + " 或以上版本！");
+            getLogger().warning("Java 版本过低，请使用 Java " + RECOMMENDED_JAVA_VERSION + " 或以上版本!");
+        }
+
+        if (!Bukkit.getServer().getPluginManager().isPluginEnabled("GuizhanLibPlugin")) {
+            getLogger().log(Level.SEVERE, "本插件需要 鬼斩前置库插件(GuizhanLibPlugin) 才能运行!");
+            getLogger().log(Level.SEVERE, "从此处下载: https://50l.cc/gzlib");
+            getLogger().log(Level.SEVERE, "当出现该报错时, 作者对一切后续的报错不负责");
         }
 
         return true;
@@ -399,20 +470,17 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         return getConfigManager().isDebug();
     }
 
-    /// //////////////////////////////////////////////////////////////////////////////
-    ///                                                                           ///
-    /// JEG Recipe Complete Compatible                                            ///
-    ///                                                                           ///
-    /// Author balugaq                                                            ///
-    /// Since 1.7                                                                 ///
-    ///                                                                           ///
-    /// //////////////////////////////////////////////////////////////////////////////
-
-    public void vanillaItemsGroupDisplayableFor(@NotNull Player player, boolean displayable) {
-        VanillaItemsGroup.displayableFor(player, displayable);
-    }
-
-    public boolean vanillaItemsGroupIsDisplayableFor(@NotNull Player player) {
-        return VanillaItemsGroup.isDisplayableFor(player);
+    /**
+     * Attempts to update the plugin if auto-update is enabled.
+     */
+    public void tryUpdate() {
+        try {
+            if (configManager.isAutoUpdate() && getDescription().getVersion().startsWith("Build")) {
+                GuizhanUpdater.start(this, getFile(), username, repo, branch);
+            }
+        } catch (NoClassDefFoundError | NullPointerException | UnsupportedClassVersionError e) {
+            getLogger().info("自动更新失败: " + e.getMessage());
+            Debug.trace(e);
+        }
     }
 }

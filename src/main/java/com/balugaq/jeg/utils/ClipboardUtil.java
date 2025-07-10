@@ -27,8 +27,8 @@
 
 package com.balugaq.jeg.utils;
 
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import lombok.experimental.UtilityClass;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -44,6 +44,7 @@ import java.util.function.Consumer;
  * @author balugaq
  * @since 1.7
  */
+@SuppressWarnings({"deprecation", "unused"})
 @UtilityClass
 public class ClipboardUtil {
     @ParametersAreNonnullByDefault
@@ -57,15 +58,15 @@ public class ClipboardUtil {
     }
 
     @ParametersAreNonnullByDefault
-    public static TextComponent makeComponent(String display, String hover, String text) {
+    public static @NotNull TextComponent makeComponent(String display, String hover, String text) {
         return makeComponent(display, hover, text, null);
     }
 
     @ParametersAreNonnullByDefault
-    public static TextComponent makeComponent(String display, String hover, String text, @Nullable Consumer<TextComponent> consumer) {
-        TextComponent msg = new TextComponent(ChatColor.translateAlternateColorCodes('&', display));
-        msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.translateAlternateColorCodes('&', hover))));
-        msg.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ChatColor.translateAlternateColorCodes('&', text)));
+    public static @NotNull TextComponent makeComponent(String display, String hover, String text, @Nullable Consumer<TextComponent> consumer) {
+        TextComponent msg = new TextComponent(ChatColors.color(display));
+        msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColors.color(hover))));
+        msg.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, ChatColors.color(text)));
         if (consumer != null) {
             consumer.accept(msg);
         }

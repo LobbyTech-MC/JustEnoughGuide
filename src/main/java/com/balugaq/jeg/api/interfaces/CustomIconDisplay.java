@@ -25,41 +25,15 @@
  *
  */
 
-package com.balugaq.jeg.api.objects.cooldown;
+package com.balugaq.jeg.api.interfaces;
 
-import lombok.Data;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-@Data
-public class CooldownPool<Key> {
-    private final Map<Key, Long> pool = new ConcurrentHashMap<>();
-    private final long cooldownMillis;
-
-    public CooldownPool(long cooldownMillis) {
-        this.cooldownMillis = cooldownMillis;
-    }
-
-    /**
-     * Check cooldown
-     *
-     * @param key key
-     * @return true if cooldown is over, false otherwise
-     */
-    public boolean checkCooldown(Key key) {
-        Long lastTime = pool.get(key);
-        if (lastTime == null) {
-            pool.put(key, System.currentTimeMillis());
-            return true;
-        }
-
-        long now = System.currentTimeMillis();
-        if (now - lastTime >= cooldownMillis) {
-            pool.put(key, now);
-            return true;
-        }
-
-        return false;
-    }
+/**
+ * @author balugaq
+ * @since 1.7
+ */
+public interface CustomIconDisplay {
+    @NotNull ItemStack getCustomIcon();
 }

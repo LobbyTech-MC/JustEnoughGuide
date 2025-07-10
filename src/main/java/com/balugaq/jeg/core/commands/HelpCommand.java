@@ -46,6 +46,7 @@ import java.util.List;
  * @author balugaq
  * @since 1.1
  */
+@SuppressWarnings({"ClassCanBeRecord", "deprecation", "SwitchStatementWithTooFewBranches"})
 @Getter
 public class HelpCommand implements JEGCommand {
     private final Plugin plugin;
@@ -75,9 +76,7 @@ public class HelpCommand implements JEGCommand {
             @NotNull String @NotNull [] args) {
         if (sender.isOp()) {
             if (args.length == 1) {
-                if ("help".equalsIgnoreCase(args[0])) {
-                    return true;
-                }
+                return "help".equalsIgnoreCase(args[0]);
             }
         }
         return false;
@@ -94,5 +93,8 @@ public class HelpCommand implements JEGCommand {
         sender.sendMessage(ChatColor.GREEN + "/jeg help - Show this help message");
         sender.sendMessage(ChatColor.GREEN + "/jeg reload - Reload JEG plugin");
         sender.sendMessage(ChatColor.GREEN + "/jeg cache <section> <key>");
+        sender.sendMessage(ChatColor.GREEN + "/jeg disable - Disable JEG plugin");
+        sender.sendMessage(ChatColor.GREEN + "/jeg gteg - Get Guide Tier Editor");
+        sender.sendMessage(ChatColor.GREEN + "/jeg categories - View all the groups");
     }
 }

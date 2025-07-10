@@ -42,6 +42,7 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerHead;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.skins.PlayerSkin;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
@@ -95,7 +96,7 @@ import java.util.Map;
  * @author balugaq
  * @since 1.4
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "UnnecessaryUnicodeEscape"})
 @Getter
 public class RTSListener implements Listener {
     public static final NamespacedKey FAKE_ITEM_KEY = new NamespacedKey(JustEnoughGuide.getInstance(), "fake_item");
@@ -123,9 +124,7 @@ public class RTSListener implements Listener {
      */
     public static boolean isFakeItem(@Nullable ItemStack itemStack) {
         if (itemStack != null && itemStack.getType() != Material.AIR) {
-            if (itemStack.getItemMeta().getPersistentDataContainer().get(FAKE_ITEM_KEY, PersistentDataType.STRING) != null) {
-                return true;
-            }
+            return itemStack.getItemMeta().getPersistentDataContainer().get(FAKE_ITEM_KEY, PersistentDataType.STRING) != null;
         }
         return false;
     }
@@ -173,7 +172,8 @@ public class RTSListener implements Listener {
      * @param item the ItemStack to generate a hash for
      * @return the hash of the player head, or null if the item is not a player head
      */
-    public static String getHash(ItemStack item) {
+    @SuppressWarnings("DataFlowIssue")
+    public static String getHash(@Nullable ItemStack item) {
         if (item != null && (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD)) {
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof SkullMeta) {
@@ -182,7 +182,7 @@ public class RTSListener implements Listener {
                     String path = t.getPath();
                     String[] parts = path.split("/");
                     return parts[parts.length - 1];
-                } catch (Throwable ignored) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -385,6 +385,7 @@ public class RTSListener implements Listener {
      *
      * @param event the InventoryClickEvent to handle
      */
+    @SuppressWarnings("DataFlowIssue")
     @EventHandler
     public void onLookup(@NotNull InventoryClickEvent event) {
         Player player = (Player) event.getView().getPlayer();
@@ -428,7 +429,7 @@ public class RTSListener implements Listener {
                                 int originalAmount = meta.getPersistentDataContainer().getOrDefault(CHEAT_AMOUNT_KEY, PersistentDataType.INTEGER, 0);
                                 int totalAmount = originalAmount + addAmount;
                                 meta.getPersistentDataContainer().set(CHEAT_AMOUNT_KEY, PersistentDataType.INTEGER, totalAmount);
-                                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', ItemStackHelper.getDisplayName(clonedItem) + " &c已拿取物品 x" + totalAmount));
+                                meta.setDisplayName(ChatColors.color(ItemStackHelper.getDisplayName(clonedItem) + " &c已拿取物品 x" + totalAmount));
                                 itemStack.setItemMeta(meta);
                             }
                         } else {
@@ -534,7 +535,6 @@ public class RTSListener implements Listener {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -548,7 +548,6 @@ public class RTSListener implements Listener {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -562,7 +561,6 @@ public class RTSListener implements Listener {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -576,7 +574,6 @@ public class RTSListener implements Listener {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
-            return;
         }
     }
 
@@ -638,12 +635,10 @@ public class RTSListener implements Listener {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.cancel();
-            return;
         } else {
             ItemStack itemStack = event.getItem();
             if (isFakeItem(itemStack)) {
                 event.cancel();
-                return;
             }
         }
     }
@@ -658,12 +653,10 @@ public class RTSListener implements Listener {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
-            return;
         } else {
             ItemStack itemStack = player.getInventory().getItem(event.getHand());
             if (isFakeItem(itemStack)) {
                 event.setCancelled(true);
-                return;
             }
         }
     }
