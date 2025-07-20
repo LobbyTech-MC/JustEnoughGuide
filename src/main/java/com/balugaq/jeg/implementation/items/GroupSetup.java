@@ -28,15 +28,12 @@
 package com.balugaq.jeg.implementation.items;
 
 import com.balugaq.jeg.api.groups.HiddenItemsGroup;
-import com.balugaq.jeg.api.groups.NexcavateItemsGroup;
 import com.balugaq.jeg.api.groups.VanillaItemsGroup;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.Models;
 import com.balugaq.jeg.utils.SlimefunRegistryUtil;
-import com.balugaq.jeg.utils.SpecialMenuProvider;
-import com.balugaq.jeg.utils.compatibility.Converter;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import org.bukkit.Material;
 
 /**
  * This class is responsible for registering all the JEG groups.
@@ -47,7 +44,6 @@ import org.bukkit.Material;
 public class GroupSetup {
     public static JEGGuideGroup guideGroup;
     public static HiddenItemsGroup hiddenItemsGroup;
-    public static NexcavateItemsGroup nexcavateItemsGroup;
     public static VanillaItemsGroup vanillaItemsGroup;
     public static ItemGroup jegItemsGroup;
 
@@ -55,28 +51,15 @@ public class GroupSetup {
      * Registers all the JEG groups.
      */
     public static void setup() {
-        guideGroup = new JEGGuideGroup(
-                KeyUtil.newKey("jeg_guide_group"),
-                Converter.getItem(Material.KNOWLEDGE_BOOK, "&bJEG 使用指南"));
+        guideGroup = new JEGGuideGroup(KeyUtil.newKey("jeg_guide_group"), Models.JEG_GUIDE_GROUP);
         guideGroup.register(JustEnoughGuide.getInstance());
-        hiddenItemsGroup = new HiddenItemsGroup(
-                KeyUtil.newKey("hidden_items_group"),
-                Converter.getItem(Material.BARRIER, "&c隐藏物品"));
+        hiddenItemsGroup = new HiddenItemsGroup(KeyUtil.newKey("hidden_items_group"), Models.HIDDEN_ITEMS_GROUP);
         hiddenItemsGroup.register(JustEnoughGuide.getInstance());
-        if (SpecialMenuProvider.ENABLED_Nexcavate) {
-            nexcavateItemsGroup = new NexcavateItemsGroup(
-                    KeyUtil.newKey("nexcavate_items_group"),
-                    Converter.getItem(Material.BLACKSTONE, "&6Nexcavate 物品"));
-            nexcavateItemsGroup.register(JustEnoughGuide.getInstance());
-        }
-        vanillaItemsGroup = new VanillaItemsGroup(
-                KeyUtil.newKey("vanilla_items_group"),
-                Converter.getItem(Material.CRAFTING_TABLE, "&7原版物品"));
+
+        vanillaItemsGroup = new VanillaItemsGroup(KeyUtil.newKey("vanilla_items_group"), Models.VANILLA_ITEMS_GROUP);
         vanillaItemsGroup.register(JustEnoughGuide.getInstance());
-        jegItemsGroup = new ItemGroup(
-                KeyUtil.newKey("jeg_items_group"),
-                Converter.getItem(Material.BOOK, "&bJEG 物品")
-        );
+
+        jegItemsGroup = new ItemGroup(KeyUtil.newKey("jeg_items_group"), Models.JEG_ITEMS_GROUP);
         jegItemsGroup.setTier(Integer.MAX_VALUE);
     }
 

@@ -27,9 +27,7 @@
 
 package com.balugaq.jeg.api.interfaces;
 
-import com.balugaq.jeg.utils.Debug;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,9 +59,8 @@ public @interface NotDisplayInCheatMode {
             String key = group.getKey().getKey();
             String className = group.getClass().getName();
 
-            //@formatter:off
-            return
-                    className.equals("io.github.sefiraat.networks.slimefun.groups.DummyItemGroup")
+            // @formatter:off
+            return className.equals("io.github.sefiraat.networks.slimefun.groups.DummyItemGroup")
                     || className.startsWith("com.balugaq.netex.api.groups")
                     || className.startsWith("io.github.ytdd9527.mobengineering.implementation.slimefun.groups")
                     || className.startsWith("io.taraxacum.finaltech.core.group")
@@ -74,8 +71,28 @@ public @interface NotDisplayInCheatMode {
                     || className.equals("io.github.mooy1.infinityexpansion.categories.InfinityGroup")
                     || className.equals("io.github.mooy1.infinityexpansion.infinitylib.groups.SubGroup")
                     || className.equals("me.lucasgithuber.obsidianexpansion.infinitylib.groups.SubGroup")
-                    || (namespace.equals("logitech") && (key.equals("info") || key.equals("tools")));
-            //@formatter:on
+                    || className.equals("io.github.slimefunguguproject.bump.implementation.groups.AppraiseInfoGroup")
+                    || className.equals("dev.sefiraat.netheopoiesis.implementation.groups.DummyItemGroup")
+                    || className.equals("io.github.addoncommunity.galactifun.infinitylib.groups.SubGroup")
+                    || className.equals("io.github.sefiraat.crystamaehistoria.slimefun.itemgroups.DummyItemGroup")
+                    || className.equals(
+                            "io.github.slimefunguguproject.bump.libs.sefilib.slimefun.itemgroup.DummyItemGroup")
+                    || className.equals("me.voper.slimeframe.implementation.groups.ChildGroup")
+                    || className.equals("me.voper.slimeframe.implementation.groups.MasterGroup")
+                    || className.equals("io.github.sefiraat.emctech.slimefun.groups.DummyItemGroup")
+                    || className.equals("dev.sefiraat.sefilib.slimefun.itemgroup.DummyItemGroup")
+                    || (namespace.equals("logitech")
+                            && (key.equals("info") || key.equals("tools") || key.equals("tools-functional")))
+                    || (namespace.equals("nexcavate") && key.equals("dummy"))
+                    || (namespace.equals("slimefun") && key.equals("rick"))
+                    || (group instanceof SubItemGroup
+                                    && (namespace.equals("networks") && key.startsWith("ntw_expansion_"))
+                            || (namespace.equals("mobengineering")
+                                    && (key.startsWith("mod_engineering_") || key.startsWith("mob_engineering_")))
+                            || (namespace.equals("finaltech-changed") && (key.startsWith("_finaltech_")))
+                            || (namespace.equals("finaltech") && (key.startsWith("finaltech_")))
+                            || namespace.equals("danktech2"));
+            // @formatter:on
         }
     }
 }

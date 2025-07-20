@@ -40,10 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * This is the implementation of the "/jeg help" command.
- * It shows the list of available commands and their usage.
- * <p>
- * This command is also the default command when no other command is specified.
+ * This is the implementation of the "/jeg gteg" command.
  *
  * @author balugaq
  * @since 1.8
@@ -72,10 +69,10 @@ public class GTEGCommand implements JEGCommand {
 
     @Override
     public boolean canCommand(
-            @NotNull CommandSender sender,
-            @NotNull Command command,
-            @NotNull String label,
-            @NotNull String @NotNull [] args) {
+            final @NotNull CommandSender sender,
+            final @NotNull Command command,
+            final @NotNull String label,
+            final @NotNull String @NotNull [] args) {
         if (sender.isOp()) {
             if (args.length == 1) {
                 return "gteg".equalsIgnoreCase(args[0]);
@@ -86,7 +83,10 @@ public class GTEGCommand implements JEGCommand {
 
     @Override
     public void onCommand(
-            @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+            final @NotNull CommandSender sender,
+            @NotNull Command command,
+            @NotNull String label,
+            @NotNull String[] args) {
         if (sender instanceof Player player) {
             giveGuide(player);
         } else {

@@ -28,22 +28,21 @@
 package com.balugaq.jeg.core.managers;
 
 import com.balugaq.jeg.api.managers.AbstractManager;
-import com.balugaq.jeg.core.listeners.GuideGUIFixListener;
 import com.balugaq.jeg.core.listeners.GroupTierEditorListener;
+import com.balugaq.jeg.core.listeners.GuideGUIFixListener;
 import com.balugaq.jeg.core.listeners.GuideListener;
 import com.balugaq.jeg.core.listeners.RTSListener;
 import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
 import com.balugaq.jeg.core.listeners.SpecialMenuFixListener;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is responsible for managing the listeners of the plugin.
@@ -53,11 +52,11 @@ import java.util.List;
  */
 @Getter
 public class ListenerManager extends AbstractManager {
-    @NotNull
-    final List<Listener> listeners = new ArrayList<>();
-    private final JavaPlugin plugin;
+    private final @NotNull List<Listener> listeners = new ArrayList<>();
 
-    public ListenerManager(JavaPlugin plugin) {
+    private final @NotNull JavaPlugin plugin;
+
+    public ListenerManager(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
         listeners.add(new GuideListener());
         listeners.add(new SpecialMenuFixListener());

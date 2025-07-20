@@ -29,6 +29,7 @@ package com.balugaq.jeg.core.integrations.networksexpansion;
 
 import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+import com.balugaq.jeg.core.integrations.networks.NetworksIntegrationMain;
 import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
 import com.balugaq.jeg.utils.BlockMenuUtil;
 import com.balugaq.jeg.utils.GuideUtil;
@@ -36,6 +37,7 @@ import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+import java.util.List;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Material;
@@ -46,8 +48,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 /**
  * @author balugaq
  * @since 1.9
@@ -56,13 +56,24 @@ public class NetworksExpansionRecipeCompleteSlimefunSource implements SlimefunSo
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean handleable(@NotNull BlockMenu blockMenu, @NotNull Player player, @NotNull ClickAction clickAction, int @NotNull [] ingredientSlots, boolean unordered) {
-        return NetworksExpansionIntegrationMain.findNearbyNetworkRoot(blockMenu.getLocation()) != null;
+    public boolean handleable(
+            @NotNull BlockMenu blockMenu,
+            @NotNull Player player,
+            @NotNull ClickAction clickAction,
+            int @NotNull [] ingredientSlots,
+            boolean unordered) {
+        return NetworksIntegrationMain.findNearbyNetworkRoot(blockMenu.getLocation()) != null;
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public boolean openGuide(@NotNull BlockMenu blockMenu, @NotNull Player player, @NotNull ClickAction clickAction, int @NotNull [] ingredientSlots, boolean unordered, @Nullable Runnable callback) {
+    public boolean openGuide(
+            @NotNull BlockMenu blockMenu,
+            @NotNull Player player,
+            @NotNull ClickAction clickAction,
+            int @NotNull [] ingredientSlots,
+            boolean unordered,
+            @Nullable Runnable callback) {
         GuideEvents.ItemButtonClickEvent lastEvent = RecipeCompletableListener.getLastEvent(player.getUniqueId());
         if (clickAction.isRightClicked() && lastEvent != null) {
             int times = 1;
@@ -132,8 +143,12 @@ public class NetworksExpansionRecipeCompleteSlimefunSource implements SlimefunSo
     }
 
     @Override
-    public boolean completeRecipeWithGuide(@NotNull BlockMenu blockMenu, GuideEvents.@NotNull ItemButtonClickEvent event, int @NotNull [] ingredientSlots, boolean unordered) {
-        NetworkRoot root = NetworksExpansionIntegrationMain.findNearbyNetworkRoot(blockMenu.getLocation());
+    public boolean completeRecipeWithGuide(
+            @NotNull BlockMenu blockMenu,
+            GuideEvents.@NotNull ItemButtonClickEvent event,
+            int @NotNull [] ingredientSlots,
+            boolean unordered) {
+        NetworkRoot root = NetworksIntegrationMain.findNearbyNetworkRoot(blockMenu.getLocation());
         if (root == null) {
             return false;
         }
@@ -209,8 +224,7 @@ public class NetworksExpansionRecipeCompleteSlimefunSource implements SlimefunSo
         return true;
     }
 
-    @Nullable
-    private ItemStack getItemStack(@NotNull NetworkRoot root, @NotNull Player player, @NotNull ItemStack itemStack) {
+    @Nullable private ItemStack getItemStack(@NotNull NetworkRoot root, @NotNull Player player, @NotNull ItemStack itemStack) {
         ItemStack i1 = getItemStackFromPlayerInventory(player, itemStack);
         if (i1 != null) {
             return i1;

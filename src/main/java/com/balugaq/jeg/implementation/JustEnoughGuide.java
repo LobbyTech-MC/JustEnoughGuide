@@ -31,7 +31,9 @@ import com.balugaq.jeg.api.CustomGroupConfigurations;
 import com.balugaq.jeg.api.editor.GroupResorter;
 import com.balugaq.jeg.api.groups.SearchGroup;
 import com.balugaq.jeg.api.groups.VanillaItemsGroup;
+import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTECHValueDisplayOption;
 import com.balugaq.jeg.core.managers.BookmarkManager;
 import com.balugaq.jeg.core.managers.CommandManager;
 import com.balugaq.jeg.core.managers.ConfigManager;
@@ -48,6 +50,7 @@ import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.MinecraftVersion;
 import com.balugaq.jeg.utils.ReflectionUtil;
 import com.balugaq.jeg.utils.SlimefunRegistryUtil;
+import com.balugaq.jeg.utils.SpecialMenuProvider;
 import com.balugaq.jeg.utils.UUIDUtils;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
@@ -58,14 +61,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.CheatSheetSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
-import lombok.Getter;
-import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,6 +72,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
+import lombok.Getter;
+import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This is the main class of the JustEnoughGuide plugin.
@@ -85,35 +87,48 @@ import java.util.logging.Level;
  * @author balugaq
  * @since 1.0
  */
-@SuppressWarnings({"unused", "Lombok", "deprecation", "ResultOfMethodCallIgnored"})
+@SuppressWarnings({"unused", "Lombok", "deprecation", "ResultOfMethodCallIgnored", "DataFlowIssue"})
 @Getter
 public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     public static final int RECOMMENDED_JAVA_VERSION = 17;
     public static final MinecraftVersion RECOMMENDED_MC_VERSION = MinecraftVersion.MINECRAFT_1_16;
+
     @Getter
     private static JustEnoughGuide instance = null;
+
     @Getter
     private static UUID serverUUID = null;
+
     @Getter
     private final @NotNull String username;
+
     @Getter
     private final @NotNull String repo;
+
     @Getter
     private final @NotNull String branch;
+
     @Getter
     private BookmarkManager bookmarkManager = null;
+
     @Getter
     private CommandManager commandManager = null;
+
     @Getter
     private ConfigManager configManager = null;
+
     @Getter
     private IntegrationManager integrationManager = null;
+
     @Getter
     private ListenerManager listenerManager = null;
+
     @Getter
     private RTSBackpackManager rtsBackpackManager = null;
+
     @Getter
     private MinecraftVersion minecraftVersion = null;
+
     @Getter
     private int javaVersion = 0;
 
@@ -265,7 +280,8 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             getLogger().info("正在加载物品组...");
             GroupSetup.setup();
             if (survivalOverride) {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(JustEnoughGuide.getInstance(), CustomGroupConfigurations::load, 1L);
+                Bukkit.getScheduler()
+                        .runTaskLaterAsynchronously(JustEnoughGuide.getInstance(), CustomGroupConfigurations::load, 1L);
             }
             getLogger().info("物品组加载完毕！");
 
@@ -301,6 +317,9 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
 
         SearchGroup.init();
 
+        SpecialMenuProvider.loadConfiguration();
+        ThirdPartyWarnings.check();
+
         getLogger().info("成功启用此附属");
     }
 
@@ -327,16 +346,9 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         SlimefunRegistryUtil.unregisterItems(JustEnoughGuide.getInstance());
 
         try {
-            Map<SlimefunGuideMode, SlimefunGuideImplementation> newGuides = new EnumMap<>(SlimefunGuideMode.class);
-            newGuides.put(SlimefunGuideMode.SURVIVAL_MODE, new SurvivalSlimefunGuide());
-            newGuides.put(SlimefunGuideMode.CHEAT_MODE, new CheatSheetSlimefunGuide());
-            ReflectionUtil.setValue(Slimefun.getRegistry(), "guides", newGuides);
-        } catch (Exception e) {
-            Debug.trace(e);
-        }
-
-        try {
-            @SuppressWarnings("unchecked") List<SlimefunGuideOption<?>> l = (List<SlimefunGuideOption<?>>) ReflectionUtil.getStaticValue(SlimefunGuideSettings.class, "options");
+            @SuppressWarnings("unchecked")
+            List<SlimefunGuideOption<?>> l = (List<SlimefunGuideOption<?>>)
+                    ReflectionUtil.getStaticValue(SlimefunGuideSettings.class, "options");
             if (l != null) {
                 List<SlimefunGuideOption<?>> copy = new ArrayList<>(l);
                 for (SlimefunGuideOption<?> option : copy) {
@@ -345,7 +357,17 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
                     }
                 }
             }
+            FinalTECHValueDisplayOption.unboot();
         } catch (Exception ignored) {
+        }
+
+        try {
+            Map<SlimefunGuideMode, SlimefunGuideImplementation> newGuides = new EnumMap<>(SlimefunGuideMode.class);
+            newGuides.put(SlimefunGuideMode.SURVIVAL_MODE, new SurvivalSlimefunGuide());
+            newGuides.put(SlimefunGuideMode.CHEAT_MODE, new CheatSheetSlimefunGuide());
+            ReflectionUtil.setValue(Slimefun.getRegistry(), "guides", newGuides);
+        } catch (Exception e) {
+            Debug.trace(e);
         }
 
         // Managers
@@ -403,8 +425,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
      *
      * @return the bug tracker URL
      */
-    @Nullable
-    @Override
+    @Nullable @Override
     public String getBugTrackerURL() {
         return MessageFormat.format("https://github.com/{0}/{1}/issues/", this.username, this.repo);
     }
@@ -445,7 +466,9 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         if (minecraftVersion == MinecraftVersion.UNKNOWN) {
             getLogger().warning("无法识别当前的 Minecraft 版本! (" + javaVersion + ")");
         } else if (!minecraftVersion.isAtLeast(RECOMMENDED_MC_VERSION)) {
-            getLogger().warning("当前 Minecraft 版本过低(" + minecraftVersion.humanize() + "), 请使用 Minecraft " + RECOMMENDED_MC_VERSION.humanize() + " 或以上版本!");
+            getLogger()
+                    .warning("当前 Minecraft 版本过低(" + minecraftVersion.humanize() + "), 请使用 Minecraft "
+                            + RECOMMENDED_MC_VERSION.humanize() + " 或以上版本!");
         }
 
         if (javaVersion < RECOMMENDED_JAVA_VERSION) {

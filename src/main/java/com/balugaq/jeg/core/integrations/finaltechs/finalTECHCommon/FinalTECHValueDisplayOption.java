@@ -29,6 +29,7 @@ package com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon;
 
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.compatibility.Converter;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
@@ -48,6 +49,24 @@ import java.util.Optional;
 @SuppressWarnings({"UnnecessaryUnicodeEscape", "SameReturnValue"})
 public class FinalTECHValueDisplayOption implements SlimefunGuideOption<Boolean> {
     public static final @NotNull FinalTECHValueDisplayOption instance = new FinalTECHValueDisplayOption();
+    private static boolean booted = false;
+
+    private static void setBooted(boolean booted) {
+        FinalTECHValueDisplayOption.booted = booted;
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean booted() {
+        return booted;
+    }
+
+    public static void boot() {
+        setBooted(true);
+    }
+
+    public static void unboot() {
+        setBooted(false);
+    }
 
     public static @NotNull FinalTECHValueDisplayOption instance() {
         return instance;

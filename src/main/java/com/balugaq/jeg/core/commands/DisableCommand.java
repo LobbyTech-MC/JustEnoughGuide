@@ -40,8 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * This is the implementation of the "/jeg reload" command.
- * It reloads the JEG plugin configuration.
+ * This is the implementation of the "/jeg disable" command.
  *
  * @author balugaq
  * @since 1.1
@@ -70,10 +69,10 @@ public class DisableCommand implements JEGCommand {
 
     @Override
     public boolean canCommand(
-            @NotNull CommandSender sender,
-            @NotNull Command command,
-            @NotNull String label,
-            @NotNull String @NotNull [] args) {
+            final @NotNull CommandSender sender,
+            final @NotNull Command command,
+            final @NotNull String label,
+            final @NotNull String @NotNull [] args) {
         if (sender.isOp()) {
             if (args.length == 1) {
                 return "disable".equalsIgnoreCase(args[0]);
@@ -84,7 +83,10 @@ public class DisableCommand implements JEGCommand {
 
     @Override
     public void onCommand(
-            @NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+            final @NotNull CommandSender sender,
+            @NotNull Command command,
+            @NotNull String label,
+            @NotNull String[] args) {
         onReload(sender);
     }
 

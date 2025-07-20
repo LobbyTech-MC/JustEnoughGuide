@@ -28,17 +28,7 @@
 package com.balugaq.jeg.core.managers;
 
 import com.balugaq.jeg.api.managers.AbstractManager;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.Debug;
-import com.balugaq.jeg.utils.MinecraftVersion;
-import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +38,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This class is responsible for managing the configuration of the plugin.
@@ -71,6 +67,7 @@ public class ConfigManager extends AbstractManager {
     private final boolean RECIPE_COMPLETE;
     private final boolean PINYIN_SEARCH;
     private final boolean BOOKMARK;
+    private final boolean RTS_SEARCH;
     private final boolean BEGINNER_OPTION;
     private final @NotNull String SURVIVAL_GUIDE_TITLE;
     private final @NotNull String CHEAT_GUIDE_TITLE;
@@ -93,7 +90,6 @@ public class ConfigManager extends AbstractManager {
     private final boolean EMC_VALUE_DISPLAY;
     private final boolean FinalTech_VALUE_DISPLAY;
     private final boolean FinalTECH_VALUE_DISPLAY;
-    private boolean RTS_SEARCH;
 
     public ConfigManager(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
@@ -105,20 +101,13 @@ public class ConfigManager extends AbstractManager {
         this.RECIPE_COMPLETE = plugin.getConfig().getBoolean("guide.recipe-complete", true);
         this.PINYIN_SEARCH = plugin.getConfig().getBoolean("improvements.pinyin-search", true);
         this.BOOKMARK = plugin.getConfig().getBoolean("improvements.bookmark", true);
-        this.SURVIVAL_GUIDE_TITLE = plugin.getConfig().getString("guide.survival-guide-title", "&2&lSlimefun 指南 (生存模式)         &e&l爱来自 JustEnoughGuide");
-        this.CHEAT_GUIDE_TITLE = plugin.getConfig().getString("guide.cheat-guide-title", "&c&lSlimefun 指南 (作弊模式)         &e&l爱来自 JustEnoughGuide");
+        this.SURVIVAL_GUIDE_TITLE = plugin.getConfig()
+                .getString("guide.survival-guide-title", "&2&lSlimefun 指南 (生存模式)         &e&l爱来自 JustEnoughGuide");
+        this.CHEAT_GUIDE_TITLE = plugin.getConfig()
+                .getString("guide.cheat-guide-title", "&c&lSlimefun 指南 (作弊模式)         &e&l爱来自 JustEnoughGuide");
         this.SETTINGS_GUIDE_TITLE = plugin.getConfig().getString("guide.settings-guide-title", "设置 & 详情");
         this.CREDITS_GUIDE_TITLE = plugin.getConfig().getString("guide.credits-guide-title", "Slimefun4 贡献者");
         this.RTS_SEARCH = plugin.getConfig().getBoolean("improvements.rts-search", true);
-        if (JustEnoughGuide.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_21_2)) {
-            if (PaperLib.isPaper()) {
-                this.RTS_SEARCH = false;
-            }
-
-            if (JustEnoughGuide.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_21_3)) {
-                this.RTS_SEARCH = false;
-            }
-        }
 
         this.BEGINNER_OPTION = plugin.getConfig().getBoolean("improvements.beginner-option", true);
         List<String> rawBlacklist = plugin.getConfig().getStringList("blacklist");

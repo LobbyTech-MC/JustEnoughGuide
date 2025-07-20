@@ -28,15 +28,16 @@
 package com.balugaq.jeg.utils;
 
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
-import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Objects;
+import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 /**
  * @author Final_ROOT
@@ -83,7 +84,8 @@ public class ReflectionUtil {
         }
     }
 
-    public static <T> @Nullable T getStaticValue(@NotNull Class<?> clazz, @NotNull String field, @NotNull Class<T> cast) {
+    public static <T> @Nullable T getStaticValue(
+            @NotNull Class<?> clazz, @NotNull String field, @NotNull Class<T> cast) {
         try {
             Field declaredField = clazz.getDeclaredField(field);
             declaredField.setAccessible(true);
@@ -119,7 +121,10 @@ public class ReflectionUtil {
         return null;
     }
 
-    public static @Nullable Method getMethod(@NotNull Class<?> clazz, @NotNull String methodName, @Range(from = 0, to = Short.MAX_VALUE) int parameterCount) {
+    public static @Nullable Method getMethod(
+            @NotNull Class<?> clazz,
+            @NotNull String methodName,
+            @Range(from = 0, to = Short.MAX_VALUE) int parameterCount) {
         while (clazz != Object.class) {
             for (Method method : clazz.getDeclaredMethods()) {
                 if (method.getName().equals(methodName) && method.getParameterTypes().length == parameterCount) {
@@ -131,7 +136,8 @@ public class ReflectionUtil {
         return null;
     }
 
-    public static @Nullable Method getMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?> @NotNull ... parameterTypes) {
+    public static @Nullable Method getMethod(
+            @NotNull Class<?> clazz, @NotNull String methodName, @NotNull Class<?> @NotNull ... parameterTypes) {
         while (clazz != Object.class) {
             for (Method method : clazz.getDeclaredMethods()) {
                 if (method.getName().equals(methodName) && method.getParameterTypes().length == parameterTypes.length) {
@@ -204,7 +210,8 @@ public class ReflectionUtil {
         return null;
     }
 
-    public static <T, V> @Nullable T getProperty(Object o, @NotNull Class<V> clazz, @NotNull String fieldName) throws IllegalAccessException {
+    public static <T, V> @Nullable T getProperty(Object o, @NotNull Class<V> clazz, @NotNull String fieldName)
+            throws IllegalAccessException {
         Field field = getField(clazz, fieldName);
         if (field != null) {
             boolean b = field.canAccess(o);
@@ -217,7 +224,8 @@ public class ReflectionUtil {
         return null;
     }
 
-    public static @Nullable Pair<Field, Class<?>> getDeclaredFieldsRecursively(@NotNull Class<?> clazz, @NotNull String fieldName) {
+    public static @Nullable Pair<Field, Class<?>> getDeclaredFieldsRecursively(
+            @NotNull Class<?> clazz, @NotNull String fieldName) {
         try {
             Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
@@ -232,7 +240,8 @@ public class ReflectionUtil {
         }
     }
 
-    public static @Nullable Constructor<?> getConstructor(@NotNull Class<?> clazz, @NotNull Class<?> @NotNull ... parameterTypes) {
+    public static @Nullable Constructor<?> getConstructor(
+            @NotNull Class<?> clazz, @Nullable Class<?> @Nullable ... parameterTypes) {
         try {
             return clazz.getDeclaredConstructor(parameterTypes);
         } catch (NoSuchMethodException e) {
@@ -241,10 +250,34 @@ public class ReflectionUtil {
         }
     }
 
-    @Nullable
-    public static Object invokeMethod(@NotNull Object object, @NotNull String methodName, @NotNull Object @NotNull ... args) {
+    @Nullable public static Object invokeMethod(
+            @NotNull Object object, @NotNull String methodName, @Nullable Object @Nullable ... args) {
         try {
-            Method method = getMethod(object.getClass(), methodName, args.length);
+            Method method;
+            if (args == null) {
+                method = getMethod(object.getClass(), methodName, 1);
+            } else {
+                boolean containsNull = false;
+                for (Object arg : args) {
+                    if (arg == null) {
+                        containsNull = true;
+                        break;
+                    }
+                }
+
+                if (containsNull) {
+                    method = getMethod(object.getClass(), methodName, args.length);
+                } else {
+                    method = getMethod(
+                            object.getClass(),
+                            methodName,
+                            Arrays.stream(args)
+                                    .filter(Objects::nonNull)
+                                    .map(Object::getClass)
+                                    .toArray(Class[]::new));
+                }
+            }
+
             if (method != null) {
                 method.setAccessible(true);
                 return method.invoke(object, args);
@@ -255,10 +288,33 @@ public class ReflectionUtil {
         return null;
     }
 
-    @Nullable
-    public static Object invokeStaticMethod(@NotNull Class<?> clazz, @NotNull String methodName, @NotNull Object @NotNull ... args) {
+    @Nullable public static Object invokeStaticMethod(
+            @NotNull Class<?> clazz, @NotNull String methodName, @Nullable Object @Nullable ... args) {
         try {
-            Method method = getMethod(clazz, methodName, args.length);
+            Method method;
+            if (args == null) {
+                method = getMethod(clazz, methodName, 1);
+            } else {
+                boolean containsNull = false;
+                for (Object arg : args) {
+                    if (arg == null) {
+                        containsNull = true;
+                        break;
+                    }
+                }
+
+                if (containsNull) {
+                    method = getMethod(clazz, methodName, args.length);
+                } else {
+                    method = getMethod(
+                            clazz,
+                            methodName,
+                            Arrays.stream(args)
+                                    .filter(Objects::nonNull)
+                                    .map(Object::getClass)
+                                    .toArray(Class[]::new));
+                }
+            }
             if (method != null) {
                 method.setAccessible(true);
                 return method.invoke(null, args);
