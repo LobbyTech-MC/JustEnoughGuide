@@ -27,6 +27,17 @@
 
 package com.balugaq.jeg.utils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
 import com.balugaq.jeg.api.objects.annotations.CallTimeSensitive;
 import com.balugaq.jeg.core.listeners.SpecialMenuFixListener;
@@ -34,6 +45,7 @@ import com.balugaq.jeg.core.managers.IntegrationManager;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.implementation.guide.CheatGuideImplementation;
 import com.balugaq.jeg.implementation.guide.SurvivalGuideImplementation;
+
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
@@ -42,18 +54,9 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
 import lombok.experimental.UtilityClass;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author balugaq
@@ -543,14 +546,9 @@ public class SpecialMenuProvider {
         Object menuFactory;
         try {
             menuFactory = methodMenuUtils_createItemRecipeDisplay.invoke(
-                    null, slimefunItem, new CustomMenuHandlerImpl_Utils(), null);
-        } catch (Throwable ignored) {
-            try {
-                menuFactory = methodMenuUtils_createItemRecipeDisplay.invoke(
-                        null, slimefunItem, new CustomMenuHandlerImpl_utils(), null);
-            } catch (Throwable ignored2) {
-                menuFactory = methodMenuUtils_createItemRecipeDisplay.invoke(null, slimefunItem, null, null);
-            }
+                    null, slimefunItem, new CustomMenuHandlerImpl_utils(), null);
+        } catch (Throwable ignored2) {
+            menuFactory = methodMenuUtils_createItemRecipeDisplay.invoke(null, slimefunItem, null, null);
         }
 
         if (menuFactory == null) {
@@ -765,26 +763,6 @@ public class SpecialMenuProvider {
         playerProfile.getGuideHistory().add(PLACEHOLDER_SEARCH_TERM);
     }
 
-    /**
-     * A better back implementation for the LogiTech special menu.
-     *
-     * @author balugaq
-     * @see CustomMenuHandlerImpl_utils
-     * @since 1.3
-     */
-    public class CustomMenuHandlerImpl_Utils
-            implements me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenuHandler {
-        @Override
-        public ChestMenu.@NotNull MenuClickHandler getInstance(
-                me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenu menu) {
-            return (p, s, i, a) -> {
-                PlayerProfile.find(p).ifPresent(playerProfile -> playerProfile
-                        .getGuideHistory()
-                        .goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE)));
-                return false;
-            };
-        }
-    }
 
     /**
      * A better back implementation for the LogiTech special menu.

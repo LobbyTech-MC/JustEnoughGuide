@@ -118,49 +118,7 @@ public class LogitechIntegrationMain implements Integration {
                 }
             }
         } catch (ClassNotFoundException ignored) {
-            // LogiTech v1.0.3
-            try {
-                Class.forName("me.matl114.logitech.SlimefunItem.AddSlimefunItems");
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.CRAFT_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ADV_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.CRUCIBLE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ANCIENT_ALTAR_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ARMOR_FORGE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.COMPRESSOR_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(
-                        me.matl114.logitech.SlimefunItem.AddSlimefunItems.ENHANCED_CRAFT_MANUAL,
-                        MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.FURNACE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.GOLD_PAN_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.GRIND_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(
-                        me.matl114.logitech.SlimefunItem.AddSlimefunItems.MAGIC_WORKBENCH_MANUAL,
-                        MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ORE_CRUSHER_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ORE_WASHER_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.PRESSURE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.SMELTERY_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.TABLESAW_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                if (JustEnoughGuide.getIntegrationManager().isEnabledInfinityExpansion()) {
-                    try {
-                        rrc(me.matl114.logitech.SlimefunItem.AddDepends.MOBDATA_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                    } catch (Throwable ignored2) {
-                    }
-                    try {
-                        rrc(me.matl114.logitech.SlimefunItem.AddDepends.INFINITY_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
-                    } catch (Throwable ignored2) {
-                    }
-                }
-                if (JustEnoughGuide.getIntegrationManager().isEnabledNetworks()) {
-                    try {
-                        rrc(
-                                me.matl114.logitech.SlimefunItem.AddDepends.NTWWORKBENCH_MANUAL,
-                                MANUAL_CRAFTER_INPUT_SLOTS);
-                    } catch (Throwable ignored2) {
-                    }
-                }
-            } catch (ClassNotFoundException ignored2) {
-            }
+            
         }
 
         rrc("LOGITECH_BUG_CRAFTER", BUG_CRAFTER_INPUT_SLOTS, false);
