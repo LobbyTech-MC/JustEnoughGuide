@@ -247,7 +247,7 @@
             <artifactId>NetworksExpansion</artifactId>
             <version>Special-Version-40</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/original-NetworksExpansion vS40.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion vS40.jar</systemPath>
         </dependency>
 
         <!-- Recipe Completable compatible -->
@@ -256,7 +256,7 @@
             <artifactId>SlimeAE</artifactId>
             <version>Build-72</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/SlimeAE-Build 72.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\SlimeAE-Build 72.jar</systemPath>
         </dependency>
 
         <!-- Custom Icon Color API -->
@@ -279,7 +279,7 @@
             <artifactId>EMCTech</artifactId>
             <version>Build-8</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/EMCTech-Build 8.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\EMCTech-Build 8.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -287,7 +287,7 @@
             <artifactId>FinalTECH1</artifactId>
             <version>Build-29</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/FinalTECH-Build 29.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\FinalTECH-Build 29.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -295,7 +295,7 @@
             <artifactId>FinalTECH2</artifactId>
             <version>Build-75</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/FinalTECH-Build 75.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\FinalTECH-Build 75.jar</systemPath>
         </dependency>
 
         <!-- AnvilGUI 1.16- Paper 1.21.2 / Spigot 1.21.3 -->
