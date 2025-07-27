@@ -161,17 +161,12 @@ public class NetworksRecipeCompleteSlimefunSource implements SlimefunSource {
             return false;
         }
 
-        // choices.size() must be 9
         List<RecipeChoice> choices = getRecipe(clickedItem);
         if (choices == null) {
             return false;
         }
 
-        for (int i = 0; i < 9; i++) {
-            if (i >= choices.size()) {
-                break;
-            }
-
+        for (int i = 0; i < choices.size(); i++) {
             if (i >= ingredientSlots.length) {
                 break;
             }
@@ -225,7 +220,9 @@ public class NetworksRecipeCompleteSlimefunSource implements SlimefunSource {
         return true;
     }
 
-    @Nullable private ItemStack getItemStack(@NotNull NetworkRoot root, @NotNull Player player, @NotNull ItemStack itemStack) {
+    @SuppressWarnings("removal")
+    @Nullable
+    private ItemStack getItemStack(@NotNull NetworkRoot root, @NotNull Player player, @NotNull ItemStack itemStack) {
         ItemStack i1 = getItemStackFromPlayerInventory(player, itemStack);
         if (i1 != null) {
             return i1;

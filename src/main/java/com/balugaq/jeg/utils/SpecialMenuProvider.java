@@ -58,6 +58,11 @@ import lombok.experimental.UtilityClass;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
 /**
  * @author balugaq
  * @see SpecialMenuFixListener
@@ -418,7 +423,8 @@ public class SpecialMenuProvider {
                 || isObsidianForgeItem(slimefunItem);
     }
 
-    @Nullable public static FlexItemGroup getFinalTECHRecipeItemGroup(
+    @Nullable
+    public static FlexItemGroup getFinalTECHRecipeItemGroup(
             @NotNull Player player,
             @NotNull PlayerProfile playerProfile,
             @NotNull SlimefunGuideMode slimefunGuideMode,

@@ -199,7 +199,9 @@ public class NetworksRecipeCompleteVanillaSource implements VanillaSource {
         return true;
     }
 
-    @Nullable private ItemStack getItemStack(@NotNull NetworkRoot root, @NotNull Player player, @NotNull ItemStack itemStack) {
+    @SuppressWarnings("removal")
+    @Nullable
+    private ItemStack getItemStack(@NotNull NetworkRoot root, @NotNull Player player, @NotNull ItemStack itemStack) {
         ItemStack i1 = getItemStackFromPlayerInventory(player, itemStack);
         if (i1 != null) {
             return i1;
