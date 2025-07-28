@@ -29,7 +29,6 @@ package com.balugaq.jeg.implementation.option;
 
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.JEGVersionedItemFlag;
 import com.balugaq.jeg.utils.compatibility.Converter;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
@@ -47,15 +46,15 @@ import java.util.Optional;
  * @since 1.9
  */
 @SuppressWarnings({"UnnecessaryUnicodeEscape", "SameReturnValue"})
-public class ShareInGuideOption implements SlimefunGuideOption<Boolean> {
-    public static final @NotNull ShareInGuideOption instance = new ShareInGuideOption();
+public class NoticeMissingMaterialGuideOption implements SlimefunGuideOption<Boolean> {
+    public static final @NotNull NoticeMissingMaterialGuideOption instance = new NoticeMissingMaterialGuideOption();
 
-    public static @NotNull ShareInGuideOption instance() {
+    public static @NotNull NoticeMissingMaterialGuideOption instance() {
         return instance;
     }
 
     public static @NotNull NamespacedKey key0() {
-        return new NamespacedKey(JustEnoughGuide.getInstance(), "share_in");
+        return new NamespacedKey(JustEnoughGuide.getInstance(), "notice_missing_material");
     }
 
     public static boolean isEnabled(@NotNull Player p) {
@@ -78,22 +77,25 @@ public class ShareInGuideOption implements SlimefunGuideOption<Boolean> {
 
     @Override
     public @NotNull Optional<ItemStack> getDisplayItem(@NotNull Player p, ItemStack guide) {
-        boolean enabled = getSelectedOption(p, guide).orElse(true);
+        boolean enabled = getSelectedOption(p, guide).orElse(false);
         ItemStack item = Converter.getItem(
-                Converter.getItem(Material.WRITTEN_BOOK, meta -> meta.addItemFlags(JEGVersionedItemFlag.HIDE_ADDITIONAL_TOOLTIP)),
-                "&b接收分享的物品: &" + (enabled ? "a启用" : "4禁用"),
+                isEnabled(p) ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK,
+                "&b告知缺失的材料: &" + (enabled ? "a启用" : "4禁用"),
                 "",
                 "&7你现在可以选择",
-                "&7当他人分享一个物品时",
-                "&7是否接收那个玩家发送的推送消息",
+                "&7当你使用配方补全时",
+                "&7如果材料不足",
+                "&7是否告知缺失的材料",
+                "&e&l此功能为实验性功能，谨慎使用",
+                "&c&l此功能容易误报",
                 "",
-                "&7\u21E8 &e点击 " + (enabled ? "禁用" : "启用") + " 接收分享的物品");
+                "&7\u21E8 &e点击 " + (enabled ? "禁用" : "启用") + " 告知缺失的材料");
         return Optional.of(item);
     }
 
     @Override
     public void onClick(@NotNull Player p, @NotNull ItemStack guide) {
-        setSelectedOption(p, guide, !getSelectedOption(p, guide).orElse(true));
+        setSelectedOption(p, guide, !getSelectedOption(p, guide).orElse(false));
         JEGGuideSettings.openSettings(p, guide);
     }
 

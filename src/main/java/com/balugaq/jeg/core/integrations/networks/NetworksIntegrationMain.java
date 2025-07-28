@@ -35,8 +35,10 @@ import io.github.sefiraat.networks.NetworkStorage;
 import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +49,7 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
+@SuppressWarnings("DataFlowIssue")
 public class NetworksIntegrationMain implements Integration {
     public static final int[] ENCODER_RECIPE_SLOTS = new int[]{12, 13, 14, 21, 22, 23, 30, 31, 32};
     public static final int[] CRAFTING_GRID_RECIPE_SLOTS = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
@@ -55,6 +58,19 @@ public class NetworksIntegrationMain implements Integration {
     public static final BlockFace[] VALID_FACES = new BlockFace[]{
             BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
     };
+    public static JavaPlugin plugin = null;
+
+    public static @NotNull JavaPlugin getPlugin() {
+        if (plugin == null) {
+            plugin = (JavaPlugin) Bukkit.getPluginManager().getPlugin("Networks");
+        }
+
+        if (plugin == null) {
+            plugin = (JavaPlugin) Bukkit.getPluginManager().getPlugin("Networks-Changed");
+        }
+
+        return plugin;
+    }
 
     public static void rrc(@NotNull String id, int @NotNull [] slots, boolean unordered) {
         SlimefunItem slimefunItem = SlimefunItem.getById(id);
