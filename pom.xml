@@ -308,7 +308,7 @@
             <artifactId>SlimeHUD</artifactId>
             <version>Build-16</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/SlimeHUD-Build 16.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib/SlimeHUD-Build 16.jar</systemPath>
         </dependency>
 
         <!-- AnvilGUI 1.16+ -->
