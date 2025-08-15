@@ -124,6 +124,7 @@ public class IntegrationManager extends AbstractManager {
     private boolean enabledSlimeAEPlugin;
     private boolean enabledSlimeFrame;
     private boolean enabledSlimeHUD;
+    private boolean enabledSlimeHUDPlus;
     private boolean enabledSlimeTinker;
     private boolean enabledTsingshanTechnology;
     private boolean enabledTsingshanTechnology_Fixed;
@@ -131,9 +132,8 @@ public class IntegrationManager extends AbstractManager {
 
     public IntegrationManager(@NotNull JavaPlugin plugin) {
         this.plugin = plugin;
-        Bukkit.getScheduler()
-                .runTaskLater(
-                        plugin,
+        JustEnoughGuide
+                .runLater(
                         () -> {
                             PluginManager pm = Bukkit.getPluginManager();
                             try {
@@ -175,7 +175,8 @@ public class IntegrationManager extends AbstractManager {
                             this.enabledRykenSlimefunCustomizer = pm.isPluginEnabled("RykenSlimefunCustomizer");
                             this.enabledSimpleUtils = pm.isPluginEnabled("SimpleUtils");
                             this.enabledSlimeAEPlugin = pm.isPluginEnabled("SlimeAEPlugin");
-                            this.enabledSlimeHUD = pm.isPluginEnabled("SlimeHUD");
+                            this.enabledSlimeHUDPlus = pm.isPluginEnabled("SlimeHUDPlus");
+                            this.enabledSlimeHUD = enabledSlimeHUD || pm.isPluginEnabled("SlimeHUD");
                             this.enabledSlimeFrame = pm.isPluginEnabled("SlimeFrame");
                             this.enabledSlimeTinker = pm.isPluginEnabled("SlimeTinker");
                             this.enabledTsingshanTechnology_Fixed = pm.isPluginEnabled("TsingshanTechnology-Fixed");
@@ -231,11 +232,11 @@ public class IntegrationManager extends AbstractManager {
     }
 
     public static void scheduleRun(@NotNull Runnable runnable) {
-        Bukkit.getScheduler().runTaskLater(JustEnoughGuide.getInstance(), runnable, 2L);
+        JustEnoughGuide.runLater(runnable, 2L);
     }
 
     public static void scheduleRunAsync(@NotNull Runnable runnable) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(JustEnoughGuide.getInstance(), runnable, 2L);
+        JustEnoughGuide.runLaterAsync(runnable, 2L);
     }
 
     @Deprecated
