@@ -81,13 +81,13 @@ public class HUDMachineInfoLocationGuideOption implements SlimefunGuideOption<HU
         boolean actionbar = current == HUDLocation.ACTION_BAR;
         ItemStack item = Converter.getItem(
                 bossbar ? Material.GLOW_ITEM_FRAME : actionbar ? Material.ITEM_FRAME : Material.ACACIA_BOAT,
-                "&bHUD显示机器信息位置: &" + (bossbar ? "aBoss栏" : actionbar ? "b动作栏" : "e默认设置"),
+                "&b机器信息显示位置: &" + (bossbar ? "a顶部" : actionbar ? "b底部" : "e默认设置"),
                 "",
                 "&7你现在可以自主选择是否",
-                "&7在使用SlimeHUD显示机器信息时",
-                "&7将机器信息显示在Boss栏或动作栏",
+                "&7在使用机器信息显示位置",
+                "&7显示在顶部还是底部",
                 "",
-                "&7\u21E8 &e点击切换为使用 " + (bossbar ? "动作栏" : actionbar ? "默认设置" : "Boss栏") + " 显示机器信息");
+                "&7\u21E8 &e点击切换为在游戏界面 " + (bossbar ? "顶部" : actionbar ? "默认设置" : "底部") + " 显示机器信息");
         return Optional.of(item);
     }
 
