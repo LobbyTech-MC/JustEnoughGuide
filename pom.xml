@@ -298,7 +298,7 @@
         <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMILib</artifactId>
-            <version>1.4.7.4</version>
+            <version>1.5.6.3</version>
             <scope>provided</scope>
         </dependency>
 
