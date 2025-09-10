@@ -25,21 +25,40 @@
  *
  */
 
-package com.balugaq.jeg.core.integrations.slimehud;
+package com.balugaq.jeg.core.listeners;
 
+import city.norain.slimefun4.holder.SlimefunInventoryHolder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * @author balugaq
- * @since 1.9
- */
-public class PlayerWAILAUpdateListener implements Listener {
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
-        JEGPlayerWAILA.wrap(event.getPlayer());
+public class BundleListener implements Listener {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onBundleClick(@NotNull InventoryClickEvent event) {
+        if (!(event.getInventory().getHolder() instanceof SlimefunInventoryHolder)) {
+            return;
+        }
+
+        if (event.getWhoClicked().isOp()) {
+            return;
+        }
+
+        if (!isBundle(event.getCursor()) && !isBundle(event.getCurrentItem())) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    public static boolean isBundle(@Nullable ItemStack item) {
+        if (item == null) {
+            return false;
+        }
+
+        return item.getType().name().endsWith("BUNDLE");
     }
 }
