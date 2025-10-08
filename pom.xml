@@ -289,7 +289,7 @@
             <artifactId>LogiTech1</artifactId>
             <version>1.0.3</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/original-LogiTech v1.0.3.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</systemPath>
         </dependency>
 
         <!-- Special Menu Provider me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenu -->
