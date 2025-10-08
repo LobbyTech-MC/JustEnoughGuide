@@ -27,39 +27,37 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import city.norain.slimefun4.holder.SlimefunInventoryHolder;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.event.inventory.InventoryDragEvent;
 
-public class BundleListener implements Listener {
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isBundle(@Nullable ItemStack item) {
-        if (item == null) {
-            return false;
+public class MenuListener implements Listener {
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onMenuClick(InventoryClickEvent event) {
+        if (event.getClick() == ClickType.DOUBLE_CLICK || event.getClick() == ClickType.SHIFT_LEFT || event.getClick() == ClickType.SHIFT_RIGHT) {
+            if (event.getRawSlot() >= event.getInventory().getSize()) {
+                if (event.getInventory().getHolder() instanceof ChestMenu menu) {
+                    if (!(menu instanceof BlockMenu)) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
         }
-
-        return item.getType().name().endsWith("BUNDLE");
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onBundleClick(@NotNull InventoryClickEvent event) {
-        if (!(event.getInventory().getHolder() instanceof SlimefunInventoryHolder)) {
-            return;
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onMenuDrag(InventoryDragEvent event) {
+        if (event.getRawSlots().stream().mapToInt(i -> i).max().orElse(0) < event.getInventory().getSize()) {
+            if (event.getInventory().getHolder() instanceof ChestMenu menu) {
+                if (!(menu instanceof BlockMenu)) {
+                    event.setCancelled(true);
+                }
+            }
         }
-
-        if (event.getWhoClicked().isOp()) {
-            return;
-        }
-
-        if (!isBundle(event.getCursor()) && !isBundle(event.getCurrentItem())) {
-            return;
-        }
-
-        event.setCancelled(true);
     }
 }

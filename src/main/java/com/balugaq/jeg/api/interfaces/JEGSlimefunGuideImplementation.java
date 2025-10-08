@@ -30,11 +30,12 @@ package com.balugaq.jeg.api.interfaces;
 import city.norain.slimefun4.VaultIntegration;
 import com.balugaq.jeg.api.groups.BookmarkGroup;
 import com.balugaq.jeg.api.groups.ItemMarkGroup;
+import com.balugaq.jeg.api.objects.collection.data.Bookmark;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.ItemStackUtil;
 import com.balugaq.jeg.utils.LocalHelper;
+import com.balugaq.jeg.utils.clickhandler.OnClick;
 import com.balugaq.jeg.utils.compatibility.Converter;
-import com.balugaq.jeg.utils.compatibility.Sounds;
 import com.balugaq.jeg.utils.formatter.Format;
 import com.balugaq.jeg.utils.formatter.Formats;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -70,6 +71,7 @@ import java.util.List;
 public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementation {
     NamespacedKey UNLOCK_ITEM_KEY = new NamespacedKey(JustEnoughGuide.getInstance(), "unlock_item");
 
+    @Deprecated(forRemoval = true)
     @ParametersAreNonnullByDefault
     static @NotNull ItemStack getDisplayItem(Player p, boolean isSlimefunRecipe, ItemStack item) {
         if (isSlimefunRecipe) {
@@ -153,8 +155,7 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
     default ChestMenu create0(@NotNull Player p) {
         ChestMenu menu = new ChestMenu(JustEnoughGuide.getConfigManager().getSurvivalGuideTitle());
 
-        menu.setEmptySlotsClickable(false);
-        menu.addMenuOpeningHandler(pl -> Sounds.playFor(pl, Sounds.GUIDE_BUTTON_CLICK_SOUND));
+        OnClick.preset(menu);
         return menu;
     }
 
@@ -166,7 +167,7 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
      */
     @ParametersAreNonnullByDefault
     default void openBookMarkGroup(Player player, PlayerProfile profile) {
-        List<SlimefunItem> items = JustEnoughGuide.getBookmarkManager().getBookmarkedItems(player);
+        List<Bookmark> items = JustEnoughGuide.getBookmarkManager().getBookmarkedItems(player);
         if (items == null || items.isEmpty()) {
             player.sendMessage(ChatColor.RED + "你还没有收藏任何物品!");
             return;

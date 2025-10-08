@@ -34,7 +34,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.balugaq.jeg</groupId>
     <artifactId>JustEnoughGuide</artifactId>
-    <version>Insider-150</version>
+    <version>Insider-156</version>
 
     <pluginRepositories>
         <pluginRepository>
@@ -196,6 +196,10 @@
             <id>tcoded-releases</id>
             <url>https://repo.tcoded.com/releases</url>
         </repository>
+        <repository>
+            <id>jeffMediaPublic</id>
+            <url>https://repo.jeff-media.com/public</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -249,6 +253,12 @@
             <version>24.1.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Pinyin Library -->
         <dependency>
             <groupId>com.github.houbb</groupId>
@@ -265,6 +275,22 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Useful PDC Types -->
+        <dependency>
+            <groupId>com.jeff-media</groupId>
+            <artifactId>MorePersistentDataTypes</artifactId>
+            <version>2.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Special Menu Provider me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenu -->
+        <dependency>
+            <groupId>me.matl114</groupId>
+            <artifactId>LogiTech1</artifactId>
+            <version>1.0.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/original-LogiTech v1.0.3.jar</systemPath>
+        </dependency>
 
         <!-- Special Menu Provider me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenu -->
         <dependency>

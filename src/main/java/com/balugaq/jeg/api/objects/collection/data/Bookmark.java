@@ -25,20 +25,36 @@
  *
  */
 
-package com.balugaq.jeg.utils.clickhandler;
+package com.balugaq.jeg.api.objects.collection.data;
 
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import org.jetbrains.annotations.Range;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * @author balugaq
- * @since 1.7
+ * @since 2.0
  */
-@SuppressWarnings({"deprecation", "unused"})
-public interface Applier {
-    @ParametersAreNonnullByDefault
-    void apply(SlimefunGuideImplementation guide, ChestMenu menu, @Range(from = 0, to = 53) int slot);
+@NullMarked
+public interface Bookmark {
+    static Item of(SlimefunItem slimefunItem) {
+        return new Item(slimefunItem);
+    }
+
+    static ItemGroup of(io.github.thebusybiscuit.slimefun4.api.items.ItemGroup itemGroup) {
+        return new ItemGroup(itemGroup);
+    }
+
+    @RequiredArgsConstructor
+    @Data
+    class Item implements Bookmark {
+        final SlimefunItem slimefunItem;
+    }
+
+    @RequiredArgsConstructor
+    @Data
+    class ItemGroup implements Bookmark {
+        final io.github.thebusybiscuit.slimefun4.api.items.ItemGroup itemGroup;
+    }
 }

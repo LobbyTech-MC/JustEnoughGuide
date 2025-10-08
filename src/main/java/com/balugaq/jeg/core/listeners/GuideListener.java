@@ -49,7 +49,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -80,7 +80,7 @@ public class GuideListener implements Listener {
     @PatchCode("io.github.thebusybiscuit.slimefun4.implementation.listeners.SlimefunGuideListener.tryOpenGuide(Player, PlayerRightClickEvent, SlimefunGuideMode)")
     @NotNull
     @ParametersAreNonnullByDefault
-    @ApiStatus.Internal
+    @Internal
     public static Event.Result tryOpenGuide(Player p, PlayerRightClickEvent e, SlimefunGuideMode layout) {
         ItemStack item = e.getItem();
         if (SlimefunUtils.isItemSimilar(item, SlimefunGuide.getItem(layout), false, false)) {
@@ -95,34 +95,32 @@ public class GuideListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onGuideOpen(@NotNull SlimefunGuideOpenEvent e) {
-        if (!e.isCancelled()) {
-            e.setCancelled(true);
+        e.setCancelled(true);
 
-            Player p = e.getPlayer();
-            SlimefunGuideMode mode = e.getGuideLayout();
+        Player p = e.getPlayer();
+        SlimefunGuideMode mode = e.getGuideLayout();
+        try {
+            openGuide(p, mode);
+        } catch (Exception ex) {
             try {
-                openGuide(p, mode);
-            } catch (Throwable ex) {
+                openGuideAsync(p, mode);
+            } catch (Exception ex2) {
                 try {
-                    openGuideAsync(p, mode);
-                } catch (Throwable ex2) {
-                    try {
-                        openGuideSync(p, mode);
-                    } catch (Throwable ex3) {
-                        Debug.traceExactly(ex, "opening guide", OPEN_GUIDE_DEFAULT_FATAL_ERROR_CODE);
-                        Debug.traceExactly(ex2, "opening guide asynchronously", OPEN_GUIDE_ASYNC_FATAL_ERROR_CODE);
-                        Debug.traceExactly(ex3, "opening guide synchronously", OPEN_GUIDE_SYNC_FATAL_ERROR_CODE);
-                        PlayerProfile.find(e.getPlayer())
-                                .ifPresent(profile -> GuideUtil.removeLastEntry(profile.getGuideHistory()));
-                    }
+                    openGuideSync(p, mode);
+                } catch (Exception ex3) {
+                    Debug.traceExactly(ex, "opening guide", OPEN_GUIDE_DEFAULT_FATAL_ERROR_CODE);
+                    Debug.traceExactly(ex2, "opening guide asynchronously", OPEN_GUIDE_ASYNC_FATAL_ERROR_CODE);
+                    Debug.traceExactly(ex3, "opening guide synchronously", OPEN_GUIDE_SYNC_FATAL_ERROR_CODE);
+                    PlayerProfile.find(e.getPlayer())
+                            .ifPresent(profile -> GuideUtil.removeLastEntry(profile.getGuideHistory()));
                 }
             }
         }
     }
 
-    @ApiStatus.Internal
+    @Internal
     public void openGuide(@NotNull Player player, @NotNull SlimefunGuideMode mode) {
         Optional<PlayerProfile> optional = PlayerProfile.find(player);
 
@@ -141,7 +139,7 @@ public class GuideListener implements Listener {
         }
     }
 
-    @ApiStatus.Internal
+    @Internal
     public void openGuideAsync(@NotNull Player player, @NotNull SlimefunGuideMode mode) {
         JustEnoughGuide.runLaterAsync(() -> {
             Optional<PlayerProfile> optional = PlayerProfile.find(player);
@@ -162,7 +160,7 @@ public class GuideListener implements Listener {
         }, 1L);
     }
 
-    @ApiStatus.Internal
+    @Internal
     public void openGuideSync(@NotNull Player player, @NotNull SlimefunGuideMode mode) {
         JustEnoughGuide.runLater(() -> {
             Optional<PlayerProfile> optional = PlayerProfile.find(player);
