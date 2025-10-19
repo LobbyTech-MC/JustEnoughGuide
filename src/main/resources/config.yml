@@ -17,6 +17,7 @@ improvements:
   finaltech-emc-display-option: true
   finalTECH-emc-display-option: true
   item-shareable: true
+  cer-patch: true
 
 # 是否禁止在粘液容器中交互收纳袋
 disable-bundle-interaction: true
@@ -65,6 +66,8 @@ shared-chars:
   - "暮慕睦墓"
   - "舟州洲粥"
   - "蜂蜜"
+  - "竿杆"
+  - "鱼渔"
 
 # 是否注册配方补全书
 recipe-complete: true
@@ -540,6 +543,9 @@ local-translate:
   浮木科技: "浮木科技"
   Supermarket: "超能力机器"
   HseerTech: "HseerMC科技"
+  ZeroSequenceTechnique: "零序技艺"
+  OriginTech: "起源工艺"
+  SimpleTech: "简单科技"
 
 # Do not change this value unless you know what you are doing.
 config-version: 2.0
