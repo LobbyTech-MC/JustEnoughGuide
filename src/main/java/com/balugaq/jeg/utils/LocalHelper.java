@@ -36,8 +36,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,6 +49,7 @@ import java.util.Set;
  * @since 1.2
  */
 @SuppressWarnings({"deprecation", "ExtractMethodRecommender", "unused", "ConstantValue"})
+@NullMarked
 public class LocalHelper {
     public static final String def = "未知附属";
     public static final Map<String, Map<String, SlimefunItemStack>> rscItems = new HashMap<>();
@@ -185,13 +186,16 @@ public class LocalHelper {
         addonLocals.put("SlimefunNukes", "粘液核弹");
         addonLocals.put(
                 "SlimeCustomizer",
-                "自定义粘液附属"); // Avoid conflict with RaySlimefunAddon, RykenSlimefunCustomizer, RykenSlimeCustomizer
+                "自定义粘液附属"
+        ); // Avoid conflict with RaySlimefunAddon, RykenSlimefunCustomizer, RykenSlimeCustomizer
         addonLocals.put(
                 "RykenSlimeCustomizer",
-                "Ryken自定义附属"); // Same as RykenSlimefunCustomizer, avoid conflict with RaySlimefunAddon
+                "Ryken自定义附属"
+        ); // Same as RykenSlimefunCustomizer, avoid conflict with RaySlimefunAddon
         addonLocals.put(
                 "RykenSlimefunCustomizer",
-                "Ryken自定义附属"); // Same as RykenSlimeCustomizer, avoid conflict with RaySlimefunAddon
+                "Ryken自定义附属"
+        ); // Same as RykenSlimeCustomizer, avoid conflict with RaySlimefunAddon
         addonLocals.put("FinalTECH-Changed", "乱序技艺-改版");
         addonLocals.put("BloodAlchemy", "血炼金工艺"); // Same as BloodyAlchemy
         addonLocals.put("Laboratory", "实验室");
@@ -218,7 +222,8 @@ public class LocalHelper {
         addonLocals.put("SlimeHUDPlus", "方块信息显示"); // Same as SlimeHUD
         addonLocals.put(
                 "RaySlimefunAddon",
-                "高级自定义粘液附属"); // Avoid conflict with SlimeCustomizer, RykenSlimefunCustomizer, RykenSlimeCustomizer
+                "高级自定义粘液附属"
+        ); // Avoid conflict with SlimeCustomizer, RykenSlimefunCustomizer, RykenSlimeCustomizer
         addonLocals.put("SCrafter", "SC科技"); // Same as SlimefunZT
         addonLocals.put("CrispyMachines", "酥脆机器");
         addonLocals.put("DimensionTraveler", "维度旅者");
@@ -382,76 +387,25 @@ public class LocalHelper {
         addonLocals.put("ZeroSequenceTechnique", "零序技艺");
         addonLocals.put("OriginTech", "起源工艺");
         addonLocals.put("SimpleTech", "简单科技");
+        addonLocals.put("Komutech", "口木科技");
+        addonLocals.put("SlimefunInfiniteBlocks", "粘液无尽方块");
     }
 
-    @NotNull
-    public static String getOfficialAddonName(@NotNull ItemGroup itemGroup, @NotNull String itemId) {
+    public static String getOfficialAddonName(ItemGroup itemGroup, String itemId) {
         return getOfficialAddonName(itemGroup.getAddon(), itemId, def);
     }
 
-    @NotNull
     public static String getOfficialAddonName(
-            @NotNull ItemGroup itemGroup, @NotNull String itemId, @NotNull String callback) {
-        return itemGroup.getAddon() == null ? def : getOfficialAddonName(itemGroup.getAddon(), itemId, callback);
-    }
-
-    @NotNull
-    public static String getOfficialAddonName(@Nullable SlimefunAddon addon, @NotNull String itemId) {
-        return getOfficialAddonName(addon, itemId, def);
-    }
-
-    @NotNull
-    public static String getOfficialAddonName(
-            @Nullable SlimefunAddon addon, @NotNull String itemId, @NotNull String callback) {
+            @Nullable SlimefunAddon addon, String itemId, String callback) {
         return getOfficialAddonName(addon == null ? "Slimefun" : addon.getName(), itemId, callback);
     }
 
-    @NotNull
-    public static String getOfficialAddonName(@NotNull String addonName, @NotNull String itemId) {
-        return getOfficialAddonName(addonName, itemId, def);
-    }
-
-    @NotNull
     public static String getOfficialAddonName(
-            @NotNull String addonName, @NotNull String itemId, @NotNull String callback) {
+            String addonName, String itemId, String callback) {
         return getAddonName(addonName, itemId, callback) + " (" + addonName + ")";
     }
 
-    @NotNull
-    public static String getAddonName(@NotNull ItemGroup itemGroup, @NotNull String itemId) {
-        return getAddonName(itemGroup, itemId, def);
-    }
-
-    @NotNull
-    public static String getAddonName(@Nullable SlimefunAddon addon) {
-        if (addon == null) return def;
-        return addonLocals.getOrDefault(addon.getName(), def);
-    }
-
-    @NotNull
-    public static String getAddonName(@NotNull ItemGroup itemGroup, @NotNull String itemId, @NotNull String callback) {
-        return itemGroup.getAddon() == null
-                ? def
-                : getAddonName(itemGroup.getAddon().getName(), itemId, callback);
-    }
-
-    @NotNull
-    public static String getAddonName(@Nullable SlimefunAddon addon, @NotNull String itemId) {
-        return getAddonName(addon, itemId, def);
-    }
-
-    @NotNull
-    public static String getAddonName(@Nullable SlimefunAddon addon, @NotNull String itemId, @NotNull String callback) {
-        return getAddonName(addon == null ? addonLocals.get("Slimefun") : addon.getName(), itemId, callback);
-    }
-
-    @NotNull
-    public static String getAddonName(@NotNull String addonName, @NotNull String itemId) {
-        return getAddonName(addonName, itemId, def);
-    }
-
-    @NotNull
-    public static String getAddonName(@NotNull String addonName, @NotNull String itemId, @NotNull String callback) {
+    public static String getAddonName(String addonName, String itemId, String callback) {
         if (addonName == null) {
             return callback;
         }
@@ -462,14 +416,6 @@ public class LocalHelper {
         }
         String localName = addonLocals.get(addonName);
         return ChatColors.color(localName == null ? callback : localName);
-    }
-
-    public static void addRSCLocal(String rscAddonName, String itemId) {
-        if (!rscLocals.containsKey(rscAddonName)) {
-            rscLocals.put(rscAddonName, new HashSet<>());
-        }
-
-        rscLocals.get(rscAddonName).add(itemId);
     }
 
     // get a rsc addon name by item id
@@ -510,6 +456,9 @@ public class LocalHelper {
                             Object addon = entry.getValue();
                             Object addonName = ReflectionUtil.getValue(addon, "addonName");
                             String name = (String) addonName;
+                            if (name == null) {
+                                continue;
+                            }
                             Object preloadItems = ReflectionUtil.getValue(addon, "preloadItems");
                             @SuppressWarnings("unchecked")
                             Map<Object, Object> items = (Map<Object, Object>) preloadItems;
@@ -540,8 +489,55 @@ public class LocalHelper {
         return def;
     }
 
-    @NotNull
-    public static String getDisplayName(@NotNull ItemGroup itemGroup, @NotNull Player player) {
+    public static String getOfficialAddonName(
+            ItemGroup itemGroup, String itemId, String callback) {
+        return itemGroup.getAddon() == null ? def : getOfficialAddonName(itemGroup.getAddon(), itemId, callback);
+    }
+
+    public static String getOfficialAddonName(@Nullable SlimefunAddon addon, String itemId) {
+        return getOfficialAddonName(addon, itemId, def);
+    }
+
+    public static String getOfficialAddonName(String addonName, String itemId) {
+        return getOfficialAddonName(addonName, itemId, def);
+    }
+
+    public static String getAddonName(ItemGroup itemGroup, String itemId) {
+        return getAddonName(itemGroup, itemId, def);
+    }
+
+    public static String getAddonName(ItemGroup itemGroup, String itemId, String callback) {
+        return itemGroup.getAddon() == null
+                ? def
+                : getAddonName(itemGroup.getAddon().getName(), itemId, callback);
+    }
+
+    public static String getAddonName(@Nullable SlimefunAddon addon) {
+        if (addon == null) return def;
+        return addonLocals.getOrDefault(addon.getName(), def);
+    }
+
+    public static String getAddonName(@Nullable SlimefunAddon addon, String itemId) {
+        return getAddonName(addon, itemId, def);
+    }
+
+    public static String getAddonName(@Nullable SlimefunAddon addon, String itemId, String callback) {
+        return getAddonName(addon == null ? addonLocals.get("Slimefun") : addon.getName(), itemId, callback);
+    }
+
+    public static String getAddonName(String addonName, String itemId) {
+        return getAddonName(addonName, itemId, def);
+    }
+
+    public static void addRSCLocal(String rscAddonName, String itemId) {
+        if (!rscLocals.containsKey(rscAddonName)) {
+            rscLocals.put(rscAddonName, new HashSet<>());
+        }
+
+        rscLocals.get(rscAddonName).add(itemId);
+    }
+
+    public static String getDisplayName(ItemGroup itemGroup, Player player) {
         ItemMeta meta = itemGroup.getItem(player).getItemMeta();
         if (meta == null) {
             return def;

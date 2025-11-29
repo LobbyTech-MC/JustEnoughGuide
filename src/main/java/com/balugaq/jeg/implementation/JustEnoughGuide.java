@@ -47,6 +47,7 @@ import com.balugaq.jeg.implementation.items.GroupSetup;
 import com.balugaq.jeg.implementation.items.ItemsSetup;
 import com.balugaq.jeg.implementation.option.BeginnersGuideOption;
 import com.balugaq.jeg.implementation.option.CerPatchGuideOption;
+import com.balugaq.jeg.implementation.option.KeybindsSettingsGuideOption;
 import com.balugaq.jeg.implementation.option.NoticeMissingMaterialGuideOption;
 import com.balugaq.jeg.implementation.option.RecursiveRecipeFillingGuideOption;
 import com.balugaq.jeg.implementation.option.ShareInGuideOption;
@@ -71,10 +72,10 @@ import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import lombok.Getter;
 import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,56 +90,67 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * This is the main class of the JustEnoughGuide plugin.
- * It depends on the Slimefun4 plugin and provides a set of features to improve the game experience.
+ * This is the main class of the JustEnoughGuide plugin. It depends on the Slimefun4 plugin and provides a set of
+ * features to improve the game experience.
  *
  * @author balugaq
  * @since 1.0
  */
 @SuppressWarnings({"unused", "Lombok", "deprecation", "ResultOfMethodCallIgnored"})
 @Getter
+@NullMarked
 public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     public static final int RECOMMENDED_JAVA_VERSION = 17;
     public static final MinecraftVersion RECOMMENDED_MC_VERSION = MinecraftVersion.MINECRAFT_1_16;
 
     @Getter
+    @UnknownNullability
     private static JustEnoughGuide instance = null;
 
     @Getter
+    @UnknownNullability
     private static UUID serverUUID = null;
 
     @Getter
-    private final @NotNull String username;
+    private final String username;
 
     @Getter
-    private final @NotNull String repo;
+    private final String repo;
 
     @Getter
-    private final @NotNull String branch;
+    private final String branch;
 
     @Getter
+    @UnknownNullability
     private BookmarkManager bookmarkManager = null;
 
     @Getter
+    @UnknownNullability
     private CommandManager commandManager = null;
 
     @Getter
+    @UnknownNullability
     private ConfigManager configManager = null;
 
     @Getter
+    @UnknownNullability
     private IntegrationManager integrationManager = null;
 
     @Getter
+    @UnknownNullability
     private ListenerManager listenerManager = null;
 
     @Getter
+    @UnknownNullability
     private RTSBackpackManager rtsBackpackManager = null;
 
     @Getter
+    @UnknownNullability
     private MinecraftVersion minecraftVersion = null;
 
     @Getter
-    private TaskScheduler scheduler;
+    @UnknownNullability
+    private TaskScheduler scheduler = null;
 
     @Getter
     private int javaVersion = 0;
@@ -153,67 +165,44 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         return getInstance().bookmarkManager;
     }
 
+    public static JustEnoughGuide getInstance() {
+        return JustEnoughGuide.instance;
+    }
+
     public static CommandManager getCommandManager() {
         return getInstance().commandManager;
-    }
-
-    public static ConfigManager getConfigManager() {
+    }    public static ConfigManager getConfigManager() {
         return getInstance().configManager;
-    }
-
-    public static IntegrationManager getIntegrationManager() {
-        return getInstance().integrationManager;
     }
 
     public static ListenerManager getListenerManager() {
         return getInstance().listenerManager;
-    }
-
-    @Deprecated
-    public static MinecraftVersion getMCVersion() {
-        return getInstance().minecraftVersion;
+    }    public static IntegrationManager getIntegrationManager() {
+        return getInstance().integrationManager;
     }
 
     public static MinecraftVersion getMinecraftVersion() {
         return getInstance().minecraftVersion;
     }
 
+    public static void postServerStartup(Runnable runnable) {
+        JustEnoughGuide.runNextTick(runnable);
+    }
+
+    public static void runNextTick(Runnable runnable) {
+        getScheduler().runNextTick(runnable);
+    }
+
     public static TaskScheduler getScheduler() {
         return getInstance().scheduler;
     }
 
-    public static @NotNull JustEnoughGuide getInstance() {
-        return JustEnoughGuide.instance;
-    }
-
-    /// //////////////////////////////////////////////////////////////////////////////
-    ///                                                                           ///
-    /// JEG Recipe Complete Compatible                                            ///
-    ///                                                                           ///
-    /// Related-addons:                                                           ///
-    /// - NetworksExpansion                                                       ///
-    /// - SlimeAEPlugin                                                           ///
-    /// Author balugaq                                                            ///
-    /// Since 1.7                                                                 ///
-    ///                                                                           ///
-    /// //////////////////////////////////////////////////////////////////////////////
-
-    @Deprecated
-    public static void vanillaItemsGroupDisplayableFor(@NotNull Player player, boolean displayable) {
-        VanillaItemsGroup.displayableFor(player, displayable);
-    }
-
-    @Deprecated
-    public static boolean vanillaItemsGroupIsDisplayableFor(@NotNull Player player) {
-        return VanillaItemsGroup.isDisplayableFor(player);
-    }
-
-    public static void postServerStartup(@NotNull Runnable runnable) {
-        JustEnoughGuide.runNextTick(runnable);
-    }
-
     public static void postServerStartupAsynchronously(Runnable runnable) {
         JustEnoughGuide.runLaterAsync(runnable, 1L);
+    }
+
+    public static void runLaterAsync(Runnable runnable, long delay) {
+        getScheduler().runLaterAsync(runnable, delay);
     }
 
     public static boolean disableAutomaticallyLoadItems() {
@@ -226,27 +215,50 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         Slimefun.getConfigManager().setAutoLoadingMode(value);
     }
 
-    public static void runNextTick(@NotNull Runnable runnable) {
-        getScheduler().runNextTick(runnable);
-    }
-
-    public static void runLater(@NotNull Runnable runnable, long delay) {
+    public static void runLater(Runnable runnable, long delay) {
         getScheduler().runLater(runnable, delay);
     }
 
-    public static void runLaterAsync(@NotNull Runnable runnable, long delay) {
-        getScheduler().runLaterAsync(runnable, delay);
-    }
-
-    public static void runTimer(@NotNull Runnable runnable, long delay, long period) {
+    public static void runTimer(Runnable runnable, long delay, long period) {
         getScheduler().runTimer(runnable, delay, period);
     }
 
-    public static void runTimerAsync(@NotNull Runnable runnable, long delay, long period) {
+    public static void runTimerAsync(Runnable runnable, long delay, long period) {
         getScheduler().runTimerAsync(runnable, delay, period);
     }
 
     /**
+     * Returns the JavaPlugin instance.
+     *
+     * @return the JavaPlugin instance
+     */
+    @Override
+    public JavaPlugin getJavaPlugin() {
+        return this;
+    }
+
+    /**
+     * Returns the bug tracker URL for the plugin.
+     *
+     * @return the bug tracker URL
+     */
+    @Nullable
+    @Override
+    public String getBugTrackerURL() {
+        return MessageFormat.format("https://github.com/{0}/{1}/issues/", this.username, this.repo);
+    }
+
+    /**
+     * Logs a debug message if debugging is enabled.
+     *
+     * @param message
+     *         the debug message to log
+     */
+    public void debug(String message) {
+        if (getConfigManager().isDebug()) {
+            getLogger().warning("[DEBUG] " + message);
+        }
+    }    /**
      * Initializes the plugin and sets up all necessary components.
      */
     @SuppressWarnings("DuplicateExpressions")
@@ -298,10 +310,12 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             Map<SlimefunGuideMode, SlimefunGuideImplementation> newGuides = new EnumMap<>(SlimefunGuideMode.class);
             newGuides.put(
                     SlimefunGuideMode.SURVIVAL_MODE,
-                    survivalOverride ? new SurvivalGuideImplementation() : new SurvivalSlimefunGuide());
+                    survivalOverride ? new SurvivalGuideImplementation() : new SurvivalSlimefunGuide()
+            );
             newGuides.put(
                     SlimefunGuideMode.CHEAT_MODE,
-                    cheatOverride ? new CheatGuideImplementation() : new CheatSheetSlimefunGuide());
+                    cheatOverride ? new CheatGuideImplementation() : new CheatSheetSlimefunGuide()
+            );
 
             try {
                 ReflectionUtil.setValue(Slimefun.getRegistry(), "guides", newGuides);
@@ -325,6 +339,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             if (getConfigManager().isBeginnerOption()) {
                 getLogger().info("正在加载指南选项...");
                 JEGGuideSettings.patchSlimefun();
+                JEGGuideSettings.addOption(KeybindsSettingsGuideOption.instance());
                 JEGGuideSettings.addOption(BeginnersGuideOption.instance());
                 JEGGuideSettings.addOption(CerPatchGuideOption.instance());
                 JEGGuideSettings.addOption(ShareInGuideOption.instance());
@@ -371,7 +386,9 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         getLogger().info("成功启用此附属");
     }
 
-    /**
+    public String getVersion() {
+        return getDescription().getVersion();
+    }    /**
      * Cleans up resources and shuts down the plugin.
      */
     @Override
@@ -456,45 +473,19 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     }
 
     /**
-     * Returns the JavaPlugin instance.
+     * Checks if debugging is enabled.
      *
-     * @return the JavaPlugin instance
+     * @return true if debugging is enabled, false otherwise
      */
-    @Override
-    public @NotNull JavaPlugin getJavaPlugin() {
-        return this;
+    public boolean isDebug() {
+        return getConfigManager().isDebug();
     }
 
-    /**
-     * Returns the bug tracker URL for the plugin.
-     *
-     * @return the bug tracker URL
-     */
-    @Nullable
-    @Override
-    public String getBugTrackerURL() {
-        return MessageFormat.format("https://github.com/{0}/{1}/issues/", this.username, this.repo);
-    }
 
-    /**
-     * Logs a debug message if debugging is enabled.
-     *
-     * @param message the debug message to log
-     */
-    public void debug(String message) {
-        if (getConfigManager().isDebug()) {
-            getLogger().warning("[DEBUG] " + message);
-        }
-    }
 
-    /**
-     * Returns the version of the plugin.
-     *
-     * @return the version of the plugin
-     */
-    public @NotNull String getVersion() {
-        return getDescription().getVersion();
-    }
+
+
+
 
     /**
      * Checks the environment compatibility for the plugin.
@@ -514,7 +505,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         } else if (!minecraftVersion.isAtLeast(RECOMMENDED_MC_VERSION)) {
             getLogger()
                     .warning("当前 Minecraft 版本过低(" + minecraftVersion.humanize() + "), 请使用 Minecraft "
-                            + RECOMMENDED_MC_VERSION.humanize() + " 或以上版本!");
+                                     + RECOMMENDED_MC_VERSION.humanize() + " 或以上版本!");
         }
 
         if (javaVersion < RECOMMENDED_JAVA_VERSION) {
@@ -530,14 +521,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         return true;
     }
 
-    /**
-     * Checks if debugging is enabled.
-     *
-     * @return true if debugging is enabled, false otherwise
-     */
-    public boolean isDebug() {
-        return getConfigManager().isDebug();
-    }
+
 
     /**
      * Attempts to update the plugin if auto-update is enabled.

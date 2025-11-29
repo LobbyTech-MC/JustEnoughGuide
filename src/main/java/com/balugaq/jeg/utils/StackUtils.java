@@ -58,8 +58,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.inventory.meta.SuspiciousStewMeta;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 import org.bukkit.inventory.meta.WritableBookMeta;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Objects;
@@ -72,6 +72,7 @@ import java.util.Optional;
  */
 @SuppressWarnings({"deprecation", "UnstableApiUsage", "unused"})
 @UtilityClass
+@NullMarked
 public class StackUtils {
     public static final boolean IS_1_17_1 =
             JustEnoughGuide.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_17_1);
@@ -84,7 +85,6 @@ public class StackUtils {
     public static final boolean IS_1_21 =
             JustEnoughGuide.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_21);
 
-    @NotNull
     public static ItemStack getAsQuantity(@Nullable ItemStack itemStack, int amount) {
         if (itemStack == null) {
             return new ItemStack(Material.AIR);
@@ -97,8 +97,11 @@ public class StackUtils {
     /**
      * Checks if items match each other, checks go in order from lightest to heaviest
      *
-     * @param itemStack0 The {@link ItemStack} to compare against
-     * @param itemStack  The {@link ItemStack} being evaluated
+     * @param itemStack0
+     *         The {@link ItemStack} to compare against
+     * @param itemStack
+     *         The {@link ItemStack} being evaluated
+     *
      * @return True if items match
      */
     public static boolean itemsMatch(@Nullable ItemStack itemStack0, @Nullable ItemStack itemStack) {
@@ -108,57 +111,19 @@ public class StackUtils {
     /**
      * Checks if items match each other, checks go in order from lightest to heaviest
      *
-     * @param itemStack0 The {@link ItemStack} to compare against
-     * @param itemStack  The {@link ItemStack} being evaluated
-     * @param checkLore  If lore should be checked
-     * @return True if items match
-     */
-    public static boolean itemsMatch(@Nullable ItemStack itemStack0, @Nullable ItemStack itemStack, boolean checkLore) {
-        return itemsMatch(itemStack0, itemStack, checkLore, false, true, true);
-    }
-
-    /**
-     * Checks if items match each other, checks go in order from lightest to heaviest
+     * @param itemStack0
+     *         The {@link ItemStack} to compare against
+     * @param itemStack
+     *         The {@link ItemStack} being evaluated
+     * @param checkLore
+     *         If lore should be checked
+     * @param checkAmount
+     *         If amount should be checked
+     * @param checkCustomModelId
+     *         If custom model id should be checked
+     * @param checkPersistentDataContainer
+     *         If persistent data container should be checked
      *
-     * @param itemStack0  The {@link ItemStack} to compare against
-     * @param itemStack   The {@link ItemStack} being evaluated
-     * @param checkLore   If lore should be checked
-     * @param checkAmount If amount should be checked
-     * @return True if items match
-     */
-    public static boolean itemsMatch(
-            @Nullable ItemStack itemStack0, @Nullable ItemStack itemStack, boolean checkLore, boolean checkAmount) {
-        return itemsMatch(itemStack0, itemStack, checkLore, checkAmount, true, true);
-    }
-
-    /**
-     * Checks if items match each other, checks go in order from lightest to heaviest
-     *
-     * @param itemStack0         The {@link ItemStack} to compare against
-     * @param itemStack          The {@link ItemStack} being evaluated
-     * @param checkLore          If lore should be checked
-     * @param checkAmount        If amount should be checked
-     * @param checkCustomModelId If custom model id should be checked
-     * @return True if items match
-     */
-    public static boolean itemsMatch(
-            @Nullable ItemStack itemStack0,
-            @Nullable ItemStack itemStack,
-            boolean checkLore,
-            boolean checkAmount,
-            boolean checkCustomModelId) {
-        return itemsMatch(itemStack0, itemStack, checkLore, checkAmount, checkCustomModelId, true);
-    }
-
-    /**
-     * Checks if items match each other, checks go in order from lightest to heaviest
-     *
-     * @param itemStack0                   The {@link ItemStack} to compare against
-     * @param itemStack                    The {@link ItemStack} being evaluated
-     * @param checkLore                    If lore should be checked
-     * @param checkAmount                  If amount should be checked
-     * @param checkCustomModelId           If custom model id should be checked
-     * @param checkPersistentDataContainer If persistent data container should be checked
      * @return True if items match
      */
     @SuppressWarnings({"UnstableApiUsage", "OptionalIsPresent"})
@@ -347,7 +312,7 @@ public class StackUtils {
     }
 
     @SuppressWarnings("RedundantIfStatement")
-    public static boolean canQuickEscapeMetaVariant(@NotNull ItemMeta metaOne, @NotNull ItemMeta metaTwo) {
+    public static boolean canQuickEscapeMetaVariant(ItemMeta metaOne, ItemMeta metaTwo) {
         // Damageable (first as everything can be damageable apparently)
         if (metaOne instanceof Damageable instanceOne && metaTwo instanceof Damageable instanceTwo) {
             if (instanceOne.hasDamage() != instanceTwo.hasDamage()) {
@@ -635,7 +600,8 @@ public class StackUtils {
                      * Bad 1.21, pom.xml couldn't use Paper 1.21+, otherwise the builds will boom.
                      *
                      // Shield
-                     if (metaOne instanceof org.bukkit.inventory.meta.ShieldMeta instanceOne && metaTwo instanceof org.bukkit.inventory.meta.ShieldMeta instanceTwo) {
+                     if (metaOne instanceof org.bukkit.inventory.meta.ShieldMeta instanceOne && metaTwo instanceof
+                     * org.bukkit.inventory.meta.ShieldMeta instanceTwo) {
                          return Objects.equals(instanceOne.getBaseColor(), instanceTwo.getBaseColor());
                      }
                      */
@@ -645,5 +611,65 @@ public class StackUtils {
 
         // Cannot escape via any meta extension check
         return false;
+    }
+
+    /**
+     * Checks if items match each other, checks go in order from lightest to heaviest
+     *
+     * @param itemStack0
+     *         The {@link ItemStack} to compare against
+     * @param itemStack
+     *         The {@link ItemStack} being evaluated
+     * @param checkLore
+     *         If lore should be checked
+     *
+     * @return True if items match
+     */
+    public static boolean itemsMatch(@Nullable ItemStack itemStack0, @Nullable ItemStack itemStack, boolean checkLore) {
+        return itemsMatch(itemStack0, itemStack, checkLore, false, true, true);
+    }
+
+    /**
+     * Checks if items match each other, checks go in order from lightest to heaviest
+     *
+     * @param itemStack0
+     *         The {@link ItemStack} to compare against
+     * @param itemStack
+     *         The {@link ItemStack} being evaluated
+     * @param checkLore
+     *         If lore should be checked
+     * @param checkAmount
+     *         If amount should be checked
+     *
+     * @return True if items match
+     */
+    public static boolean itemsMatch(
+            @Nullable ItemStack itemStack0, @Nullable ItemStack itemStack, boolean checkLore, boolean checkAmount) {
+        return itemsMatch(itemStack0, itemStack, checkLore, checkAmount, true, true);
+    }
+
+    /**
+     * Checks if items match each other, checks go in order from lightest to heaviest
+     *
+     * @param itemStack0
+     *         The {@link ItemStack} to compare against
+     * @param itemStack
+     *         The {@link ItemStack} being evaluated
+     * @param checkLore
+     *         If lore should be checked
+     * @param checkAmount
+     *         If amount should be checked
+     * @param checkCustomModelId
+     *         If custom model id should be checked
+     *
+     * @return True if items match
+     */
+    public static boolean itemsMatch(
+            @Nullable ItemStack itemStack0,
+            @Nullable ItemStack itemStack,
+            boolean checkLore,
+            boolean checkAmount,
+            boolean checkCustomModelId) {
+        return itemsMatch(itemStack0, itemStack, checkLore, checkAmount, checkCustomModelId, true);
     }
 }

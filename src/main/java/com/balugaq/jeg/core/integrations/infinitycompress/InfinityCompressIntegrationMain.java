@@ -30,7 +30,7 @@ package com.balugaq.jeg.core.integrations.infinitycompress;
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.core.integrations.Integration;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +39,9 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
+@NullMarked
 public class InfinityCompressIntegrationMain implements Integration {
-    public static final int[] INFINITY_FORGE_INPUT_SLOTS = new int[]{
+    public static final int[] INFINITY_FORGE_INPUT_SLOTS = new int[] {
             0, 1, 2, 3, 4, 5,
             9, 10, 11, 12, 13, 14,
             18, 19, 20, 21, 22, 23,
@@ -48,27 +49,15 @@ public class InfinityCompressIntegrationMain implements Integration {
             36, 37, 38, 39, 40, 41,
             45, 46, 47, 48, 49, 50
     };
-    public static final int[] AUTO_INPUT_SLOTS = new int[]{
+    public static final int[] AUTO_INPUT_SLOTS = new int[] {
             19, 20, 21,
             28, 29, 30,
             37, 38, 39
     };
     public static final List<SlimefunItem> handledSlimefunItems = new ArrayList<>();
 
-    public static void rrc(@NotNull String id, int @NotNull [] slots, boolean unordered) {
-        SlimefunItem slimefunItem = SlimefunItem.getById(id);
-        if (slimefunItem != null) {
-            rrc(slimefunItem, slots, unordered);
-        }
-    }
-
-    public static void rrc(@NotNull SlimefunItem slimefunItem, int @NotNull [] slots, boolean unordered) {
-        handledSlimefunItems.add(slimefunItem);
-        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
-    }
-
     @Override
-    public @NotNull String getHookPlugin() {
+    public String getHookPlugin() {
         return "InfinityCompress";
     }
 
@@ -84,6 +73,18 @@ public class InfinityCompressIntegrationMain implements Integration {
         rrc("INFCP_FN_AUTO_GEM_ALTAR", AUTO_INPUT_SLOTS, false);
         rrc("INFCP_FN_AUTO_MAGIC_ALTAR", AUTO_INPUT_SLOTS, false);
         rrc("INFCP_FN_AUTO_STICK_ALTAR", AUTO_INPUT_SLOTS, false);
+    }
+
+    public static void rrc(String id, int[] slots, boolean unordered) {
+        SlimefunItem slimefunItem = SlimefunItem.getById(id);
+        if (slimefunItem != null) {
+            rrc(slimefunItem, slots, unordered);
+        }
+    }
+
+    public static void rrc(SlimefunItem slimefunItem, int[] slots, boolean unordered) {
+        handledSlimefunItems.add(slimefunItem);
+        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
     }
 
     @Override

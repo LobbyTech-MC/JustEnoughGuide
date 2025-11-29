@@ -36,9 +36,9 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Target block has {@link BlockMenu}
@@ -47,23 +47,24 @@ import org.jetbrains.annotations.Range;
  * @since 1.9
  */
 @SuppressWarnings("unused")
+@NullMarked
 public interface SlimefunSource extends Source {
     @SuppressWarnings("deprecation")
     boolean handleable(
-            @NotNull BlockMenu blockMenu,
-            @NotNull Player player,
-            @NotNull ClickAction clickAction,
-            @Range(from = 0, to = 53) int @NotNull [] ingredientSlots,
+            BlockMenu blockMenu,
+            Player player,
+            ClickAction clickAction,
+            @Range(from = 0, to = 53) int[] ingredientSlots,
             boolean unordered,
             int recipeDepth);
 
     @CanIgnoreReturnValue
     @SuppressWarnings("deprecation")
     default boolean openGuide(
-            @NotNull BlockMenu blockMenu,
-            @NotNull Player player,
-            @NotNull ClickAction clickAction,
-            @Range(from = 0, to = 53) int @NotNull [] ingredientSlots,
+            BlockMenu blockMenu,
+            Player player,
+            ClickAction clickAction,
+            @Range(from = 0, to = 53) int[] ingredientSlots,
             boolean unordered,
             int recipeDepth) {
         return openGuide(blockMenu, player, clickAction, ingredientSlots, unordered, recipeDepth, null);
@@ -71,14 +72,16 @@ public interface SlimefunSource extends Source {
 
     @SuppressWarnings("deprecation")
     default boolean openGuide(
-            @NotNull BlockMenu blockMenu,
-            @NotNull Player player,
-            @NotNull ClickAction clickAction,
-            int @NotNull [] ingredientSlots,
+            BlockMenu blockMenu,
+            Player player,
+            ClickAction clickAction,
+            int[] ingredientSlots,
             boolean unordered,
             int recipeDepth,
             @Nullable Runnable callback) {
-        GuideEvents.ItemButtonClickEvent lastEvent = RecipeCompletableListener.getLastEvent(player.getUniqueId());
+        var p = GuideUtil.updatePlayer(player);
+        if (p == null) return false;
+        GuideEvents.ItemButtonClickEvent lastEvent = RecipeCompletableListener.getLastEvent(p);
         if (clickAction.isRightClicked() && lastEvent != null) {
             int times = 1;
             if (clickAction.isShiftClicked()) {
@@ -111,46 +114,48 @@ public interface SlimefunSource extends Source {
         }
 
         GuideUtil.openMainMenuAsync(player, SlimefunGuideMode.SURVIVAL_MODE, 1);
-        RecipeCompletableListener.addCallback(player.getUniqueId(), ((event, profile) -> {
-            BlockMenu actualMenu = StorageCacheUtils.getMenu(blockMenu.getLocation());
-            if (actualMenu == null) {
-                if (callback != null) {
-                    callback.run();
-                }
-                return;
-            }
+        RecipeCompletableListener.addCallback(
+                player.getUniqueId(), ((event, profile) -> {
+                    BlockMenu actualMenu = StorageCacheUtils.getMenu(blockMenu.getLocation());
+                    if (actualMenu == null) {
+                        if (callback != null) {
+                            callback.run();
+                        }
+                        return;
+                    }
 
-            if (!actualMenu.getPreset().getID().equals(blockMenu.getPreset().getID())) {
-                if (callback != null) {
-                    callback.run();
-                }
-                return;
-            }
+                    if (!actualMenu.getPreset().getID().equals(blockMenu.getPreset().getID())) {
+                        if (callback != null) {
+                            callback.run();
+                        }
+                        return;
+                    }
 
-            int times = 1;
-            if (event.getClickAction().isRightClicked()) {
-                times = 64;
-            }
+                    int times = 1;
+                    if (event.getClickAction().isRightClicked()) {
+                        times = 64;
+                    }
 
-            for (int i = 0; i < times; i++) {
-                completeRecipeWithGuide(actualMenu, event, ingredientSlots, unordered, recipeDepth);
-            }
+                    for (int i = 0; i < times; i++) {
+                        completeRecipeWithGuide(actualMenu, event, ingredientSlots, unordered, recipeDepth);
+                    }
 
-            player.updateInventory();
-            actualMenu.open(player);
-            if (callback != null) {
-                callback.run();
-            }
-        }));
+                    player.updateInventory();
+                    actualMenu.open(player);
+                    if (callback != null) {
+                        callback.run();
+                    }
+                })
+        );
         RecipeCompletableListener.tagGuideOpen(player);
         return true;
     }
 
     @CanIgnoreReturnValue
     boolean completeRecipeWithGuide(
-            @NotNull BlockMenu blockMenu,
-            GuideEvents.@NotNull ItemButtonClickEvent event,
-            @Range(from = 0, to = 53) int @NotNull [] ingredientSlots,
+            BlockMenu blockMenu,
+            GuideEvents.ItemButtonClickEvent event,
+            @Range(from = 0, to = 53) int[] ingredientSlots,
             boolean unordered,
             int recipeDepth);
 }

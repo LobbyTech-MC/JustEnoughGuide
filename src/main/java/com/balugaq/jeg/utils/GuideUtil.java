@@ -28,9 +28,13 @@
 package com.balugaq.jeg.utils;
 
 import com.balugaq.jeg.api.cost.CERCalculator;
+import com.balugaq.jeg.api.groups.ActionSelectGroup;
 import com.balugaq.jeg.api.groups.CERRecipeGroup;
+import com.balugaq.jeg.api.groups.KeybindItemsGroup;
+import com.balugaq.jeg.api.groups.KeybindsItemsGroup;
 import com.balugaq.jeg.api.groups.RTSSearchGroup;
 import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.groups.SubKeybindsItemsGroup;
 import com.balugaq.jeg.api.interfaces.BookmarkRelocation;
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
 import com.balugaq.jeg.api.objects.annotations.CallTimeSensitive;
@@ -40,6 +44,8 @@ import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.api.objects.events.RTSEvents;
 import com.balugaq.jeg.core.listeners.RTSListener;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.clickhandler.BaseAction;
+import com.balugaq.jeg.utils.clickhandler.OnClick;
 import com.balugaq.jeg.utils.compatibility.Converter;
 import com.balugaq.jeg.utils.formatter.Format;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -54,6 +60,7 @@ import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.experimental.UtilityClass;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
@@ -63,14 +70,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This class contains utility methods for the guide system.
@@ -79,25 +86,37 @@ import java.util.List;
  * @author balugaq
  * @since 1.0
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "deprecation"})
 @UtilityClass
+@NullMarked
 public final class GuideUtil {
     private static final List<ItemGroup> forceHiddens = new ArrayList<>();
     private static final ItemStack BOOK_MARK_MENU_BUTTON =
-            ItemStackUtil.getCleanItem(Converter.getItem(new SlimefunItemStack("JEG_BOOK_MARK_BUTTON", Material.NETHER_STAR, "&e&l收藏物列表")));
+            ItemStackUtil.getCleanItem(Converter.getItem(new SlimefunItemStack(
+                    "JEG_BOOK_MARK_BUTTON",
+                    Material.NETHER_STAR, "&e&l收藏物列表"
+            )));
     private static final ItemStack ITEM_MARK_MENU_BUTTON =
-            ItemStackUtil.getCleanItem(Converter.getItem(new SlimefunItemStack("JEG_ITEM_MARK_BUTTON", Material.WRITABLE_BOOK, "&e&l收藏物品")));
+            ItemStackUtil.getCleanItem(Converter.getItem(new SlimefunItemStack(
+                    "JEG_ITEM_MARK_BUTTON",
+                    Material.WRITABLE_BOOK, "&e&l收藏物品"
+            )));
     private static final ItemStack CER_MENU_BUTTON =
-            ItemStackUtil.getCleanItem(Converter.getItem(new SlimefunItemStack("JEG_CER_BUTTON", Material.EMERALD, "&e&l性价比界面（仅供参考）")));
+            ItemStackUtil.getCleanItem(Converter.getItem(new SlimefunItemStack(
+                    "JEG_CER_BUTTON", Material.EMERALD,
+                    "&e&l性价比界面（仅供参考）"
+            )));
 
     /**
      * Open the main menu of the guide for the given player and mode.
      *
-     * @param player       The player to open the guide for.
-     * @param mode         The mode to open the guide for.
-     * @param selectedPage The page to open the guide to.
+     * @param player
+     *         The player to open the guide for.
+     * @param mode
+     *         The mode to open the guide for.
+     * @param selectedPage
+     *         The page to open the guide to.
      */
-    @ParametersAreNonnullByDefault
     public static void openMainMenuAsync(Player player, SlimefunGuideMode mode, int selectedPage) {
         if (!PlayerProfile.get(
                 player, profile -> Slimefun.runSync(() -> openMainMenu(player, profile, mode, selectedPage)))) {
@@ -108,12 +127,15 @@ public final class GuideUtil {
     /**
      * Open the main menu of the guide for the given player and mode.
      *
-     * @param player       The player to open the guide for.
-     * @param profile      The player's profile.
-     * @param mode         The mode to open the guide for.
-     * @param selectedPage The page to open the guide to.
+     * @param player
+     *         The player to open the guide for.
+     * @param profile
+     *         The player's profile.
+     * @param mode
+     *         The mode to open the guide for.
+     * @param selectedPage
+     *         The page to open the guide to.
      */
-    @ParametersAreNonnullByDefault
     public static void openMainMenu(Player player, PlayerProfile profile, SlimefunGuideMode mode, int selectedPage) {
         getGuide(player, mode).openMainMenu(profile, selectedPage);
     }
@@ -121,11 +143,14 @@ public final class GuideUtil {
     /**
      * Get the guide implementation for the given player and mode.
      *
-     * @param player The player to get the guide for.
-     * @param mode   The mode to get the guide for.
+     * @param player
+     *         The player to get the guide for.
+     * @param mode
+     *         The mode to get the guide for.
+     *
      * @return The guide implementation for the given player and mode.
      */
-    public static @NotNull SlimefunGuideImplementation getGuide(@NotNull Player player, SlimefunGuideMode mode) {
+    public static SlimefunGuideImplementation getGuide(Player player, SlimefunGuideMode mode) {
         if (mode == SlimefunGuideMode.SURVIVAL_MODE) {
             return Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE);
         }
@@ -139,7 +164,7 @@ public final class GuideUtil {
         return Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE);
     }
 
-    public static void removeLastEntry(@NotNull GuideHistory guideHistory) {
+    public static void removeLastEntry(GuideHistory guideHistory) {
         try {
             Method getLastEntry = guideHistory.getClass().getDeclaredMethod("getLastEntry", boolean.class);
             getLastEntry.setAccessible(true);
@@ -149,35 +174,14 @@ public final class GuideUtil {
         }
     }
 
-    public static @NotNull ItemStack getBookMarkMenuButton() {
-        return BOOK_MARK_MENU_BUTTON;
-    }
-
-    public static @NotNull ItemStack getItemMarkMenuButton() {
-        return ITEM_MARK_MENU_BUTTON;
-    }
-
-    public static boolean isTaggedGroupType(@NotNull ItemGroup itemGroup) {
-        Class<?> clazz = itemGroup.getClass();
-        return !(itemGroup instanceof FlexItemGroup)
-                && (clazz == ItemGroup.class
-                || clazz == SubItemGroup.class
-                || clazz == LockedItemGroup.class
-                || clazz == SeasonalItemGroup.class
-                || itemGroup instanceof BookmarkRelocation
-                || clazz.getName().equalsIgnoreCase("me.voper.slimeframe.implementation.groups.ChildGroup")
-                || clazz.getName().endsWith("DummyItemGroup")
-                || clazz.getName().endsWith("SubGroup"));
-    }
-
     @SuppressWarnings("deprecation")
     public static void addRTSButton(
-            @NotNull ChestMenu menu,
-            @NotNull Player p,
-            @NotNull PlayerProfile profile,
-            @NotNull Format format,
+            ChestMenu menu,
+            Player p,
+            PlayerProfile profile,
+            Format format,
             SlimefunGuideMode mode,
-            @NotNull SlimefunGuideImplementation implementation) {
+            SlimefunGuideImplementation implementation) {
         if (JustEnoughGuide.getConfigManager().isRTSSearch()) {
             for (int ss : format.getChars('R')) {
                 menu.addItem(
@@ -198,7 +202,8 @@ public final class GuideUtil {
                                                             implementation.openMainMenu(
                                                                     profile,
                                                                     profile.getGuideHistory()
-                                                                            .getMainMenuPage());
+                                                                            .getMainMenuPage()
+                                                            );
                                                         } else {
                                                             history.goBack(implementation);
                                                         }
@@ -214,7 +219,8 @@ public final class GuideUtil {
                                                                             RTSSearchGroup.RTS_PLAYERS.get(pl),
                                                                             oldPage,
                                                                             newPage,
-                                                                            mode);
+                                                                            mode
+                                                                    );
                                                             Bukkit.getPluginManager()
                                                                     .callEvent(event);
                                                             if (!event.isCancelled()) {
@@ -232,14 +238,16 @@ public final class GuideUtil {
                                                                     (rts.slimefunItemList.size() - 1)
                                                                             / RTSListener.FILL_ORDER.length
                                                                             + 1,
-                                                                    oldPage + 1);
+                                                                    oldPage + 1
+                                                            );
                                                             RTSEvents.PageChangeEvent event =
                                                                     new RTSEvents.PageChangeEvent(
                                                                             pl,
                                                                             RTSSearchGroup.RTS_PLAYERS.get(pl),
                                                                             oldPage,
                                                                             newPage,
-                                                                            mode);
+                                                                            mode
+                                                                    );
                                                             Bukkit.getPluginManager()
                                                                     .callEvent(event);
                                                             if (!event.isCancelled()) {
@@ -250,17 +258,19 @@ public final class GuideUtil {
                                                         }
                                                     }
                                                 },
-                                                new int[]{
+                                                new int[] {
                                                         AnvilGUI.Slot.INPUT_LEFT,
                                                         AnvilGUI.Slot.INPUT_RIGHT,
                                                         AnvilGUI.Slot.OUTPUT
                                                 },
-                                                null);
+                                                null
+                                        );
                                     } catch (Exception ignored) {
                                         p.sendMessage(ChatColor.RED + "不兼容的版本! 无法使用实时搜索");
                                     }
                                     return false;
-                                }));
+                                })
+                );
             }
         } else {
             for (int ss : format.getChars('R')) {
@@ -271,12 +281,12 @@ public final class GuideUtil {
 
     @SuppressWarnings("deprecation")
     public static void addBookMarkButton(
-            @NotNull ChestMenu menu,
-            @NotNull Player p,
-            @NotNull PlayerProfile profile,
-            @NotNull Format format,
-            @NotNull JEGSlimefunGuideImplementation implementation,
-            ItemGroup itemGroup) {
+            ChestMenu menu,
+            Player p,
+            PlayerProfile profile,
+            Format format,
+            JEGSlimefunGuideImplementation implementation,
+            @Nullable ItemGroup itemGroup) {
         if (JustEnoughGuide.getConfigManager().isBookmark()) {
             BookmarkRelocation b =
                     itemGroup instanceof BookmarkRelocation bookmarkRelocation ? bookmarkRelocation : null;
@@ -289,7 +299,8 @@ public final class GuideUtil {
                                 .ifSuccess(() -> {
                                     implementation.openBookMarkGroup(pl, profile);
                                     return false;
-                                }));
+                                })
+                );
             }
         } else {
             for (int s : format.getChars('C')) {
@@ -298,13 +309,17 @@ public final class GuideUtil {
         }
     }
 
+    public static ItemStack getBookMarkMenuButton() {
+        return BOOK_MARK_MENU_BUTTON;
+    }
+
     @SuppressWarnings("deprecation")
     public static void addItemMarkButton(
-            @NotNull ChestMenu menu,
-            @NotNull Player p,
-            @NotNull PlayerProfile profile,
-            @NotNull Format format,
-            @NotNull JEGSlimefunGuideImplementation implementation,
+            ChestMenu menu,
+            Player p,
+            PlayerProfile profile,
+            Format format,
+            JEGSlimefunGuideImplementation implementation,
             @Nullable ItemGroup itemGroup) {
         if (itemGroup != null && JustEnoughGuide.getConfigManager().isBookmark() && isTaggedGroupType(itemGroup)) {
             BookmarkRelocation b = itemGroup instanceof BookmarkRelocation relocation ? relocation : null;
@@ -317,7 +332,8 @@ public final class GuideUtil {
                                 .ifSuccess(() -> {
                                     implementation.openItemMarkGroup(itemGroup, pl, profile);
                                     return false;
-                                }));
+                                })
+                );
             }
         } else {
             for (int ss : format.getChars('c')) {
@@ -326,14 +342,34 @@ public final class GuideUtil {
         }
     }
 
-    @SuppressWarnings({"deprecation", "DataFlowIssue"})
+    public static boolean isTaggedGroupType(ItemGroup itemGroup) {
+        Class<?> clazz = itemGroup.getClass();
+        return !(itemGroup instanceof FlexItemGroup)
+                && (clazz == ItemGroup.class
+                || clazz == SubItemGroup.class
+                || clazz == LockedItemGroup.class
+                || clazz == SeasonalItemGroup.class
+                || itemGroup instanceof BookmarkRelocation
+                || clazz.getName().equalsIgnoreCase("me.voper.slimeframe.implementation.groups.ChildGroup")
+                || clazz.getName().endsWith("DummyItemGroup")
+                || clazz.getName().endsWith("SubGroup"));
+    }
+
+    public static ItemStack getItemMarkMenuButton() {
+        return ITEM_MARK_MENU_BUTTON;
+    }
+
+    @SuppressWarnings({"deprecation"})
     @CallTimeSensitive(CallTimeSensitive.AfterIntegrationsLoaded)
-    public static void addCerButton(ChestMenu menu, Player p, PlayerProfile profile, SlimefunItem machine, SlimefunGuideImplementation implementation, Format format) {
+    public static void addCerButton(ChestMenu menu, Player p, PlayerProfile profile, SlimefunItem machine,
+                                    SlimefunGuideImplementation implementation, Format format) {
         for (int ss : format.getChars('m')) {
             if (JustEnoughGuide.getConfigManager().isCerPatch()) {
                 if (CERCalculator.cerable(machine)) {
-                    menu.addItem(ss, PatchScope.Cer.patch(p, getCerMenuButton()),
-                            (pl, slot, itemstack, action) -> EventUtil.callEvent(new GuideEvents.CerButtonClickEvent(pl, itemstack, slot, action, menu, implementation)).ifSuccess(() -> new CERRecipeGroup(implementation, pl, machine, MachineData.get(machine).wrap()).open(pl, profile, implementation.getMode())));
+                    menu.addItem(
+                            ss, PatchScope.Cer.patch(p, getCerMenuButton()),
+                            (pl, slot, itemstack, action) -> EventUtil.callEvent(new GuideEvents.CerButtonClickEvent(pl, itemstack, slot, action, menu, implementation)).ifSuccess(() -> new CERRecipeGroup(implementation, pl, machine, MachineData.get(machine).wrap()).open(pl, profile, implementation.getMode()))
+                    );
                 }
             }
         }
@@ -343,7 +379,7 @@ public final class GuideUtil {
         return CER_MENU_BUTTON;
     }
 
-    public static void setForceHiddens(@NotNull ItemGroup itemGroup, boolean forceHidden) {
+    public static void setForceHiddens(ItemGroup itemGroup, boolean forceHidden) {
         if (forceHidden) {
             forceHiddens.add(itemGroup);
         } else {
@@ -351,16 +387,66 @@ public final class GuideUtil {
         }
     }
 
-    @NotNull
     public static List<ItemGroup> getForceHiddens() {
         return new ArrayList<>(forceHiddens);
     }
 
-    public static boolean isForceHidden(@NotNull ItemGroup group) {
+    public static boolean isForceHidden(ItemGroup group) {
         return forceHiddens.contains(group);
     }
 
     public static void shutdown() {
         forceHiddens.clear();
+    }
+
+    public static void openKeybindsGui(Player player) {
+        PlayerProfile.get(
+                player, prf ->
+                        new KeybindsItemsGroup().open(player, prf, SlimefunGuideMode.SURVIVAL_MODE)
+        );
+    }
+
+    public static void openSubKeybindsGui(Player player, OnClick keybindsSet) {
+        PlayerProfile.get(
+                player, prf ->
+                        new SubKeybindsItemsGroup(keybindsSet).open(player, prf, SlimefunGuideMode.SURVIVAL_MODE)
+        );
+    }
+
+    public static ItemStack getKeybindIcon(OnClick keybind) {
+        return Converter.getItem(keybind.material(), ChatColors.color("&7" + keybind.name()));
+    }
+
+    public static void openKeybindGui(Player player, OnClick keybind) {
+        PlayerProfile.get(
+                player, prf ->
+                        new KeybindItemsGroup(player, keybind).open(player, prf, SlimefunGuideMode.SURVIVAL_MODE)
+        );
+    }
+
+    public static void openActionSelectGui(Player player, OnClick keybind, BaseAction action) {
+        PlayerProfile.get(
+                player, prf -> new ActionSelectGroup(player, keybind, action)
+                        .open(player, prf, SlimefunGuideMode.SURVIVAL_MODE)
+        );
+    }
+
+    public static ItemStack getActionIcon(BaseAction action) {
+        return Converter.getItem(action.material(), ChatColors.color("&7" + action.name()));
+    }
+
+    public static ItemStack getLeftActionIcon(BaseAction action) {
+        return Converter.getItem(
+                action.material(),
+                ChatColors.color("&7按下 " + action.getKey().getKey() + " 时 (" + action.name() + ")")
+        );
+    }
+
+    public static @Nullable Player updatePlayer(Player player) {
+        return Bukkit.getPlayer(player.getUniqueId());
+    }
+
+    public static @Nullable Player updatePlayer(UUID uuid) {
+        return Bukkit.getPlayer(uuid);
     }
 }

@@ -39,8 +39,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,18 +49,19 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
-@SuppressWarnings("DataFlowIssue")
+@SuppressWarnings({"DataFlowIssue", "ConstantValue"})
+@NullMarked
 public class NetworksIntegrationMain implements Integration {
-    public static final int[] ENCODER_RECIPE_SLOTS = new int[]{12, 13, 14, 21, 22, 23, 30, 31, 32};
-    public static final int[] CRAFTING_GRID_RECIPE_SLOTS = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
-    public static final int[] QUANTUM_WORKBENCH_RECIPE_SLOTS = new int[]{10, 11, 12, 19, 20, 21, 28, 29, 30};
+    public static final int[] ENCODER_RECIPE_SLOTS = new int[] {12, 13, 14, 21, 22, 23, 30, 31, 32};
+    public static final int[] CRAFTING_GRID_RECIPE_SLOTS = new int[] {6, 7, 8, 15, 16, 17, 24, 25, 26};
+    public static final int[] QUANTUM_WORKBENCH_RECIPE_SLOTS = new int[] {10, 11, 12, 19, 20, 21, 28, 29, 30};
     public static final List<SlimefunItem> handledSlimefunItems = new ArrayList<>();
-    public static final BlockFace[] VALID_FACES = new BlockFace[]{
+    public static final BlockFace[] VALID_FACES = new BlockFace[] {
             BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
     };
     public static JavaPlugin plugin = null;
 
-    public static @NotNull JavaPlugin getPlugin() {
+    public static JavaPlugin getPlugin() {
         if (plugin == null) {
             plugin = (JavaPlugin) Bukkit.getPluginManager().getPlugin("Networks");
         }
@@ -72,20 +73,8 @@ public class NetworksIntegrationMain implements Integration {
         return plugin;
     }
 
-    public static void rrc(@NotNull String id, int @NotNull [] slots, boolean unordered) {
-        SlimefunItem slimefunItem = SlimefunItem.getById(id);
-        if (slimefunItem != null) {
-            rrc(slimefunItem, slots, unordered);
-        }
-    }
-
-    public static void rrc(@NotNull SlimefunItem slimefunItem, int @NotNull [] slots, boolean unordered) {
-        handledSlimefunItems.add(slimefunItem);
-        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
-    }
-
     @Nullable
-    public static NetworkRoot findNearbyNetworkRoot(@NotNull Location location) {
+    public static NetworkRoot findNearbyNetworkRoot(Location location) {
         NetworkRoot root = null;
 
         for (BlockFace blockFace : VALID_FACES) {
@@ -109,7 +98,7 @@ public class NetworksIntegrationMain implements Integration {
     }
 
     @Override
-    public @NotNull String getHookPlugin() {
+    public String getHookPlugin() {
         return "Networks";
     }
 
@@ -123,6 +112,18 @@ public class NetworksIntegrationMain implements Integration {
         rrc("NTW_RECIPE_ENCODER", ENCODER_RECIPE_SLOTS, false);
         rrc("NTW_CRAFTING_GRID", CRAFTING_GRID_RECIPE_SLOTS, false);
         rrc("NTW_QUANTUM_WORKBENCH", QUANTUM_WORKBENCH_RECIPE_SLOTS, false);
+    }
+
+    public static void rrc(String id, int[] slots, boolean unordered) {
+        SlimefunItem slimefunItem = SlimefunItem.getById(id);
+        if (slimefunItem != null) {
+            rrc(slimefunItem, slots, unordered);
+        }
+    }
+
+    public static void rrc(SlimefunItem slimefunItem, int[] slots, boolean unordered) {
+        handledSlimefunItems.add(slimefunItem);
+        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
     }
 
     @Override

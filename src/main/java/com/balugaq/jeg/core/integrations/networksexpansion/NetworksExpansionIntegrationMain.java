@@ -33,7 +33,7 @@ import com.balugaq.jeg.core.integrations.Integration;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +42,13 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
-@SuppressWarnings("DataFlowIssue")
+@SuppressWarnings({"DataFlowIssue", "ConstantValue"})
+@NullMarked
 public class NetworksExpansionIntegrationMain implements Integration {
-    public static final int[] ENCODER_RECIPE_SLOTS = new int[]{12, 13, 14, 21, 22, 23, 30, 31, 32};
-    public static final int[] CRAFTING_GRID_NEW_STYLE_RECIPE_SLOTS = new int[]{6, 7, 8, 15, 16, 17, 24, 25, 26};
-    public static final int[] EXPANSION_WORKBENCH_RECIPE_SLOTS = new int[]{10, 11, 12, 19, 20, 21, 28, 29, 30};
-    public static final int[] EXPANSION_WORKBENCH_6X6_RECIPE_SLOTS = new int[]{
+    public static final int[] ENCODER_RECIPE_SLOTS = new int[] {12, 13, 14, 21, 22, 23, 30, 31, 32};
+    public static final int[] CRAFTING_GRID_NEW_STYLE_RECIPE_SLOTS = new int[] {6, 7, 8, 15, 16, 17, 24, 25, 26};
+    public static final int[] EXPANSION_WORKBENCH_RECIPE_SLOTS = new int[] {10, 11, 12, 19, 20, 21, 28, 29, 30};
+    public static final int[] EXPANSION_WORKBENCH_6X6_RECIPE_SLOTS = new int[] {
             0, 1, 2, 3, 4, 5,
             9, 10, 11, 12, 13, 14,
             18, 19, 20, 21, 22, 23,
@@ -55,12 +56,12 @@ public class NetworksExpansionIntegrationMain implements Integration {
             36, 37, 38, 39, 40, 41,
             45, 46, 47, 48, 49, 50
     };
-    public static final int[] STORAGE_UPGRADE_TABLE_RECIPE_SLOTS = new int[]{
+    public static final int[] STORAGE_UPGRADE_TABLE_RECIPE_SLOTS = new int[] {
             2, 3, 4,
             11, 12, 13,
             20, 21, 22
     };
-    public static final int[] NTW_EXPANSION_SMART_NETWORK_CRAFTING_GRID_NEW_STYLE_SLOTS = new int[]{
+    public static final int[] NTW_EXPANSION_SMART_NETWORK_CRAFTING_GRID_NEW_STYLE_SLOTS = new int[] {
             0, 1, 2,
             9, 10, 11,
             18, 19, 20
@@ -68,7 +69,7 @@ public class NetworksExpansionIntegrationMain implements Integration {
     public static final List<SlimefunItem> handledSlimefunItems = new ArrayList<>();
     public static JavaPlugin plugin = null;
 
-    public static @NotNull JavaPlugin getPlugin() {
+    public static JavaPlugin getPlugin() {
         if (plugin == null) {
             plugin = (JavaPlugin) Bukkit.getPluginManager().getPlugin("Networks");
         }
@@ -76,20 +77,8 @@ public class NetworksExpansionIntegrationMain implements Integration {
         return plugin;
     }
 
-    public static void rrc(@NotNull String id, int @NotNull [] slots, boolean unordered) {
-        SlimefunItem slimefunItem = SlimefunItem.getById(id);
-        if (slimefunItem != null) {
-            rrc(slimefunItem, slots, unordered);
-        }
-    }
-
-    public static void rrc(@NotNull SlimefunItem slimefunItem, int @NotNull [] slots, boolean unordered) {
-        handledSlimefunItems.add(slimefunItem);
-        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
-    }
-
     @Override
-    public @NotNull String getHookPlugin() {
+    public String getHookPlugin() {
         return "NetworksExpansion";
     }
 
@@ -113,7 +102,22 @@ public class NetworksExpansionIntegrationMain implements Integration {
         rrc("NTW_EXPANSION_WORKBENCH", EXPANSION_WORKBENCH_RECIPE_SLOTS, false);
         rrc("NTW_EXPANSION_WORKBENCH_6X6", EXPANSION_WORKBENCH_6X6_RECIPE_SLOTS, false);
         rrc("NTW_EXPANSION_STORAGE_UPGRADE_TABLE", STORAGE_UPGRADE_TABLE_RECIPE_SLOTS, false);
-        rrc("NTW_EXPANSION_SMART_NETWORK_CRAFTING_GRID_NEW_STYLE", NTW_EXPANSION_SMART_NETWORK_CRAFTING_GRID_NEW_STYLE_SLOTS, false);
+        rrc(
+                "NTW_EXPANSION_SMART_NETWORK_CRAFTING_GRID_NEW_STYLE",
+                NTW_EXPANSION_SMART_NETWORK_CRAFTING_GRID_NEW_STYLE_SLOTS, false
+        );
+    }
+
+    public static void rrc(String id, int[] slots, boolean unordered) {
+        SlimefunItem slimefunItem = SlimefunItem.getById(id);
+        if (slimefunItem != null) {
+            rrc(slimefunItem, slots, unordered);
+        }
+    }
+
+    public static void rrc(SlimefunItem slimefunItem, int[] slots, boolean unordered) {
+        handledSlimefunItems.add(slimefunItem);
+        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
     }
 
     @Override

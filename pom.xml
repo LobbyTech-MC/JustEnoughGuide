@@ -34,7 +34,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.balugaq.jeg</groupId>
     <artifactId>JustEnoughGuide</artifactId>
-    <version>Insider-160</version>
+    <version>Insider-166</version>
 
     <pluginRepositories>
         <pluginRepository>
@@ -267,6 +267,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>opencc4j</artifactId>
+            <version>1.14.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Chinese localization library -->
         <dependency>
             <groupId>net.guizhanss</groupId>
@@ -306,9 +313,9 @@
         <dependency>
             <groupId>com.ytdd9527.networksexpansion</groupId>
             <artifactId>NetworksExpansion</artifactId>
-            <version>Special-Version-43</version>
+            <version>Special-Version-63</version>
             <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\NetworksExpansion.jar</systemPath>
+            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion vS63.jar</systemPath>
         </dependency>
 
         <!-- Recipe Completable compatible -->
@@ -355,7 +362,7 @@
         <dependency>
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>1.10.7-SNAPSHOT</version>
+            <version>1.10.10-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

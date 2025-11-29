@@ -54,8 +54,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,17 +69,18 @@ import java.util.Optional;
  */
 @SuppressWarnings({"deprecation", "UnnecessaryUnicodeEscape", "DataFlowIssue"})
 @Getter
+@NullMarked
 public class JEGGuideSettings {
     @Getter
     private static final List<SlimefunGuideOption<?>> patched = new ArrayList<>();
 
-    public static void openSettings(final @NotNull Player p, final @NotNull ItemStack guide) {
+    public static void openSettings(final Player p, final ItemStack guide) {
         openSettings(p, guide, 1);
     }
 
     public static void openSettings(
-            final @NotNull Player p,
-            final @NotNull ItemStack guide,
+            final Player p,
+            final ItemStack guide,
             @Range(from = 1, to = Integer.MAX_VALUE) int page) {
         ChestMenu menu = new ChestMenu(Slimefun.getLocalization().getMessage(p, "guide.title.settings"));
 
@@ -97,7 +98,7 @@ public class JEGGuideSettings {
     }
 
     private static void addHeader(
-            final @NotNull Player p, final @NotNull ChestMenu menu, final @NotNull ItemStack guide) {
+            final Player p, final ChestMenu menu, final ItemStack guide) {
         LocalizationService locale = Slimefun.getLocalization();
 
         // @formatter:off
@@ -126,7 +127,9 @@ public class JEGGuideSettings {
                 "guide.credits.description",
                 msg -> msg.replace(
                         "%contributors%",
-                        String.valueOf(github.getContributors().size()))));
+                        String.valueOf(github.getContributors().size())
+                )
+        ));
         contributorsLore.add("");
         contributorsLore.add("&7\u21E8 &e" + locale.getMessage(p, "guide.credits.open"));
 
@@ -256,11 +259,13 @@ public class JEGGuideSettings {
                                         "&7\u21E8 &eClick to go to the Slimefun4 Bug Tracker")));
                 // @formatter:on
 
-                menu.addMenuClickHandler(ss, (pl, slot, item, action) -> {
-                    pl.closeInventory();
-                    ChatUtils.sendURL(pl, "https://github.com/SlimefunGuguProject/Slimefun4/issues");
-                    return false;
-                });
+                menu.addMenuClickHandler(
+                        ss, (pl, slot, item, action) -> {
+                            pl.closeInventory();
+                            ChatUtils.sendURL(pl, "https://github.com/SlimefunGuguProject/Slimefun4/issues");
+                            return false;
+                        }
+                );
             } else {
                 menu.addItem(ss, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());
             }
@@ -273,24 +278,28 @@ public class JEGGuideSettings {
                             p,
                             Converter.getItem(
                                     Material.TOTEM_OF_UNDYING,
-                                    ChatColor.RED + locale.getMessage(p, "guide.work-in-progress"))),
+                                    ChatColor.RED + locale.getMessage(p, "guide.work-in-progress")
+                            )
+                    ),
                     (pl, slot, item, action) -> {
                         // Add something here
                         return false;
-                    });
+                    }
+            );
         }
     }
 
     private static void addConfigurableOptions(
-            final @NotNull Player p,
-            final @NotNull ChestMenu menu,
-            final @NotNull ItemStack guide,
+            final Player p,
+            final ChestMenu menu,
+            final ItemStack guide,
             @Range(from = 1, to = Integer.MAX_VALUE) int page) {
         List<Integer> slots = Formats.settings.getChars('o');
         List<SlimefunGuideOption<?>> options = new ArrayList<>(getOptions());
         options.removeIf(option -> {
             String sm = option.getClass().getSimpleName();
-            return option.getAddon() instanceof Slimefun && (sm.equals("FireworksOption") || sm.equals("LearningAnimationOption"));
+            return option.getAddon() instanceof Slimefun && (sm.equals("FireworksOption") || sm.equals(
+                    "LearningAnimationOption"));
         });
         int maxPage = (int) Math.ceil(options.size() / (double) slots.size());
         List<SlimefunGuideOption<?>> split = options.stream()
@@ -311,10 +320,12 @@ public class JEGGuideSettings {
 
             if (item.isPresent()) {
                 menu.addItem(slot, PatchScope.GuideOption.patch(p, item.get()));
-                menu.addMenuClickHandler(slot, (pl, s, stack, action) -> {
-                    option.onClick(p, guide);
-                    return false;
-                });
+                menu.addMenuClickHandler(
+                        slot, (pl, s, stack, action) -> {
+                            option.onClick(p, guide);
+                            return false;
+                        }
+                );
             } else {
                 fail++;
             }
@@ -322,35 +333,29 @@ public class JEGGuideSettings {
 
         for (int ss : Formats.settings.getChars('P')) {
             menu.addItem(ss, ChestMenuUtils.getPreviousButton(p, page, maxPage));
-            menu.addMenuClickHandler(ss, (pl, slot, item, action) -> {
-                if (page > 1) {
-                    openSettings(pl, guide, page - 1);
-                }
+            menu.addMenuClickHandler(
+                    ss, (pl, slot, item, action) -> {
+                        if (page > 1) {
+                            openSettings(pl, guide, page - 1);
+                        }
 
-                return false;
-            });
+                        return false;
+                    }
+            );
         }
 
         for (int ss : Formats.settings.getChars('N')) {
             menu.addItem(ss, ChestMenuUtils.getNextButton(p, page, maxPage));
-            menu.addMenuClickHandler(ss, (pl, slot, item, action) -> {
-                if (page + 1 < maxPage) {
-                    openSettings(pl, guide, page + 1);
-                }
+            menu.addMenuClickHandler(
+                    ss, (pl, slot, item, action) -> {
+                        if (page + 1 < maxPage) {
+                            openSettings(pl, guide, page + 1);
+                        }
 
-                return false;
-            });
+                        return false;
+                    }
+            );
         }
-    }
-
-    @SuppressWarnings({"unchecked", "DataFlowIssue"})
-    public static @NotNull List<SlimefunGuideOption<?>> getOptions() {
-        return (List<SlimefunGuideOption<?>>)
-                ReflectionUtil.getStaticValue(SlimefunGuideSettings.class, "options", List.class);
-    }
-
-    public static void addOption(@NotNull SlimefunGuideOption<?> option) {
-        SlimefunGuideSettings.addOption(option);
     }
 
     public static void patchSlimefun() {
@@ -375,6 +380,16 @@ public class JEGGuideSettings {
         addOption(new PlayerLanguageOption());
     }
 
+    @SuppressWarnings({"unchecked", "DataFlowIssue"})
+    public static List<SlimefunGuideOption<?>> getOptions() {
+        return (List<SlimefunGuideOption<?>>)
+                ReflectionUtil.getStaticValue(SlimefunGuideSettings.class, "options", List.class);
+    }
+
+    public static void addOption(SlimefunGuideOption<?> option) {
+        SlimefunGuideSettings.addOption(option);
+    }
+
     public static void unpatchSlimefun() {
         for (var po : patched) {
             getOptions().add(po);
@@ -382,17 +397,12 @@ public class JEGGuideSettings {
     }
 
     @SuppressWarnings("unused")
-    public static boolean hasFireworksEnabled(@NotNull Player p) {
+    public static boolean hasFireworksEnabled(Player p) {
         return getOptionValue(p, FireworksOption.class, true);
     }
 
-    @SuppressWarnings("unused")
-    public static boolean hasLearningAnimationEnabled(@NotNull Player p) {
-        return getOptionValue(p, LearningAnimationOption.class, true);
-    }
-
-    @NotNull
-    public static <T extends SlimefunGuideOption<V>, V> V getOptionValue(@NotNull Player p, @NotNull Class<T> optionsClass, @NotNull V defaultValue) {
+    public static <T extends SlimefunGuideOption<V>, V> V getOptionValue(Player p, Class<T> optionsClass,
+                                                                         V defaultValue) {
         for (SlimefunGuideOption<?> option : getOptions()) {
             if (optionsClass.isInstance(option)) {
                 T o = optionsClass.cast(option);
@@ -402,5 +412,10 @@ public class JEGGuideSettings {
         }
 
         return defaultValue;
+    }
+
+    @SuppressWarnings("unused")
+    public static boolean hasLearningAnimationEnabled(Player p) {
+        return getOptionValue(p, LearningAnimationOption.class, true);
     }
 }

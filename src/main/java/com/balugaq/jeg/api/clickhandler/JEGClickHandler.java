@@ -34,10 +34,9 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+import org.jspecify.annotations.NullMarked;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,10 +47,9 @@ import java.util.Optional;
  * @since 1.5
  */
 @SuppressWarnings({"deprecation", "unused"})
+@NullMarked
 public interface JEGClickHandler extends ChestMenu.AdvancedMenuClickHandler, GuideClickHandler {
 
-    @ParametersAreNonnullByDefault
-    @NotNull
     static JEGClickHandler of(
             final SlimefunGuideImplementation guide, final ChestMenu menu, final @Range(from = 0, to = 53) int slot) {
         ChestMenu.MenuClickHandler current = menu.getMenuClickHandler(slot);
@@ -62,60 +60,39 @@ public interface JEGClickHandler extends ChestMenu.AdvancedMenuClickHandler, Gui
         return new JEGClickHandler() {
             private final Map<Class<? extends Processor>, Processor> processors = new HashMap<>();
 
-            @NotNull
             public ChestMenu.MenuClickHandler getOrigin() {
                 return Optional.ofNullable(current).orElse(ChestMenuUtils.getEmptyClickHandler());
             }
 
-            @NotNull
             public SlimefunGuideImplementation getGuide() {
                 return guide;
             }
 
-            @NotNull
             public ChestMenu getMenu() {
                 return menu;
             }
 
-            @NotNull
             public Map<Class<? extends Processor>, Processor> getProcessors() {
                 return processors;
             }
         };
     }
 
-    @NotNull
-    default ChestMenu.MenuClickHandler getOrigin() {
-        return ChestMenuUtils.getEmptyClickHandler();
-    }
-
-    @NotNull SlimefunGuideImplementation getGuide();
-
-    @NotNull ChestMenu getMenu();
-
-    @NotNull Map<Class<? extends Processor>, Processor> getProcessors();
-
-    @NotNull
-    default JEGClickHandler addProcessor(final @NotNull Processor processor) {
+    default JEGClickHandler addProcessor(final Processor processor) {
         getProcessors().put(processor.getClass(), processor);
         return this;
     }
 
-    @NotNull
-    default Collection<Processor> getProcessor(final @NotNull Processor.Strategy strategy) {
-        return getProcessors().values().stream()
-                .filter(processor -> processor.getStrategy() == strategy)
-                .toList();
-    }
+    Map<Class<? extends Processor>, Processor> getProcessors();
 
     // Our implement
     @Override
     default boolean onClick(
-            final @NotNull InventoryClickEvent event,
-            final @NotNull Player player,
+            final InventoryClickEvent event,
+            final Player player,
             final @Range(from = 0, to = 53) int clickedSlot,
             final ItemStack cursor,
-            final @NotNull ClickAction clickAction) {
+            final ClickAction clickAction) {
         ItemStack itemStack = getMenu().getItemInSlot(clickedSlot);
         for (Processor processor : getProcessor(Processor.Strategy.HEAD)) {
             if (!processor.process(getGuide(), getMenu(), event, player, clickedSlot, itemStack, clickAction, null)) {
@@ -136,6 +113,20 @@ public interface JEGClickHandler extends ChestMenu.AdvancedMenuClickHandler, Gui
         }
 
         return result;
+    }
+
+    ChestMenu getMenu();
+
+    default Collection<Processor> getProcessor(final Processor.Strategy strategy) {
+        return getProcessors().values().stream()
+                .filter(processor -> processor.getStrategy() == strategy)
+                .toList();
+    }
+
+    SlimefunGuideImplementation getGuide();
+
+    default ChestMenu.MenuClickHandler getOrigin() {
+        return ChestMenuUtils.getEmptyClickHandler();
     }
 
     // Fallback

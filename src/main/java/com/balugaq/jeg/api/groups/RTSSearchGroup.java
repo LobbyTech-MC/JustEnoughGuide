@@ -35,6 +35,8 @@ import com.balugaq.jeg.core.listeners.RTSListener;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.ItemStackUtil;
+import com.balugaq.jeg.utils.KeyUtil;
 import com.balugaq.jeg.utils.Models;
 import com.balugaq.jeg.utils.ReflectionUtil;
 import com.balugaq.jeg.utils.compatibility.Converter;
@@ -48,21 +50,19 @@ import lombok.Getter;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
@@ -72,15 +72,17 @@ import java.util.function.Function;
  * @author balugaq
  * @since 1.3
  */
-@SuppressWarnings({"unused", "UnusedAssignment"})
+@SuppressWarnings({"unused", "UnusedAssignment", "ConstantValue"})
 @NotDisplayInSurvivalMode
 @NotDisplayInCheatMode
 @Getter
+@NullMarked
 public class RTSSearchGroup extends FlexItemGroup {
     public static final ItemStack PLACEHOLDER = Converter.getItem(
             Converter.getItem(Material.LIGHT_GRAY_STAINED_GLASS_PANE, "&a", "&a", "&a"),
             meta -> meta.getPersistentDataContainer()
-                    .set(RTSListener.FAKE_ITEM_KEY, PersistentDataType.STRING, "____JEG_FAKE_ITEM____"));
+                    .set(RTSListener.FAKE_ITEM_KEY, PersistentDataType.STRING, "____JEG_FAKE_ITEM____")
+    );
     // Use RTS_SEARCH_GROUPS, RTS_PAGES, RTS_PLAYERS or RTS_SEARCH_TERMS must be by keyword "synchronized"
     public static final Map<Player, SearchGroup> RTS_SEARCH_GROUPS = new ConcurrentHashMap<>();
     public static final Map<Player, Integer> RTS_PAGES = new ConcurrentHashMap<>();
@@ -88,11 +90,8 @@ public class RTSSearchGroup extends FlexItemGroup {
     public static final Map<Player, String> RTS_SEARCH_TERMS = new ConcurrentHashMap<>();
     public static final Function<Player, ItemStack> BACK_ICON =
             (player) -> ChestMenuUtils.getBackButton(player, "", "&f左键: &7返回上一页", "&fShift + 左键: &7返回主菜单");
-    public static final ItemStack INPUT_TEXT_ICON = Models.INPUT_TEXT_ICON;
-    public static final ItemStack AIR_ICON = new ItemStack(Material.AIR);
-    private static final JavaPlugin JAVA_PLUGIN = JustEnoughGuide.getInstance();
     // Cache AnvilView class for 1.21+ compatibility
-    private static Class<?> anvilViewClass = null;
+    private static @UnknownNullability Class<?> anvilViewClass = null;
 
     static {
         try {
@@ -119,7 +118,7 @@ public class RTSSearchGroup extends FlexItemGroup {
                                 searchTermCopy = new HashMap<>(RTS_SEARCH_TERMS);
                             }
 
-                            Map<Player, String> writes = new HashMap<>();
+                            Map<Player, @Nullable String> writes = new HashMap<>();
                             copy.forEach((player, inventory) -> {
                                 if (inventory == null) {
                                     return;
@@ -144,7 +143,10 @@ public class RTSSearchGroup extends FlexItemGroup {
                                         if (anvilViewClass != null) {
                                             try {
                                                 if (anvilViewClass.isInstance(view)) {
-                                                    newSearchTerm = (String) ReflectionUtil.invokeMethod(view, "getRenameText");
+                                                    newSearchTerm = (String) ReflectionUtil.invokeMethod(
+                                                            view,
+                                                            "getRenameText"
+                                                    );
                                                 }
                                             } catch (Exception e) {
                                                 // AnvilView method failed, will use fallback
@@ -155,9 +157,13 @@ public class RTSSearchGroup extends FlexItemGroup {
                                         if (newSearchTerm == null) {
                                             try {
                                                 // Use ReflectionUtil to avoid compile-time dependency
-                                                newSearchTerm = (String) ReflectionUtil.invokeMethod(anvilInventory, "getRenameText");
+                                                newSearchTerm = (String) ReflectionUtil.invokeMethod(
+                                                        anvilInventory,
+                                                        "getRenameText"
+                                                );
                                             } catch (Exception e) {
-                                                Debug.debug("Both AnvilView and AnvilInventory getRenameText() methods are unavailable");
+                                                Debug.debug("Both AnvilView and AnvilInventory getRenameText() " +
+                                                                    "methods are unavailable");
                                                 return;
                                             }
                                         }
@@ -175,7 +181,8 @@ public class RTSSearchGroup extends FlexItemGroup {
                                                     anvilInventory,
                                                     oldSearchTerm,
                                                     newSearchTerm,
-                                                    GuideListener.guideModeMap.get(player));
+                                                    GuideListener.guideModeMap.get(player)
+                                            );
                                             Bukkit.getPluginManager().callEvent(event);
                                         }
                                     } catch (Exception e) {
@@ -193,51 +200,31 @@ public class RTSSearchGroup extends FlexItemGroup {
                             });
                         },
                         1,
-                        4);
+                        4
+                );
     }
 
     private final AnvilInventory anvilInventory;
     private final String presetSearchTerm;
     private final int page;
 
-    /**
-     * Creates a new RTS search group for a player with a specific preset search term.
-     *
-     * @param anvilInventory   The anvil inventory used for the search.
-     * @param presetSearchTerm The preset search term to initialize the search with.
-     */
     public RTSSearchGroup(AnvilInventory anvilInventory, String presetSearchTerm) {
         this(anvilInventory, presetSearchTerm, 1);
     }
 
-    /**
-     * Creates a new RTS search group for a player with a specific preset search term and page.
-     *
-     * @param anvilInventory   The anvil inventory used for the search.
-     * @param presetSearchTerm The preset search term to initialize the search with.
-     * @param page             The initial page number for the search results.
-     */
     public RTSSearchGroup(AnvilInventory anvilInventory, String presetSearchTerm, int page) {
-        super(
-                new NamespacedKey(JAVA_PLUGIN, "jeg_rts_search_group_" + UUID.randomUUID()),
-                new ItemStack(Material.BARRIER));
+        super(KeyUtil.random(), ItemStackUtil.barrier());
         this.anvilInventory = anvilInventory;
         this.presetSearchTerm = presetSearchTerm;
         this.page = page;
     }
 
-    /**
-     * Creates a new RTS inventory for a player in a specific guide mode.
-     *
-     * @param player    The player for whom the inventory is created.
-     * @param guideMode The guide mode (e.g., CHEAT_MODE, SURVIVAL_MODE).
-     * @return The created inventory.
-     */
     public static Inventory newRTSInventoryFor(Player player, SlimefunGuideMode guideMode) {
         return newRTSInventoryFor(player, guideMode, null);
     }
 
-    public static Inventory newRTSInventoryFor(Player player, SlimefunGuideMode guideMode, String presetSearchTerm) {
+    public static Inventory newRTSInventoryFor(Player player, SlimefunGuideMode guideMode,
+                                               @Nullable String presetSearchTerm) {
         return newRTSInventoryFor(player, guideMode, null, null, presetSearchTerm);
     }
 
@@ -250,8 +237,8 @@ public class RTSSearchGroup extends FlexItemGroup {
         AnvilGUI.Builder builder = new AnvilGUI.Builder()
                 .plugin(SearchGroup.JAVA_PLUGIN)
                 .itemLeft(BACK_ICON.apply(player))
-                .itemRight(INPUT_TEXT_ICON)
-                .itemOutput(AIR_ICON)
+                .itemRight(Models.INPUT_TEXT_ICON)
+                .itemOutput(ItemStackUtil.air())
                 .text("")
                 .title("在下方输入搜索内容")
                 .onClose((stateSnapshot) -> {
@@ -295,24 +282,17 @@ public class RTSSearchGroup extends FlexItemGroup {
 
     @Override
     public boolean isVisible(
-            @NotNull Player player,
-            @NotNull PlayerProfile playerProfile,
-            @NotNull SlimefunGuideMode slimefunGuideMode) {
+            Player player,
+            PlayerProfile playerProfile,
+            SlimefunGuideMode slimefunGuideMode) {
         return false;
     }
 
-    /**
-     * Opens the RTS search group for a player with a specific guide mode.
-     *
-     * @param player            The player who is opening the search group.
-     * @param playerProfile     The player profile associated with the player.
-     * @param slimefunGuideMode The guide mode (e.g., CHEAT_MODE, SURVIVAL_MODE).
-     */
     @Override
     public void open(
-            @NotNull Player player,
-            @NotNull PlayerProfile playerProfile,
-            @NotNull SlimefunGuideMode slimefunGuideMode) {
+            Player player,
+            PlayerProfile playerProfile,
+            SlimefunGuideMode slimefunGuideMode) {
         GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
         newRTSInventoryFor(
                 player,
@@ -359,8 +339,9 @@ public class RTSSearchGroup extends FlexItemGroup {
                         }
                     }
                 },
-                new int[]{AnvilGUI.Slot.INPUT_LEFT, AnvilGUI.Slot.INPUT_RIGHT, AnvilGUI.Slot.OUTPUT},
-                presetSearchTerm);
+                new int[] {AnvilGUI.Slot.INPUT_LEFT, AnvilGUI.Slot.INPUT_RIGHT, AnvilGUI.Slot.OUTPUT},
+                presetSearchTerm
+        );
         synchronized (RTS_PAGES) {
             RTS_PAGES.put(player, this.page);
         }

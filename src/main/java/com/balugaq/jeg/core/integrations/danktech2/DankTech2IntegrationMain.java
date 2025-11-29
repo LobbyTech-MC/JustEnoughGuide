@@ -30,7 +30,7 @@ package com.balugaq.jeg.core.integrations.danktech2;
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.core.integrations.Integration;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,34 +39,35 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
+@NullMarked
 public class DankTech2IntegrationMain implements Integration {
-    public static final int[] CRAFTER_INPUT_SLOTS = new int[]{
+    public static final int[] CRAFTER_INPUT_SLOTS = new int[] {
             10, 11, 12,
             19, 20, 21,
             28, 29, 30
     };
     public static final List<SlimefunItem> handledSlimefunItems = new ArrayList<>();
 
-    public static void rrc(@NotNull String id, int @NotNull [] slots, boolean unordered) {
-        SlimefunItem slimefunItem = SlimefunItem.getById(id);
-        if (slimefunItem != null) {
-            rrc(slimefunItem, slots, unordered);
-        }
-    }
-
-    public static void rrc(@NotNull SlimefunItem slimefunItem, int @NotNull [] slots, boolean unordered) {
-        handledSlimefunItems.add(slimefunItem);
-        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
-    }
-
     @Override
-    public @NotNull String getHookPlugin() {
+    public String getHookPlugin() {
         return "DankTech2";
     }
 
     @Override
     public void onEnable() {
         rrc("DK2_CRAFTER_1", CRAFTER_INPUT_SLOTS, false);
+    }
+
+    public static void rrc(String id, int[] slots, boolean unordered) {
+        SlimefunItem slimefunItem = SlimefunItem.getById(id);
+        if (slimefunItem != null) {
+            rrc(slimefunItem, slots, unordered);
+        }
+    }
+
+    public static void rrc(SlimefunItem slimefunItem, int[] slots, boolean unordered) {
+        handledSlimefunItems.add(slimefunItem);
+        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
     }
 
     @Override

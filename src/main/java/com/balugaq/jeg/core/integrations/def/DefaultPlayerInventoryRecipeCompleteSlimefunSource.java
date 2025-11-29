@@ -31,6 +31,7 @@ import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
 import com.balugaq.jeg.core.integrations.networksexpansion.NetworksExpansionIntegrationMain;
 import com.balugaq.jeg.utils.BlockMenuUtil;
+import com.balugaq.jeg.utils.GuideUtil;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Material;
@@ -38,8 +39,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -47,14 +48,15 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
+@NullMarked
 public class DefaultPlayerInventoryRecipeCompleteSlimefunSource implements SlimefunSource {
     @SuppressWarnings("deprecation")
     @Override
     public boolean handleable(
-            @NotNull BlockMenu blockMenu,
-            @NotNull Player player,
-            @NotNull ClickAction clickAction,
-            int @NotNull [] ingredientSlots,
+            BlockMenu blockMenu,
+            Player player,
+            ClickAction clickAction,
+            int[] ingredientSlots,
             boolean unordered,
             int recipeDepth) {
         // Always available
@@ -63,19 +65,22 @@ public class DefaultPlayerInventoryRecipeCompleteSlimefunSource implements Slime
 
     @Override
     public boolean completeRecipeWithGuide(
-            @NotNull BlockMenu blockMenu,
-            GuideEvents.@NotNull ItemButtonClickEvent event,
-            int @NotNull [] ingredientSlots,
+            BlockMenu blockMenu,
+            GuideEvents.ItemButtonClickEvent event,
+            int[] ingredientSlots,
             boolean unordered,
             int recipeDepth) {
-        Player player = event.getPlayer();
+        Player player = GuideUtil.updatePlayer(event.getPlayer());
+        if (player == null) {
+            return false;
+        }
 
         ItemStack clickedItem = event.getClickedItem();
         if (clickedItem == null) {
             return false;
         }
 
-        List<RecipeChoice> choices = getRecipe(clickedItem);
+        List<@Nullable RecipeChoice> choices = getRecipe(clickedItem);
         if (choices == null) {
             sendMissingMaterial(player, clickedItem);
             return false;
@@ -119,10 +124,16 @@ public class DefaultPlayerInventoryRecipeCompleteSlimefunSource implements Slime
                         if (depthInRange(player, recipeDepth + 1)) {
                             completeRecipeWithGuide(
                                     blockMenu,
-                                    new GuideEvents.ItemButtonClickEvent(event.getPlayer(), itemStack, event.getClickedSlot(), event.getClickAction(), event.getMenu(), event.getGuide()),
+                                    new GuideEvents.ItemButtonClickEvent(
+                                            event.getPlayer(), itemStack,
+                                            event.getClickedSlot(),
+                                            event.getClickAction(), event.getMenu(),
+                                            event.getGuide()
+                                    ),
                                     ingredientSlots,
                                     unordered,
-                                    recipeDepth + 1);
+                                    recipeDepth + 1
+                            );
                         } else {
                             sendMissingMaterial(player, itemStack);
                         }
@@ -141,10 +152,16 @@ public class DefaultPlayerInventoryRecipeCompleteSlimefunSource implements Slime
                         if (depthInRange(player, recipeDepth + 1)) {
                             completeRecipeWithGuide(
                                     blockMenu,
-                                    new GuideEvents.ItemButtonClickEvent(event.getPlayer(), itemStack, event.getClickedSlot(), event.getClickAction(), event.getMenu(), event.getGuide()),
+                                    new GuideEvents.ItemButtonClickEvent(
+                                            event.getPlayer(), itemStack,
+                                            event.getClickedSlot(),
+                                            event.getClickAction(), event.getMenu(),
+                                            event.getGuide()
+                                    ),
                                     ingredientSlots,
                                     unordered,
-                                    recipeDepth + 1);
+                                    recipeDepth + 1
+                            );
                         } else {
                             sendMissingMaterial(player, itemStack);
                         }
@@ -158,12 +175,12 @@ public class DefaultPlayerInventoryRecipeCompleteSlimefunSource implements Slime
     }
 
     @Nullable
-    private ItemStack getItemStack(@NotNull Player player, @NotNull ItemStack itemStack) {
+    private ItemStack getItemStack(Player player, ItemStack itemStack) {
         return getItemStackFromPlayerInventory(player, itemStack);
     }
 
     @Override
-    public @NotNull JavaPlugin plugin() {
+    public JavaPlugin plugin() {
         return NetworksExpansionIntegrationMain.getPlugin();
     }
 }

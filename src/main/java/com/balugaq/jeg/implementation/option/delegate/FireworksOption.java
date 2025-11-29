@@ -44,7 +44,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Optional;
 
@@ -54,25 +54,29 @@ import java.util.Optional;
  * @since 1.9
  */
 @SuppressWarnings("DataFlowIssue")
+@NullMarked
 public class FireworksOption implements SlimefunGuideOption<Boolean> {
-    @NotNull
     public SlimefunAddon getAddon() {
         return JustEnoughGuide.getInstance();
-    }
-
-    public @NotNull NamespacedKey getKey() {
-        return new NamespacedKey(Slimefun.instance(), "research_fireworks");
     }
 
     public Optional<ItemStack> getDisplayItem(Player p, ItemStack guide) {
         SlimefunConfigManager cfgManager = Slimefun.getConfigManager();
         if (cfgManager.isResearchingEnabled() && cfgManager.isResearchFireworkEnabled()) {
             boolean enabled = this.getSelectedOption(p, guide).orElse(true);
-            ItemStack item = new CustomItemStack(Material.FIREWORK_ROCKET, "&b烟花特效: &" + (enabled ? "a启用" : "4禁用"), "", "&7你现在可以选择是否", "&7在解锁一个新物品的时候", "&7展示烟花特效.", "", "&7⇨ &e点击 " + (enabled ? "禁用" : "启用") + " 烟花特效");
+            ItemStack item = new CustomItemStack(
+                    Material.FIREWORK_ROCKET, "&b烟花特效: &" + (enabled ? "a启用" : "4禁用"),
+                    "", "&7你现在可以选择是否", "&7在解锁一个新物品的时候", "&7展示烟花特效.", "",
+                    "&7⇨ &e点击 " + (enabled ? "禁用" : "启用") + " 烟花特效"
+            );
             return Optional.of(item);
         } else {
             return Optional.empty();
         }
+    }
+
+    public NamespacedKey getKey() {
+        return new NamespacedKey(Slimefun.instance(), "research_fireworks");
     }
 
     public void onClick(Player p, ItemStack guide) {

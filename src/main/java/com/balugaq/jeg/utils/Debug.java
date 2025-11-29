@@ -33,8 +33,8 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +49,8 @@ import java.util.UUID;
  * @author balugaq
  * @since 1.0
  */
-@SuppressWarnings({"unused", "deprecation", "CallToPrintStackTrace", "ResultOfMethodCallIgnored", "JavaExistingMethodCanBeUsed"})
+@SuppressWarnings({"unused", "deprecation", "CallToPrintStackTrace", "ResultOfMethodCallIgnored"})
+@NullMarked
 public class Debug {
     public static final File errorsFolder =
             new File(JustEnoughGuide.getInstance().getDataFolder(), "error-reports");
@@ -62,7 +63,61 @@ public class Debug {
         }
     }
 
-    @NotNull
+    public static void severe(Object... objects) {
+        severe(Arrays.toString(objects));
+    }
+
+    public static void severe(String message) {
+        log("&e[ERROR] " + message);
+    }
+
+    public static void log(String message) {
+        Bukkit.getServer()
+                .getConsoleSender()
+                .sendMessage("[" + JustEnoughGuide.getInstance().getName() + "] " + ChatColors.color(message));
+    }
+
+    public static void severe(Throwable e) {
+        severe(e.getMessage());
+        trace(e);
+    }
+
+    public static void trace(Throwable e) {
+        trace(e, null);
+    }
+
+    public static void trace(Throwable e, @Nullable String doing) {
+        trace(e, doing, null);
+    }
+
+    public static void trace(Throwable e, @Nullable String doing, @Nullable Integer code) {
+        try {
+            getPlugin()
+                    .getLogger()
+                    .severe(
+                            "DO NOT REPORT THIS ERROR TO JustEnoughGuide DEVELOPERS!!! THIS IS NOT A JustEnoughGuide " +
+                                    "BUG!");
+            if (code != null) {
+                getPlugin().getLogger().severe("Error code: " + code);
+            }
+            getPlugin()
+                    .getLogger()
+                    .severe("If you are sure that this is a JustEnoughGuide bug, please report to "
+                                    + JustEnoughGuide.getInstance().getBugTrackerURL());
+            if (doing != null) {
+                getPlugin().getLogger().severe("An unexpected error occurred while " + doing);
+            } else {
+                getPlugin().getLogger().severe("An unexpected error occurred.");
+            }
+
+            e.printStackTrace();
+
+            dumpToFile(e, code);
+        } catch (Throwable e2) {
+            throw new RuntimeException(e2);
+        }
+    }
+
     public static JavaPlugin getPlugin() {
         if (plugin == null) {
             plugin = JustEnoughGuide.getInstance();
@@ -70,251 +125,7 @@ public class Debug {
         return plugin;
     }
 
-    public static void severe(Object @NotNull ... objects) {
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : objects) {
-            if (obj == null) {
-                sb.append("null");
-            } else {
-                sb.append(obj);
-            }
-            sb.append(" ");
-        }
-        warn(sb.toString());
-    }
-
-    public static void severe(@NotNull Throwable e) {
-        warn(e.getMessage());
-        trace(e);
-    }
-
-    public static void severe(@Nullable Object object) {
-        warn(object == null ? "null" : object.toString());
-    }
-
-    public static void severe(String @NotNull ... messages) {
-        for (String message : messages) {
-            warn(message);
-        }
-    }
-
-    public static void severe(String message) {
-        log("&e[ERROR] " + message);
-    }
-
-    public static void warn(Object @NotNull ... objects) {
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : objects) {
-            if (obj == null) {
-                sb.append("null");
-            } else {
-                sb.append(obj);
-            }
-            sb.append(" ");
-        }
-        warn(sb.toString());
-    }
-
-    public static void warn(@NotNull Throwable e) {
-        warn(e.getMessage());
-        trace(e);
-    }
-
-    public static void warn(@Nullable Object object) {
-        warn(object == null ? "null" : object.toString());
-    }
-
-    public static void warn(String @NotNull ... messages) {
-        for (String message : messages) {
-            warn(message);
-        }
-    }
-
-    public static void warn(String message) {
-        log("&e[WARN] " + message);
-    }
-
-    public static void debug(Object @NotNull ... objects) {
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : objects) {
-            if (obj == null) {
-                sb.append("null");
-            } else {
-                sb.append(obj);
-            }
-            sb.append(" ");
-        }
-        debug(sb.toString());
-    }
-
-    public static void debug(@NotNull Throwable e) {
-        debug(e.getMessage());
-        trace(e);
-    }
-
-    public static void debug(@Nullable Object object) {
-        debug(object == null ? "null" : object.toString());
-    }
-
-    public static void debug(String @NotNull ... messages) {
-        for (String message : messages) {
-            debug(message);
-        }
-    }
-
-    public static void debug(String message) {
-        if (JustEnoughGuide.getConfigManager().isDebug()) {
-            log(debugPrefix + message);
-        }
-    }
-
-    public static void sendMessage(@NotNull Player player, Object @NotNull ... objects) {
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : objects) {
-            if (obj == null) {
-                sb.append("null");
-            } else {
-                sb.append(obj);
-            }
-            sb.append(" ");
-        }
-        sendMessage(player, sb.toString());
-    }
-
-    public static void sendMessage(@NotNull Player player, @Nullable Object object) {
-        if (object == null) {
-            sendMessage(player, "null");
-            return;
-        }
-        sendMessage(player, object.toString());
-    }
-
-    public static void sendMessages(@NotNull Player player, String @NotNull ... messages) {
-        for (String message : messages) {
-            sendMessage(player, message);
-        }
-    }
-
-    public static void sendMessage(@NotNull Player player, String message) {
-        player.sendMessage("[" + getPlugin().getName() + "]" + message);
-    }
-
-    public static void dumpStack() {
-        Thread.dumpStack();
-    }
-
-    public static void log(Object @NotNull ... object) {
-        StringBuilder sb = new StringBuilder();
-        for (Object obj : object) {
-            if (obj == null) {
-                sb.append("null");
-            } else {
-                sb.append(obj);
-            }
-            sb.append(" ");
-        }
-
-        log(sb.toString());
-    }
-
-    public static void log(@Nullable Object object) {
-        log(object == null ? "null" : object.toString());
-    }
-
-    public static void log(String @NotNull ... messages) {
-        for (String message : messages) {
-            log(message);
-        }
-    }
-
-    public static void log(@NotNull String message) {
-        Bukkit.getServer()
-                .getConsoleSender()
-                .sendMessage("[" + JustEnoughGuide.getInstance().getName() + "] " + ChatColors.color(message));
-    }
-
-    public static void log(@NotNull Throwable e) {
-        Debug.trace(e);
-    }
-
-    public static void log() {
-        log("");
-    }
-
-    public static void trace(@NotNull Throwable e) {
-        trace(e, null);
-    }
-
-    public static void trace(@NotNull Throwable e, @Nullable String doing) {
-        trace(e, doing, null);
-    }
-
-    public static void trace(@NotNull Throwable e, @Nullable String doing, @Nullable Integer code) {
-        try {
-            getPlugin()
-                    .getLogger()
-                    .severe(
-                            "DO NOT REPORT THIS ERROR TO JustEnoughGuide DEVELOPERS!!! THIS IS NOT A JustEnoughGuide BUG!");
-            if (code != null) {
-                getPlugin().getLogger().severe("Error code: " + code);
-            }
-            getPlugin()
-                    .getLogger()
-                    .severe("If you are sure that this is a JustEnoughGuide bug, please report to "
-                            + JustEnoughGuide.getInstance().getBugTrackerURL());
-            if (doing != null) {
-                getPlugin().getLogger().severe("An unexpected error occurred while " + doing);
-            } else {
-                getPlugin().getLogger().severe("An unexpected error occurred.");
-            }
-
-            e.printStackTrace();
-
-            dumpToFile(e, code);
-        } catch (Throwable e2) {
-            throw new RuntimeException(e2);
-        }
-    }
-
-    public static void traceExactly(@NotNull Throwable e, @Nullable String doing, @Nullable Integer code) {
-        try {
-            getPlugin()
-                    .getLogger()
-                    .severe("====================AN FATAL OCCURRED"
-                            + (doing != null ? (" WHEN " + doing.toUpperCase()) : "") + "====================");
-            getPlugin()
-                    .getLogger()
-                    .severe(
-                            "DO NOT REPORT THIS ERROR TO JustEnoughGuide DEVELOPERS!!! THIS IS NOT A JustEnoughGuide BUG!");
-            if (code != null) {
-                getPlugin().getLogger().severe("Error code: " + code);
-            }
-            getPlugin()
-                    .getLogger()
-                    .severe("If you are sure that this is a JustEnoughGuide bug, please report to "
-                            + JustEnoughGuide.getInstance().getBugTrackerURL());
-            if (doing != null) {
-                getPlugin().getLogger().severe("An unexpected error occurred while " + doing);
-            } else {
-                getPlugin().getLogger().severe("An unexpected error occurred.");
-            }
-
-            e.printStackTrace();
-
-            getPlugin().getLogger().severe("ALL EXCEPTION INFORMATION IS BELOW:");
-            getPlugin().getLogger().severe("message: " + e.getMessage());
-            getPlugin().getLogger().severe("localizedMessage: " + e.getLocalizedMessage());
-            getPlugin().getLogger().severe("cause: " + e.getCause());
-            getPlugin().getLogger().severe("stackTrace: " + Arrays.toString(e.getStackTrace()));
-            getPlugin().getLogger().severe("suppressed: " + Arrays.toString(e.getSuppressed()));
-
-            dumpToFile(e, code);
-        } catch (Throwable e2) {
-            throw new RuntimeException(e2);
-        }
-    }
-
-    public static void dumpToFile(@NotNull Throwable e, @Nullable Integer code) {
+    public static void dumpToFile(Throwable e, @Nullable Integer code) {
         // Format as: yyyy-MM-dd-HH-mm-ss-e.getClass().getSimpleName()-uuid
         String fileName = "error-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"))
                 + "-" + e.getClass().getSimpleName() + "-" + UUID.randomUUID() + ".txt";
@@ -327,13 +138,13 @@ public class Debug {
                 stream.println(
                         "DO NOT REPORT THIS ERROR TO JustEnoughGuide DEVELOPERS!!! THIS IS NOT A JustEnoughGuide BUG!");
                 stream.println("If you are sure that this is a JustEnoughGuide bug, please report to "
-                        + JustEnoughGuide.getInstance().getBugTrackerURL());
+                                       + JustEnoughGuide.getInstance().getBugTrackerURL());
                 stream.println("An unexpected error occurred.");
                 stream.println("JustEnoughGuide version: "
-                        + JustEnoughGuide.getInstance().getDescription().getVersion());
+                                       + JustEnoughGuide.getInstance().getDescription().getVersion());
                 stream.println("Java version: " + System.getProperty("java.version"));
                 stream.println("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " "
-                        + System.getProperty("os.arch"));
+                                       + System.getProperty("os.arch"));
                 stream.println("Minecraft version: " + JustEnoughGuide.getMinecraftVersion());
                 stream.println("Slimefun version: " + Slimefun.getVersion());
                 if (code != null) {
@@ -355,6 +166,151 @@ public class Debug {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public static void warn(String message) {
+        log("&e[WARN] " + message);
+    }
+
+    public static void severe(@Nullable Object object) {
+        severe(object == null ? "null" : object.toString());
+    }
+
+    public static void severe(String... messages) {
+        for (String message : messages) {
+            severe(message);
+        }
+    }
+
+    public static void warn(Object... objects) {
+        warn(Arrays.toString(objects));
+    }
+
+    public static void warn(Throwable e) {
+        warn(e.getMessage());
+        trace(e);
+    }
+
+    public static void warn(@Nullable Object object) {
+        warn(object == null ? "null" : object.toString());
+    }
+
+    public static void warn(String... messages) {
+        for (String message : messages) {
+            warn(message);
+        }
+    }
+
+    public static void debug(Object... objects) {
+        debug(Arrays.toString(objects));
+    }
+
+    public static void debug(String message) {
+        if (JustEnoughGuide.getConfigManager().isDebug()) {
+            log(debugPrefix + message);
+        }
+    }
+
+    public static void debug(Throwable e) {
+        debug(e.getMessage());
+        trace(e);
+    }
+
+    public static void debug(@Nullable Object object) {
+        debug(object == null ? "null" : object.toString());
+    }
+
+    public static void debug(String... messages) {
+        for (String message : messages) {
+            debug(message);
+        }
+    }
+
+    public static void sendMessage(Player player, Object... objects) {
+        sendMessage(player, Arrays.toString(objects));
+    }
+
+    public static void sendMessage(Player player, String message) {
+        player.sendMessage("[" + getPlugin().getName() + "]" + message);
+    }
+
+    public static void sendMessage(Player player, @Nullable Object object) {
+        if (object == null) {
+            sendMessage(player, "null");
+            return;
+        }
+        sendMessage(player, object.toString());
+    }
+
+    public static void sendMessages(Player player, String... messages) {
+        for (String message : messages) {
+            sendMessage(player, message);
+        }
+    }
+
+    public static void dumpStack() {
+        Thread.dumpStack();
+    }
+
+    public static void log(Object... object) {
+        log(Arrays.toString(object));
+    }
+
+    public static void log(@Nullable Object object) {
+        log(object == null ? "null" : object.toString());
+    }
+
+    public static void log(String... messages) {
+        for (String message : messages) {
+            log(message);
+        }
+    }
+
+    public static void log(Throwable e) {
+        Debug.trace(e);
+    }
+
+    public static void log() {
+        log("");
+    }
+
+    public static void traceExactly(Throwable e, @Nullable String doing, @Nullable Integer code) {
+        try {
+            getPlugin()
+                    .getLogger()
+                    .severe("====================AN FATAL OCCURRED"
+                                    + (doing != null ? (" WHEN " + doing.toUpperCase()) : "") + "====================");
+            getPlugin()
+                    .getLogger()
+                    .severe(
+                            "DO NOT REPORT THIS ERROR TO JustEnoughGuide DEVELOPERS!!! THIS IS NOT A JustEnoughGuide " +
+                                    "BUG!");
+            if (code != null) {
+                getPlugin().getLogger().severe("Error code: " + code);
+            }
+            getPlugin()
+                    .getLogger()
+                    .severe("If you are sure that this is a JustEnoughGuide bug, please report to "
+                                    + JustEnoughGuide.getInstance().getBugTrackerURL());
+            if (doing != null) {
+                getPlugin().getLogger().severe("An unexpected error occurred while " + doing);
+            } else {
+                getPlugin().getLogger().severe("An unexpected error occurred.");
+            }
+
+            e.printStackTrace();
+
+            getPlugin().getLogger().severe("ALL EXCEPTION INFORMATION IS BELOW:");
+            getPlugin().getLogger().severe("message: " + e.getMessage());
+            getPlugin().getLogger().severe("localizedMessage: " + e.getLocalizedMessage());
+            getPlugin().getLogger().severe("cause: " + e.getCause());
+            getPlugin().getLogger().severe("stackTrace: " + Arrays.toString(e.getStackTrace()));
+            getPlugin().getLogger().severe("suppressed: " + Arrays.toString(e.getSuppressed()));
+
+            dumpToFile(e, code);
+        } catch (Throwable e2) {
+            throw new RuntimeException(e2);
         }
     }
 }

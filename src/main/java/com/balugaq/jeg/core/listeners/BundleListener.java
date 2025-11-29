@@ -33,21 +33,17 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
+/**
+ * @author balugaq
+ * @since 2.0
+ */
+@NullMarked
 public class BundleListener implements Listener {
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isBundle(@Nullable ItemStack item) {
-        if (item == null) {
-            return false;
-        }
-
-        return item.getType().name().endsWith("BUNDLE");
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onBundleClick(@NotNull InventoryClickEvent event) {
+    public void onBundleClick(InventoryClickEvent event) {
         if (!(event.getInventory().getHolder() instanceof SlimefunInventoryHolder)) {
             return;
         }
@@ -61,5 +57,14 @@ public class BundleListener implements Listener {
         }
 
         event.setCancelled(true);
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean isBundle(@Nullable ItemStack item) {
+        if (item == null) {
+            return false;
+        }
+
+        return item.getType().name().endsWith("BUNDLE");
     }
 }

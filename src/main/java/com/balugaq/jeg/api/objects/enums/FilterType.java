@@ -28,6 +28,7 @@
 package com.balugaq.jeg.api.objects.enums;
 
 import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.interfaces.Api;
 import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.LocalHelper;
 import com.balugaq.jeg.utils.SpecialMenuProvider;
@@ -40,7 +41,6 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.Reference;
 import java.util.List;
@@ -53,7 +53,8 @@ import java.util.Set;
 @SuppressWarnings({"ConstantValue", "deprecation"})
 @Getter
 public enum FilterType {
-    BY_RECIPE_ITEM_NAME("#", (player, item, lowerFilterValue, pinyin) -> {
+    BY_RECIPE_ITEM_NAME(
+            "#", (player, item, lowerFilterValue, pinyin) -> {
         ItemStack[] recipe = item.getRecipe();
         if (recipe == null) {
             return false;
@@ -66,15 +67,18 @@ public enum FilterType {
         }
 
         return false;
-    }),
-    BY_RECIPE_TYPE_NAME("$", (player, item, lowerFilterValue, pinyin) -> {
+    }
+    ),
+    BY_RECIPE_TYPE_NAME(
+            "$", (player, item, lowerFilterValue, pinyin) -> {
         ItemStack recipeTypeIcon = item.getRecipeType().getItem(player);
         if (recipeTypeIcon == null) {
             return false;
         }
 
         return SearchGroup.isSearchFilterApplicable(recipeTypeIcon, lowerFilterValue, false);
-    }),
+    }
+    ),
     BY_DISPLAY_ITEM_NAME(
             "%",
             (player, item, lowerFilterValue, pinyin) -> {
@@ -130,16 +134,22 @@ public enum FilterType {
                 }
 
                 return false;
-            }),
-    BY_ADDON_NAME("@", (player, item, lowerFilterValue, pinyin) -> {
+            }
+    ),
+    BY_ADDON_NAME(
+            "@", (player, item, lowerFilterValue, pinyin) -> {
         SlimefunAddon addon = item.getAddon();
         String localAddonName = LocalHelper.getAddonName(addon, item.getId()).toLowerCase();
         String originModName = (addon == null ? "Slimefun" : addon.getName()).toLowerCase();
         return localAddonName.contains(lowerFilterValue) || originModName.contains(lowerFilterValue);
-    }),
-    BY_ITEM_NAME("!", (player, item, lowerFilterValue, pinyin) ->
-            SearchGroup.isSearchFilterApplicable(item, lowerFilterValue, pinyin)),
-    BY_ITEM_LORE("^", (player, item, lowerFilterValue, pinyin) -> {
+    }
+    ),
+    BY_ITEM_NAME(
+            "!", (player, item, lowerFilterValue, pinyin) ->
+            SearchGroup.isSearchFilterApplicable(item, lowerFilterValue, pinyin)
+    ),
+    BY_ITEM_LORE(
+            "^", (player, item, lowerFilterValue, pinyin) -> {
         ItemMeta meta = item.getItem().getItemMeta();
         if (meta == null) return false;
         List<String> s = meta.getLore();
@@ -150,27 +160,32 @@ public enum FilterType {
             }
         }
         return false;
-    }),
-    BY_MATERIAL_NAME("~", (player, item, lowerFilterValue, pinyin) -> item.getItem().getType().name().toLowerCase().contains(lowerFilterValue));
+    }
+    ),
+    BY_MATERIAL_NAME(
+            "~",
+            (player, item, lowerFilterValue, pinyin) -> item.getItem().getType().name().toLowerCase().contains(lowerFilterValue)
+    );
 
-    private @NotNull
-    final String symbol;
-    private @NotNull
-    final DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter;
+    private final String symbol;
+    private final DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter;
 
     /**
      * Constructs a new FilterType instance with the specified flag and filter function.
      *
-     * @param symbol The string symbol of the filter type.
-     * @param filter The filter function to determine whether an item matches the filter.
+     * @param symbol
+     *         The string symbol of the filter type.
+     * @param filter
+     *         The filter function to determine whether an item matches the filter.
      */
-    FilterType(@NotNull String symbol, @NotNull DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter) {
+    FilterType(String symbol, DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter) {
         this.symbol = symbol;
         this.filter = filter;
     }
 
     @Deprecated
-    public @NotNull String getFlag() {
+    @Api
+    public String getFlag() {
         return symbol;
     }
 

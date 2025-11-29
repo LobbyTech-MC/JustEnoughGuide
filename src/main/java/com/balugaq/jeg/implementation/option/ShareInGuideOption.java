@@ -30,6 +30,7 @@ package com.balugaq.jeg.implementation.option;
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.JEGVersionedItemFlag;
+import com.balugaq.jeg.utils.KeyUtil;
 import com.balugaq.jeg.utils.compatibility.Converter;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
@@ -38,7 +39,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Optional;
 
@@ -47,65 +48,70 @@ import java.util.Optional;
  * @since 1.9
  */
 @SuppressWarnings({"UnnecessaryUnicodeEscape", "SameReturnValue"})
+@NullMarked
 public class ShareInGuideOption implements SlimefunGuideOption<Boolean> {
-    public static final @NotNull ShareInGuideOption instance = new ShareInGuideOption();
+    public static final ShareInGuideOption instance = new ShareInGuideOption();
 
-    public static @NotNull ShareInGuideOption instance() {
+    public static ShareInGuideOption instance() {
         return instance;
     }
 
-    public static @NotNull NamespacedKey key0() {
-        return new NamespacedKey(JustEnoughGuide.getInstance(), "share_in");
-    }
-
-    public static boolean isEnabled(@NotNull Player p) {
+    public static boolean isEnabled(Player p) {
         return getSelectedOption(p);
     }
 
-    public static boolean getSelectedOption(@NotNull Player p) {
+    public static boolean getSelectedOption(Player p) {
         return !PersistentDataAPI.hasByte(p, key0()) || PersistentDataAPI.getByte(p, key0()) == (byte) 1;
     }
 
+    public static NamespacedKey key0() {
+        return KeyUtil.newKey("share_in");
+    }
+
     @Override
-    public @NotNull SlimefunAddon getAddon() {
+    public SlimefunAddon getAddon() {
         return JustEnoughGuide.getInstance();
     }
 
     @Override
-    public @NotNull NamespacedKey getKey() {
-        return key0();
-    }
-
-    @Override
-    public @NotNull Optional<ItemStack> getDisplayItem(@NotNull Player p, ItemStack guide) {
+    public Optional<ItemStack> getDisplayItem(Player p, ItemStack guide) {
         boolean enabled = getSelectedOption(p, guide).orElse(true);
         ItemStack item = Converter.getItem(
-                Converter.getItem(Material.WRITTEN_BOOK, meta -> meta.addItemFlags(JEGVersionedItemFlag.HIDE_ADDITIONAL_TOOLTIP)),
+                Converter.getItem(
+                        Material.WRITTEN_BOOK,
+                        meta -> meta.addItemFlags(JEGVersionedItemFlag.HIDE_ADDITIONAL_TOOLTIP)
+                ),
                 "&b接收分享的物品: &" + (enabled ? "a启用" : "4禁用"),
                 "",
                 "&7你现在可以选择",
                 "&7当他人分享一个物品时",
                 "&7是否接收那个玩家发送的推送消息",
                 "",
-                "&7\u21E8 &e点击 " + (enabled ? "禁用" : "启用") + " 接收分享的物品");
+                "&7\u21E8 &e点击 " + (enabled ? "禁用" : "启用") + " 接收分享的物品"
+        );
         return Optional.of(item);
     }
 
     @Override
-    public void onClick(@NotNull Player p, @NotNull ItemStack guide) {
+    public NamespacedKey getKey() {
+        return key0();
+    }
+
+    @Override
+    public void onClick(Player p, ItemStack guide) {
         setSelectedOption(p, guide, !getSelectedOption(p, guide).orElse(true));
         JEGGuideSettings.openSettings(p, guide);
     }
 
     @Override
-    public @NotNull Optional<Boolean> getSelectedOption(@NotNull Player p, ItemStack guide) {
+    public Optional<Boolean> getSelectedOption(Player p, ItemStack guide) {
         NamespacedKey key = getKey();
         boolean value = !PersistentDataAPI.hasByte(p, key) || PersistentDataAPI.getByte(p, key) == (byte) 1;
         return Optional.of(value);
     }
 
     @Override
-    public void setSelectedOption(@NotNull Player p, ItemStack guide, Boolean value) {
+    public void setSelectedOption(Player p, ItemStack guide, Boolean value) {
         PersistentDataAPI.setByte(p, getKey(), value ? (byte) 1 : (byte) 0);
     }
 }

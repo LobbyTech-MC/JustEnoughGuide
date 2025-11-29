@@ -42,8 +42,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
 import java.util.UUID;
@@ -54,37 +54,30 @@ import java.util.UUID;
  */
 @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
 @Getter
+@NullMarked
 public class RTSBackpackManager extends AbstractManager {
     private static final int IDENTIFIER_SLOT = 53;
     private static final String BACKPACK_NAME = "JEGRTSBackpack";
     private static final NamespacedKey STATUS_KEY = new NamespacedKey(JustEnoughGuide.getInstance(), "status");
     private static final String OPEN_STATUS = "open";
     private static final String CLOSE_STATUS = "close";
-    private final @NotNull Plugin plugin;
-    private final @NotNull NamespacedKey SERVER_KEY;
-    private final @NotNull NamespacedKey OWNER_KEY;
+    private final Plugin plugin;
+    private final NamespacedKey SERVER_KEY;
+    private final NamespacedKey OWNER_KEY;
 
-    public RTSBackpackManager(@NotNull Plugin plugin) {
+    public RTSBackpackManager(Plugin plugin) {
         this.plugin = plugin;
         this.SERVER_KEY = new NamespacedKey(plugin, "server");
         this.OWNER_KEY = new NamespacedKey(plugin, "owner");
     }
 
-    public static ItemStack @NotNull [] getStorageContents(@NotNull PlayerInventory inventory) {
-        ItemStack[] contents = new ItemStack[36];
-        for (int i = 0; i < 36; i++) {
-            ItemStack itemStack = inventory.getItem(i);
-            contents[i] = itemStack;
-        }
-        return contents;
-    }
-
     /**
      * Saves the player's inventory backup to a backpack.
      *
-     * @param player the player whose inventory to back up
+     * @param player
+     *         the player whose inventory to back up
      */
-    public void saveInventoryBackupFor(@NotNull Player player) {
+    public void saveInventoryBackupFor(Player player) {
         PlayerProfile profile = PlayerProfile.find(player).orElse(null);
         if (profile == null) {
             return;
@@ -135,11 +128,112 @@ public class RTSBackpackManager extends AbstractManager {
     }
 
     /**
+     * Checks if the item is a valid identifier for the player.
+     *
+     * @param item
+     *         the item to check
+     * @param player
+     *         the player
+     *
+     * @return true if the item is a valid identifier, false otherwise
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean isIdentifier(@Nullable ItemStack item, Player player) {
+        if (item == null || item.getType() == Material.AIR) {
+            return false;
+        }
+
+        String owner = item.getItemMeta().getPersistentDataContainer().get(OWNER_KEY, PersistentDataType.STRING);
+        if (owner == null) {
+            return false;
+        }
+
+        if (!owner.equals(player.getUniqueId().toString())) {
+            return false;
+        }
+
+        String serverUUID = item.getItemMeta().getPersistentDataContainer().get(SERVER_KEY, PersistentDataType.STRING);
+        if (serverUUID == null) {
+            return false;
+        }
+
+        return serverUUID.equals(JustEnoughGuide.getServerUUID().toString());
+    }
+
+    /**
+     * Sets the identifier item in the inventory.
+     *
+     * @param player
+     *         the player
+     * @param inventory
+     *         the inventory
+     * @param slot
+     *         the slot to set the identifier item
+     * @param open
+     *         whether the identifier item should indicate an open status
+     */
+    public void setIdentifier(Player player, Inventory inventory, int slot, boolean open) {
+        inventory.setItem(slot, getIdentifierItem(player, open));
+    }
+
+    public static ItemStack[] getStorageContents(PlayerInventory inventory) {
+        ItemStack[] contents = new ItemStack[36];
+        for (int i = 0; i < 36; i++) {
+            ItemStack itemStack = inventory.getItem(i);
+            contents[i] = itemStack;
+        }
+        return contents;
+    }
+
+    /**
+     * Creates and returns the identifier item.
+     *
+     * @param player
+     *         the player
+     * @param open
+     *         whether the identifier item should indicate an open status
+     *
+     * @return the identifier item
+     */
+    public ItemStack getIdentifierItem(Player player, boolean open) {
+        return Converter.getItem(
+                Converter.getItem(
+                        Material.DIRT,
+                        "[RTS]",
+                        "[RTS]",
+                        "[RTS]",
+                        "[RTS]",
+                        UUID.randomUUID().toString()
+                ),
+                meta -> {
+                    meta.getPersistentDataContainer()
+                            .set(
+                                    OWNER_KEY,
+                                    PersistentDataType.STRING,
+                                    player.getUniqueId().toString()
+                            );
+                    meta.getPersistentDataContainer()
+                            .set(
+                                    SERVER_KEY,
+                                    PersistentDataType.STRING,
+                                    JustEnoughGuide.getServerUUID().toString()
+                            );
+                    if (open) {
+                        meta.getPersistentDataContainer().set(STATUS_KEY, PersistentDataType.STRING, OPEN_STATUS);
+                    } else {
+                        meta.getPersistentDataContainer().set(STATUS_KEY, PersistentDataType.STRING, CLOSE_STATUS);
+                    }
+                }
+        );
+    }
+
+    /**
      * Clears the player's inventory.
      *
-     * @param player the player whose inventory to clear
+     * @param player
+     *         the player whose inventory to clear
      */
-    public void clearInventoryFor(@NotNull Player player) {
+    public void clearInventoryFor(Player player) {
         ItemStack[] newContents = new ItemStack[player.getInventory().getStorageContents().length];
         for (int i = 0; i < newContents.length; i++) {
             newContents[i] = new ItemStack(Material.AIR);
@@ -150,9 +244,10 @@ public class RTSBackpackManager extends AbstractManager {
     /**
      * Restores the player's inventory from a backpack.
      *
-     * @param player the player whose inventory to restore
+     * @param player
+     *         the player whose inventory to restore
      */
-    public void restoreInventoryFor(@NotNull Player player) {
+    public void restoreInventoryFor(Player player) {
         PlayerProfile profile = PlayerProfile.find(player).orElse(null);
         if (profile == null) {
             return;
@@ -168,7 +263,7 @@ public class RTSBackpackManager extends AbstractManager {
         for (PlayerBackpack backpack : backpacks) {
             if (backpack.getName().equals(BACKPACK_NAME)) {
                 Inventory inventory = backpack.getInventory();
-                ItemStack[] contents = inventory.getContents();
+                @Nullable ItemStack[] contents = inventory.getContents();
 
                 ItemStack identifierItem = contents[IDENTIFIER_SLOT];
                 if (identifierItem == null || identifierItem.getType() == Material.AIR) {
@@ -211,86 +306,11 @@ public class RTSBackpackManager extends AbstractManager {
     }
 
     /**
-     * Sets the identifier item in the inventory.
-     *
-     * @param player    the player
-     * @param inventory the inventory
-     * @param slot      the slot to set the identifier item
-     * @param open      whether the identifier item should indicate an open status
-     */
-    public void setIdentifier(@NotNull Player player, @NotNull Inventory inventory, int slot, boolean open) {
-        inventory.setItem(slot, getIdentifierItem(player, open));
-    }
-
-    /**
-     * Creates and returns the identifier item.
-     *
-     * @param player the player
-     * @param open   whether the identifier item should indicate an open status
-     * @return the identifier item
-     */
-    public @NotNull ItemStack getIdentifierItem(@NotNull Player player, boolean open) {
-        return Converter.getItem(
-                Converter.getItem(
-                        Material.DIRT,
-                        "[RTS]",
-                        "[RTS]",
-                        "[RTS]",
-                        "[RTS]",
-                        UUID.randomUUID().toString()),
-                meta -> {
-                    meta.getPersistentDataContainer()
-                            .set(
-                                    OWNER_KEY,
-                                    PersistentDataType.STRING,
-                                    player.getUniqueId().toString());
-                    meta.getPersistentDataContainer()
-                            .set(
-                                    SERVER_KEY,
-                                    PersistentDataType.STRING,
-                                    JustEnoughGuide.getServerUUID().toString());
-                    if (open) {
-                        meta.getPersistentDataContainer().set(STATUS_KEY, PersistentDataType.STRING, OPEN_STATUS);
-                    } else {
-                        meta.getPersistentDataContainer().set(STATUS_KEY, PersistentDataType.STRING, CLOSE_STATUS);
-                    }
-                });
-    }
-
-    /**
-     * Checks if the item is a valid identifier for the player.
-     *
-     * @param item   the item to check
-     * @param player the player
-     * @return true if the item is a valid identifier, false otherwise
-     */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isIdentifier(@Nullable ItemStack item, @NotNull Player player) {
-        if (item == null || item.getType() == Material.AIR) {
-            return false;
-        }
-
-        String owner = item.getItemMeta().getPersistentDataContainer().get(OWNER_KEY, PersistentDataType.STRING);
-        if (owner == null) {
-            return false;
-        }
-
-        if (!owner.equals(player.getUniqueId().toString())) {
-            return false;
-        }
-
-        String serverUUID = item.getItemMeta().getPersistentDataContainer().get(SERVER_KEY, PersistentDataType.STRING);
-        if (serverUUID == null) {
-            return false;
-        }
-
-        return serverUUID.equals(JustEnoughGuide.getServerUUID().toString());
-    }
-
-    /**
      * Checks if the identifier item indicates an open status.
      *
-     * @param item the identifier item to check
+     * @param item
+     *         the identifier item to check
+     *
      * @return true if the identifier item indicates an open status, false otherwise
      */
     public boolean isOpenIdentifier(@Nullable ItemStack item) {

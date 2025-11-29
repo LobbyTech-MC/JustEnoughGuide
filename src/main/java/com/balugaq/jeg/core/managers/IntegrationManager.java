@@ -70,7 +70,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,9 +84,10 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings({"unused", "LombokGetterMayBeUsed"})
 @Getter
+@NullMarked
 public class IntegrationManager extends AbstractManager {
-    private final @NotNull List<Integration> integrations = new ArrayList<>();
-    private final @NotNull JavaPlugin plugin;
+    private final List<Integration> integrations = new ArrayList<>();
+    private final JavaPlugin plugin;
 
     @Deprecated
     private final boolean hasRecipeCompletableWithGuide = false;
@@ -131,7 +132,7 @@ public class IntegrationManager extends AbstractManager {
     private boolean enabledTsingshanTechnology_Fixed;
     private boolean enabledWilderNether;
 
-    public IntegrationManager(@NotNull JavaPlugin plugin) {
+    public IntegrationManager(JavaPlugin plugin) {
         this.plugin = plugin;
         JustEnoughGuide
                 .runLater(
@@ -154,10 +155,12 @@ public class IntegrationManager extends AbstractManager {
                             this.enabledElementManipulation = pm.isPluginEnabled("ElementManipulation");
                             this.enabledEMCTech = pm.isPluginEnabled("EMCTech");
                             this.enabledFastMachines = pm.isPluginEnabled("FastMachines");
-                            this.enabledFinalTech = pm.isPluginEnabled("FinalTech") && classExists("io.taraxacum.finaltech.api.factory.ItemValueTable");
+                            this.enabledFinalTech = pm.isPluginEnabled("FinalTech") && classExists("io.taraxacum" +
+                                                                                                           ".finaltech.api.factory.ItemValueTable");
                             this.enabledFinalTECH_Changed = pm.isPluginEnabled("FinalTECH-Changed");
                             this.enabledFinalTECH = enabledFinalTECH_Changed
-                                    || (pm.isPluginEnabled("FinalTECH") && classExists("io.taraxacum.libs.slimefun.dto.ItemValueTable"));
+                                    || (pm.isPluginEnabled("FinalTECH") && classExists("io.taraxacum.libs.slimefun" +
+                                                                                               ".dto.ItemValueTable"));
                             this.enabledFluffyMachines = pm.isPluginEnabled("FluffyMachines");
                             this.enabledGalactifun = pm.isPluginEnabled("Galactifun");
                             this.enabledGastronomicon = pm.isPluginEnabled("Gastronomicon");
@@ -182,7 +185,8 @@ public class IntegrationManager extends AbstractManager {
                             this.enabledSlimeFrame = pm.isPluginEnabled("SlimeFrame");
                             this.enabledSlimeTinker = pm.isPluginEnabled("SlimeTinker");
                             this.enabledTsingshanTechnology_Fixed = pm.isPluginEnabled("TsingshanTechnology-Fixed");
-                            this.enabledTsingshanTechnology = enabledTsingshanTechnology_Fixed || pm.isPluginEnabled("TsingshanTechnology");
+                            this.enabledTsingshanTechnology = enabledTsingshanTechnology_Fixed || pm.isPluginEnabled(
+                                    "TsingshanTechnology");
                             this.enabledWilderNether = pm.isPluginEnabled("WilderNether");
 
                             addIntegration(enabledAlchimiaVitae, AlchimiaVitaeIntegrationMain::new);
@@ -221,10 +225,11 @@ public class IntegrationManager extends AbstractManager {
                             RecipeCompleteProvider.addSource(new DefaultPlayerInventoryRecipeCompleteSlimefunSource());
                             RecipeCompleteProvider.addSource(new DefaultPlayerInventoryRecipeCompleteVanillaSource());
                         },
-                        1L);
+                        1L
+                );
     }
 
-    public static boolean classExists(@NotNull String className) {
+    public static boolean classExists(String className) {
         try {
             Class.forName(className);
             return true;
@@ -233,17 +238,15 @@ public class IntegrationManager extends AbstractManager {
         }
     }
 
-    public static void scheduleRun(@NotNull Runnable runnable) {
-        JustEnoughGuide.runLater(runnable, 2L);
-    }
-
-    public static void scheduleRunAsync(@NotNull Runnable runnable) {
-        JustEnoughGuide.runLaterAsync(runnable, 2L);
-    }
-
-    @Deprecated
-    public boolean hasRecipeCompletableWithGuide() {
-        return hasRecipeCompletableWithGuide;
+    @SuppressWarnings("UnusedReturnValue")
+    public Run addIntegration(boolean enabled, Supplier<Integration> supplier) {
+        if (enabled) {
+            Integration integration = supplier.get();
+            integrations.add(integration);
+            return Run.success();
+        } else {
+            return Run.failure();
+        }
     }
 
     private void startupIntegrations() {
@@ -255,6 +258,19 @@ public class IntegrationManager extends AbstractManager {
                 Debug.trace(e);
             }
         }
+    }
+
+    public static void scheduleRun(Runnable runnable) {
+        JustEnoughGuide.runLater(runnable, 2L);
+    }
+
+    public static void scheduleRunAsync(Runnable runnable) {
+        JustEnoughGuide.runLaterAsync(runnable, 2L);
+    }
+
+    @Deprecated
+    public boolean hasRecipeCompletableWithGuide() {
+        return hasRecipeCompletableWithGuide;
     }
 
     public void shutdownIntegrations() {
@@ -280,17 +296,6 @@ public class IntegrationManager extends AbstractManager {
         return enabledFinalTECH_Changed;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public Run addIntegration(boolean enabled, @NotNull Supplier<Integration> supplier) {
-        if (enabled) {
-            Integration integration = supplier.get();
-            integrations.add(integration);
-            return Run.success();
-        } else {
-            return Run.failure();
-        }
-    }
-
     @Data
     @RequiredArgsConstructor
     public static class Run implements Cloneable {
@@ -302,24 +307,24 @@ public class IntegrationManager extends AbstractManager {
             return SUCCESS.clone();
         }
 
-        public static Run failure() {
-            return FAILURE.clone();
-        }
-
-        public Run or(@NotNull Supplier<Run> callable) {
-            if (!success) {
-                return callable.get();
-            } else {
-                return this;
-            }
-        }
-
         @Override
         public Run clone() {
             try {
                 return (Run) super.clone();
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError();
+            }
+        }
+
+        public static Run failure() {
+            return FAILURE.clone();
+        }
+
+        public Run or(Supplier<Run> callable) {
+            if (!success) {
+                return callable.get();
+            } else {
+                return this;
             }
         }
     }

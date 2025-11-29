@@ -29,16 +29,18 @@ package com.balugaq.jeg.utils;
 
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 /**
- * This class represents a Minecraft version. It contains a major and minor version number, and provides methods to compare
+ * This class represents a Minecraft version. It contains a major and minor version number, and provides methods to
+ * compare
  *
  * @author balugaq
  * @since 1.2
  */
 @SuppressWarnings("unused")
 @Getter
+@NullMarked
 public enum MinecraftVersion {
     MINECRAFT_1_16(16, 0),
     MINECRAFT_1_16_1(16, 1),
@@ -213,7 +215,13 @@ public enum MinecraftVersion {
         this.minor = minor;
     }
 
-    public static @NotNull MinecraftVersion of(int major, int minor) {
+    public static MinecraftVersion getCurrentVersion() {
+        int major = PaperLib.getMinecraftVersion();
+        int minor = PaperLib.getMinecraftPatchVersion();
+        return of(major, minor);
+    }
+
+    public static MinecraftVersion of(int major, int minor) {
         for (MinecraftVersion version : values()) {
             if (version.major == major && version.minor == minor) {
                 return version;
@@ -222,17 +230,11 @@ public enum MinecraftVersion {
         return UNKNOWN;
     }
 
-    public static @NotNull MinecraftVersion getCurrentVersion() {
-        int major = PaperLib.getMinecraftVersion();
-        int minor = PaperLib.getMinecraftPatchVersion();
-        return of(major, minor);
-    }
-
-    public boolean isAtLeast(@NotNull MinecraftVersion version) {
+    public boolean isAtLeast(MinecraftVersion version) {
         return this.major > version.major || (this.major == version.major && this.minor >= version.minor);
     }
 
-    public boolean isBelow(@NotNull MinecraftVersion version) {
+    public boolean isBelow(MinecraftVersion version) {
         return this.major < version.major || (this.major == version.major && this.minor < version.minor);
     }
 
@@ -261,7 +263,7 @@ public enum MinecraftVersion {
      *
      * @return 1.x.x
      */
-    public @NotNull String humanize() {
+    public String humanize() {
         return "1." + this.major + "." + this.minor;
     }
 }

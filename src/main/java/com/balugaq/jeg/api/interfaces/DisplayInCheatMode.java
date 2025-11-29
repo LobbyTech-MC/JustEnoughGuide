@@ -28,7 +28,7 @@
 package com.balugaq.jeg.api.interfaces;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,30 +36,35 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to indicate that a class should be displayed in the cheat mode menu.
- * Priority lower than {@link NotDisplayInCheatMode}
+ * This annotation is used to indicate that a class should be displayed in the cheat mode menu. Priority lower than
+ * {@link NotDisplayInCheatMode}
  * <p>
  * Usage:
  * <p>
- * &#064;DisplayInCheatMode
- * public class MyGroup extends ItemGroup {
- * //...
- * }
+ * &#064;DisplayInCheatMode public class MyGroup extends ItemGroup { //... }
  *
  * @author balugaq
  * @since 1.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@NullMarked
 public @interface DisplayInCheatMode {
+    /**
+     * @author balugaq
+     * @since 1.8
+     */
+    @NullMarked
     class Checker {
         /**
          * Check if the {@link ItemGroup} should be forced to display
          *
-         * @param group The {@link ItemGroup} to check
+         * @param group
+         *         The {@link ItemGroup} to check
+         *
          * @return true if the {@link ItemGroup} should be forced to display, false otherwise
          */
-        public static boolean contains(@NotNull ItemGroup group) {
+        public static boolean contains(ItemGroup group) {
             String namespace = group.getKey().getNamespace();
             String key = group.getKey().getKey();
             // @formatter:off
@@ -74,10 +79,12 @@ public @interface DisplayInCheatMode {
         /**
          * Check if the {@link ItemGroup} should be put to the last
          *
-         * @param group The {@link ItemGroup} to check
+         * @param group
+         *         The {@link ItemGroup} to check
+         *
          * @return true if the {@link ItemGroup} should be put to the last, false otherwise
          */
-        public static boolean isSpecial(@NotNull ItemGroup group) {
+        public static boolean isSpecial(ItemGroup group) {
             String namespace = group.getKey().getNamespace();
             String key = group.getKey().getKey();
             String className = group.getClass().getName();

@@ -17,7 +17,8 @@ improvements:
   finaltech-emc-display-option: true
   finalTECH-emc-display-option: true
   item-shareable: true
-  cer-patch: false
+  cer-patch: true
+  allow-action-redirect: true
 
 # 是否禁止在粘液容器中交互收纳袋
 disable-bundle-interaction: true
@@ -229,6 +230,39 @@ custom-format:
     - "ppppppppp"
     - "ppppppppp"
     - "ppppppppp"
+    - "BPBBBBBNB"
+  # 按键绑定集
+  # B = 背景板
+  # b = 返回
+  # i = 按键绑定子集
+  keybinds:
+    - "BbBBBBBBB"
+    - "BiiiiiiiB"
+    - "BiiiiiiiB"
+    - "BiiiiiiiB"
+    - "BiiiiiiiB"
+    - "BPBBBBBNB"
+  # 按键绑定子集
+  # B = 背景板
+  # b = 返回
+  # x = 原按键
+  # y = 分隔板
+  # z = 映射按键
+  keybind:
+    - "BbBBBBBBB"
+    - "BxyzBxyzB"
+    - "BxyzBxyzB"
+    - "BxyzBxyzB"
+    - "BxyzBxyzB"
+    - "BPBBBBBNB"
+  # 按键选择
+  # B = 背景板
+  # b = 返回
+  # i = 按键
+  action-select:
+    - "BbBBBBBBB"
+    - "iiiiiiiii"
+    - "iiiiiiiii"
     - "BPBBBBBNB"
 
 # 支持颜色符号: &a粘液科技
@@ -546,6 +580,8 @@ local-translate:
   ZeroSequenceTechnique: "零序技艺"
   OriginTech: "起源工艺"
   SimpleTech: "简单科技"
+  Komutech: "口木科技"
+  SlimefunInfiniteBlocks: "粘液无尽方块"
 
 # Do not change this value unless you know what you are doing.
 config-version: 2.0

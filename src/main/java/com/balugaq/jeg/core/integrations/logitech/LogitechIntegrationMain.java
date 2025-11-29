@@ -35,7 +35,7 @@ import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.core.integrations.Integration;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +44,14 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
+@NullMarked
 public class LogitechIntegrationMain implements Integration {
-    public static final int[] MANUAL_CRAFTER_INPUT_SLOTS = new int[]{
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    public static final int[] MANUAL_CRAFTER_INPUT_SLOTS = new int[] {
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+            29,
             33, 34, 35, 36, 37, 38, 42, 43, 44, 45, 46, 47, 51, 52, 53
     };
-    public static final int[] BUG_CRAFTER_INPUT_SLOTS = new int[]{
+    public static final int[] BUG_CRAFTER_INPUT_SLOTS = new int[] {
             0, 1, 2, 3, 4, 5,
             9, 10, 11, 12, 13, 14,
             18, 19, 20, 21, 22, 23,
@@ -59,25 +61,8 @@ public class LogitechIntegrationMain implements Integration {
     };
     public static final List<SlimefunItem> handledSlimefunItems = new ArrayList<>();
 
-    public static void rrc(@NotNull SlimefunItem slimefunItem, int @NotNull [] slots) {
-        handledSlimefunItems.add(slimefunItem);
-        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, true);
-    }
-
-    public static void rrc(@NotNull String id, int @NotNull [] slots, boolean unordered) {
-        SlimefunItem slimefunItem = SlimefunItem.getById(id);
-        if (slimefunItem != null) {
-            rrc(slimefunItem, slots, unordered);
-        }
-    }
-
-    public static void rrc(@NotNull SlimefunItem slimefunItem, int @NotNull [] slots, boolean unordered) {
-        handledSlimefunItems.add(slimefunItem);
-        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
-    }
-
     @Override
-    public @NotNull String getHookPlugin() {
+    public String getHookPlugin() {
         return "Logitech";
     }
 
@@ -120,10 +105,76 @@ public class LogitechIntegrationMain implements Integration {
                 }
             }
         } catch (ClassNotFoundException ignored) {
-            
+            // LogiTech v1.0.3
+            try {
+                Class.forName("me.matl114.logitech.SlimefunItem.AddSlimefunItems");
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.CRAFT_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ADV_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.CRUCIBLE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ANCIENT_ALTAR_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ARMOR_FORGE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.COMPRESSOR_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(
+                        me.matl114.logitech.SlimefunItem.AddSlimefunItems.ENHANCED_CRAFT_MANUAL,
+                        MANUAL_CRAFTER_INPUT_SLOTS
+                );
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.FURNACE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.GOLD_PAN_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.GRIND_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(
+                        me.matl114.logitech.SlimefunItem.AddSlimefunItems.MAGIC_WORKBENCH_MANUAL,
+                        MANUAL_CRAFTER_INPUT_SLOTS
+                );
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ORE_CRUSHER_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.ORE_WASHER_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.PRESSURE_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.SMELTERY_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(me.matl114.logitech.SlimefunItem.AddSlimefunItems.TABLESAW_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                rrc(
+                        me.matl114.logitech.SlimefunItem.AddSlimefunItems.MULTICRAFTTABLE_MANUAL,
+                        MANUAL_CRAFTER_INPUT_SLOTS
+                );
+                if (JustEnoughGuide.getIntegrationManager().isEnabledInfinityExpansion()) {
+                    try {
+                        rrc(me.matl114.logitech.SlimefunItem.AddDepends.MOBDATA_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                    } catch (Throwable ignored2) {
+                    }
+                    try {
+                        rrc(me.matl114.logitech.SlimefunItem.AddDepends.INFINITY_MANUAL, MANUAL_CRAFTER_INPUT_SLOTS);
+                    } catch (Throwable ignored2) {
+                    }
+                }
+                if (JustEnoughGuide.getIntegrationManager().isEnabledNetworks()) {
+                    try {
+                        rrc(
+                                me.matl114.logitech.SlimefunItem.AddDepends.NTWWORKBENCH_MANUAL,
+                                MANUAL_CRAFTER_INPUT_SLOTS
+                        );
+                    } catch (Throwable ignored2) {
+                    }
+                }
+            } catch (ClassNotFoundException ignored2) {
+            }
         }
 
         rrc("LOGITECH_BUG_CRAFTER", BUG_CRAFTER_INPUT_SLOTS, false);
+    }
+
+    public static void rrc(SlimefunItem slimefunItem, int[] slots) {
+        handledSlimefunItems.add(slimefunItem);
+        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, true);
+    }
+
+    public static void rrc(String id, int[] slots, boolean unordered) {
+        SlimefunItem slimefunItem = SlimefunItem.getById(id);
+        if (slimefunItem != null) {
+            rrc(slimefunItem, slots, unordered);
+        }
+    }
+
+    public static void rrc(SlimefunItem slimefunItem, int[] slots, boolean unordered) {
+        handledSlimefunItems.add(slimefunItem);
+        RecipeCompletableRegistry.registerRecipeCompletable(slimefunItem, slots, unordered);
     }
 
     @Override

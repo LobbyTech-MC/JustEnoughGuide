@@ -57,10 +57,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+import org.jspecify.annotations.NullMarked;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 /**
@@ -68,12 +67,12 @@ import java.util.List;
  * @since 1.0
  */
 @SuppressWarnings({"deprecation", "unused"})
+@NullMarked
 public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementation {
     NamespacedKey UNLOCK_ITEM_KEY = new NamespacedKey(JustEnoughGuide.getInstance(), "unlock_item");
 
     @Deprecated(forRemoval = true)
-    @ParametersAreNonnullByDefault
-    static @NotNull ItemStack getDisplayItem(Player p, boolean isSlimefunRecipe, ItemStack item) {
+    static ItemStack getDisplayItem(Player p, boolean isSlimefunRecipe, ItemStack item) {
         if (isSlimefunRecipe) {
             SlimefunItem slimefunItem = SlimefunItem.getByItem(item);
 
@@ -90,7 +89,8 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
                     ? String.format(
                     "&f需要在 %s 中解锁",
                     (LocalHelper.getAddonName(itemGroup, slimefunItem.getId())) + ChatColor.WHITE + " - "
-                            + LocalHelper.getDisplayName(itemGroup, p))
+                            + LocalHelper.getDisplayName(itemGroup, p)
+            )
                     : "&f无权限";
             Research research = slimefunItem.getResearch();
             if (research == null) {
@@ -105,12 +105,15 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
                                                 + Slimefun.getLocalization()
                                                 .getMessage(p, "guide.locked"),
                                         "",
-                                        lore),
+                                        lore
+                                ),
                                 meta -> meta.getPersistentDataContainer()
                                         .set(
                                                 UNLOCK_ITEM_KEY,
                                                 PersistentDataType.STRING,
-                                                slimefunItem.getId())));
+                                                slimefunItem.getId()
+                                        )
+                        ));
             } else {
                 String cost = VaultIntegration.isEnabled()
                         ? String.format("%.2f", research.getCurrencyCost()) + " 游戏币"
@@ -131,28 +134,28 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
                                         "&a单击解锁",
                                         "",
                                         "&7需要",
-                                        "&b" + cost),
+                                        "&b" + cost
+                                ),
                                 meta -> meta.getPersistentDataContainer()
                                         .set(
                                                 UNLOCK_ITEM_KEY,
                                                 PersistentDataType.STRING,
-                                                slimefunItem.getId())));
+                                                slimefunItem.getId()
+                                        )
+                        ));
             }
         } else {
             return item;
         }
     }
 
-    @ParametersAreNonnullByDefault
     static boolean hasPermission0(Player p, SlimefunItem item) {
         return Slimefun.getPermissionsService().hasPermission(p, item);
     }
 
-    @ParametersAreNonnullByDefault
     void showItemGroup0(ChestMenu menu, Player p, PlayerProfile profile, ItemGroup group, int index);
 
-    @NotNull
-    default ChestMenu create0(@NotNull Player p) {
+    default ChestMenu create0(Player p) {
         ChestMenu menu = new ChestMenu(JustEnoughGuide.getConfigManager().getSurvivalGuideTitle());
 
         OnClick.preset(menu);
@@ -162,35 +165,36 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
     /**
      * Opens the bookmark group for the player.
      *
-     * @param player  The player.
-     * @param profile The player profile.
+     * @param player
+     *         The player.
+     * @param profile
+     *         The player profile.
      */
-    @ParametersAreNonnullByDefault
     default void openBookMarkGroup(Player player, PlayerProfile profile) {
         List<Bookmark> items = JustEnoughGuide.getBookmarkManager().getBookmarkedItems(player);
         if (items == null || items.isEmpty()) {
             player.sendMessage(ChatColor.RED + "你还没有收藏任何物品!");
             return;
         }
-        new BookmarkGroup(this, player, items).open(player, profile, getMode());
+        new BookmarkGroup(this, items).open(player, profile, getMode());
     }
 
     /**
      * Opens the item mark group for the player.
      *
-     * @param itemGroup The item group.
-     * @param player    The player.
-     * @param profile   The player profile.
+     * @param itemGroup
+     *         The item group.
+     * @param player
+     *         The player.
+     * @param profile
+     *         The player profile.
      */
-    @ParametersAreNonnullByDefault
     default void openItemMarkGroup(ItemGroup itemGroup, Player player, PlayerProfile profile) {
         new ItemMarkGroup(this, itemGroup, player).open(player, profile, getMode());
     }
 
-    @ParametersAreNonnullByDefault
     void openNestedItemGroup(Player p, PlayerProfile profile, NestedItemGroup nested, int page);
 
-    @ParametersAreNonnullByDefault
     void displaySlimefunItem0(
             ChestMenu menu,
             ItemGroup itemGroup,
@@ -200,68 +204,61 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
             int page,
             int index);
 
-    @ParametersAreNonnullByDefault
     void openSearch(PlayerProfile profile, String input, int page, boolean addToHistory);
 
     void showMinecraftRecipe0(
-            Recipe @NotNull [] recipes,
+            Recipe[] recipes,
             int index,
-            final @NotNull ItemStack item,
-            final @NotNull PlayerProfile profile,
-            final @NotNull Player p,
+            final ItemStack item,
+            final PlayerProfile profile,
+            final Player p,
             boolean addToHistory);
 
     <T extends Recipe> void showRecipeChoices0(
-            final @NotNull T recipe, ItemStack[] recipeItems, @NotNull AsyncRecipeChoiceTask task);
+            final T recipe, ItemStack[] recipeItems, AsyncRecipeChoiceTask task);
 
-    @ParametersAreNonnullByDefault
     default void displayItem(PlayerProfile profile, SlimefunItem item, boolean addToHistory, boolean maybeSpecial) {
         displayItem(
                 profile,
                 item,
                 addToHistory,
                 maybeSpecial,
-                item instanceof RecipeDisplayItem ? Formats.recipe_display : Formats.recipe);
+                item instanceof RecipeDisplayItem ? Formats.recipe_display : Formats.recipe
+        );
     }
 
-    @ParametersAreNonnullByDefault
     void displayItem(
             PlayerProfile profile, SlimefunItem item, boolean addToHistory, boolean maybeSpecial, Format format);
 
     void displayItem0(
-            final @NotNull ChestMenu menu,
-            final @NotNull PlayerProfile profile,
-            final @NotNull Player p,
+            final ChestMenu menu,
+            final PlayerProfile profile,
+            final Player p,
             Object item,
             ItemStack output,
-            final @NotNull RecipeType recipeType,
+            final RecipeType recipeType,
             ItemStack[] recipe,
-            final @NotNull AsyncRecipeChoiceTask task);
+            final AsyncRecipeChoiceTask task);
 
     void displayItem(
-            final @NotNull ChestMenu menu,
-            final @NotNull PlayerProfile profile,
-            final @NotNull Player p,
+            final ChestMenu menu,
+            final PlayerProfile profile,
+            final Player p,
             Object item,
             ItemStack output,
-            final @NotNull RecipeType recipeType,
+            final RecipeType recipeType,
             ItemStack[] recipe,
-            final @NotNull AsyncRecipeChoiceTask task,
+            final AsyncRecipeChoiceTask task,
             Format format);
 
-    @ParametersAreNonnullByDefault
     void createHeader(Player p, PlayerProfile profile, ChestMenu menu, Format format);
 
-    @ParametersAreNonnullByDefault
     void createHeader(Player p, PlayerProfile profile, ChestMenu menu, ItemGroup itemGroup);
 
-    @ParametersAreNonnullByDefault
     void addBackButton0(ChestMenu menu, @Range(from = 0, to = 53) int slot, Player p, PlayerProfile profile);
 
-    @ParametersAreNonnullByDefault
     void displayRecipes0(Player p, PlayerProfile profile, ChestMenu menu, RecipeDisplayItem sfItem, int page);
 
-    @ParametersAreNonnullByDefault
     void addDisplayRecipe0(
             ChestMenu menu,
             PlayerProfile profile,
@@ -270,9 +267,7 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
             int index,
             int page);
 
-    @ParametersAreNonnullByDefault
     void printErrorMessage0(Player p, Throwable x);
 
-    @ParametersAreNonnullByDefault
     void printErrorMessage0(Player p, SlimefunItem item, Throwable x);
 }

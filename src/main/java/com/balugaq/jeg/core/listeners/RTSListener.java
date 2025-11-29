@@ -81,8 +81,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NullMarked;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,13 +92,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The RTSListener class is responsible for handling events related to the Real-Time Search (RTS) mode in JustEnoughGuide.
+ * The RTSListener class is responsible for handling events related to the Real-Time Search (RTS) mode in
+ * JustEnoughGuide.
  *
  * @author balugaq
  * @since 1.4
  */
-@SuppressWarnings({"deprecation", "UnnecessaryUnicodeEscape"})
+@SuppressWarnings({"deprecation", "UnnecessaryUnicodeEscape", "ConstantValue"})
 @Getter
+@NullMarked
 public class RTSListener implements Listener {
     public static final NamespacedKey FAKE_ITEM_KEY = new NamespacedKey(JustEnoughGuide.getInstance(), "fake_item");
     public static final NamespacedKey CHEAT_AMOUNT_KEY =
@@ -110,9 +113,113 @@ public class RTSListener implements Listener {
     };
 
     /**
+     * Handles the event when an RTS is opened for a player.
+     *
+     * @param event
+     *         the OpenRTSEvent to handle
+     */
+    @EventHandler
+    public void onOpenRTS(RTSEvents.OpenRTSEvent event) {
+        Player player = event.getPlayer();
+        Debug.debug("[RTS] Opening for " + player.getName());
+        synchronized (openingPlayers) {
+            openingPlayers.put(player, event.getGuideMode());
+        }
+        synchronized (RTSSearchGroup.RTS_PLAYERS) {
+            RTSSearchGroup.RTS_PLAYERS.put(player, event.getOpeningInventory());
+        }
+        synchronized (RTSSearchGroup.RTS_PAGES) {
+            RTSSearchGroup.RTS_PAGES.put(player, 1);
+        }
+        JustEnoughGuide.getInstance().getRtsBackpackManager().saveInventoryBackupFor(player);
+        JustEnoughGuide.getInstance().getRtsBackpackManager().clearInventoryFor(player);
+        ItemStack[] itemStacks = new ItemStack[36];
+        for (int i = 0; i < 36; i++) {
+            itemStacks[i] = RTSSearchGroup.PLACEHOLDER.clone();
+        }
+        player.getInventory().setStorageContents(itemStacks);
+
+        String presetSearchTerm = event.getPresetSearchTerm();
+        if (presetSearchTerm != null) {
+            synchronized (RTSSearchGroup.RTS_SEARCH_TERMS) {
+                RTSSearchGroup.RTS_SEARCH_TERMS.put(player, presetSearchTerm);
+            }
+            RTSEvents.SearchTermChangeEvent e = new RTSEvents.SearchTermChangeEvent(
+                    player,
+                    player.getOpenInventory(),
+                    event.getOpeningInventory(),
+                    null,
+                    presetSearchTerm,
+                    event.getGuideMode()
+            );
+            Bukkit.getPluginManager().callEvent(e);
+        }
+    }
+
+    /**
+     * Handles the event when the search term changes in the RTS system.
+     *
+     * @param event
+     *         the SearchTermChangeEvent to handle
+     */
+    @EventHandler
+    public void onRTS(RTSEvents.SearchTermChangeEvent event) {
+        Player player = event.getPlayer();
+        Debug.debug("[RTS] Searching for " + player.getName());
+        SlimefunGuideImplementation implementation = Slimefun.getRegistry().getSlimefunGuide(event.getGuideMode());
+        SearchGroup searchGroup = new SearchGroup(
+                implementation,
+                player,
+                event.getNewSearchTerm(),
+                JustEnoughGuide.getConfigManager().isPinyinSearch(),
+                true
+        );
+        if (isRTSPlayer(player)) {
+            synchronized (RTSSearchGroup.RTS_SEARCH_GROUPS) {
+                RTSSearchGroup.RTS_SEARCH_GROUPS.put(player, searchGroup);
+            }
+
+            synchronized (RTSSearchGroup.RTS_PAGES) {
+                RTSSearchGroup.RTS_PAGES.put(player, 1);
+            }
+
+            int page = RTSSearchGroup.RTS_PAGES.get(player);
+            for (int i = 0; i < FILL_ORDER.length; i++) {
+                int index = i + page * FILL_ORDER.length - FILL_ORDER.length;
+                if (index < searchGroup.slimefunItemList.size()) {
+                    SlimefunItem slimefunItem = searchGroup.slimefunItemList.get(index);
+                    ItemStack fake = getFakeItem(slimefunItem, player);
+                    player.getInventory().setItem(FILL_ORDER[i], fake);
+                } else {
+                    player.getInventory().setItem(FILL_ORDER[i], RTSSearchGroup.PLACEHOLDER.clone());
+                }
+            }
+            /*
+             * Page buttons' icons.
+             * For page buttons' click handler see {@link SurvivalGuideImplementation#createHeader(Player,
+             * PlayerProfile, ChestMenu)}
+             * or {@link CheatGuideImplementation#createHeader(Player, PlayerProfile, ChestMenu)}
+             */
+            AnvilInventory anvilInventory = event.getOpeningInventory();
+            anvilInventory.setItem(
+                    1,
+                    ChestMenuUtils.getPreviousButton(
+                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1)
+            );
+            anvilInventory.setItem(
+                    2,
+                    ChestMenuUtils.getNextButton(
+                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1)
+            );
+        }
+    }
+
+    /**
      * Checks if a player is currently in the RTS (Real-Time Search) mode.
      *
-     * @param player the player to check
+     * @param player
+     *         the player to check
+     *
      * @return true if the player is in RTS mode, false otherwise
      */
     public static boolean isRTSPlayer(Player player) {
@@ -120,25 +227,151 @@ public class RTSListener implements Listener {
     }
 
     /**
-     * Checks if an ItemStack is a fake item used in the RTS system.
+     * Creates a fake ItemStack for a SlimefunItem to display in the RTS inventory.
      *
-     * @param itemStack the ItemStack to check
-     * @return true if the itemStack is a fake item, false otherwise
+     * @param slimefunItem
+     *         the SlimefunItem to create a fake item for
+     * @param player
+     *         the player for whom the fake item is created
+     *
+     * @return the fake ItemStack, or null if the SlimefunItem or player is null
      */
-    public static boolean isFakeItem(@Nullable ItemStack itemStack) {
-        if (itemStack != null && itemStack.getType() != Material.AIR) {
-            return itemStack.getItemMeta().getPersistentDataContainer().get(FAKE_ITEM_KEY, PersistentDataType.STRING)
-                    != null;
+    @Contract("null, _ -> null; _, null -> null; !null, !null -> !null")
+    @UnknownNullability
+    public ItemStack getFakeItem(@Nullable SlimefunItem slimefunItem, @Nullable Player player) {
+        if (slimefunItem == null || player == null) {
+            return null;
         }
-        return false;
+
+        ItemStack legacy = slimefunItem.getItem();
+        Material material = legacy.getType();
+        ItemStack itemStack;
+        if (material == Material.PLAYER_HEAD || material == Material.PLAYER_WALL_HEAD) {
+            String hash = getHash(legacy);
+            if (hash != null) {
+                itemStack = PlayerHead.getItemStack(PlayerSkin.fromHashCode(hash));
+            } else {
+                itemStack = new ItemStack(material);
+            }
+        } else {
+            itemStack = new ItemStack(material);
+        }
+        itemStack.setAmount(legacy.getAmount());
+
+        ItemMeta legacyMeta = legacy.getItemMeta();
+        ItemMeta meta = itemStack.getItemMeta();
+
+        ItemGroup itemGroup = slimefunItem.getItemGroup();
+        List<String> additionLore = List.of(
+                "",
+                ChatColor.DARK_GRAY + "\u21E8 " + ChatColor.WHITE
+                        + (LocalHelper.getAddonName(itemGroup, slimefunItem.getId())) + ChatColor.WHITE + " - "
+                        + LocalHelper.getDisplayName(itemGroup, player)
+        );
+        if (legacyMeta.hasLore() && legacyMeta.getLore() != null) {
+            List<String> lore = legacyMeta.getLore();
+            lore.addAll(additionLore);
+            meta.setLore(lore);
+        } else {
+            meta.setLore(additionLore);
+        }
+
+        meta.addItemFlags(
+                ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, JEGVersionedItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+
+        meta.getPersistentDataContainer().set(FAKE_ITEM_KEY, PersistentDataType.STRING, slimefunItem.getId());
+
+        if (legacyMeta.hasDisplayName()) {
+            String name = legacyMeta.getDisplayName();
+            meta.setDisplayName(" " + name + " ");
+        }
+
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    /**
+     * Generates a unique hash for a player head ItemStack.
+     *
+     * @param item
+     *         the ItemStack to generate a hash for
+     *
+     * @return the hash of the player head, or null if the item is not a player head
+     */
+    @SuppressWarnings("DataFlowIssue")
+    public static String getHash(@Nullable ItemStack item) {
+        if (item != null && (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD)) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta instanceof SkullMeta) {
+                try {
+                    URL t = ((SkullMeta) meta).getOwnerProfile().getTextures().getSkin();
+                    String path = t.getPath();
+                    String[] parts = path.split("/");
+                    return parts[parts.length - 1];
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Handles the event when the page changes in the RTS system.
+     *
+     * @param event
+     *         the PageChangeEvent to handle
+     */
+    @EventHandler
+    public void onRTSPageChange(RTSEvents.PageChangeEvent event) {
+        Player player = event.getPlayer();
+        Debug.debug("[RTS] Changing page for " + player.getName());
+        int page = event.getNewPage();
+        SearchGroup searchGroup = RTSSearchGroup.RTS_SEARCH_GROUPS.get(player);
+        if (searchGroup != null) {
+            for (int i = 0; i < FILL_ORDER.length; i++) {
+                int index = i + page * FILL_ORDER.length - FILL_ORDER.length;
+                if (index < searchGroup.slimefunItemList.size()) {
+                    SlimefunItem slimefunItem = searchGroup.slimefunItemList.get(index);
+                    ItemStack fake = getFakeItem(slimefunItem, player);
+
+                    player.getInventory().setItem(FILL_ORDER[i], fake);
+                } else {
+                    player.getInventory().setItem(FILL_ORDER[i], RTSSearchGroup.PLACEHOLDER.clone());
+                }
+            }
+            AnvilInventory anvilInventory = RTSSearchGroup.RTS_PLAYERS.get(player);
+            anvilInventory.setItem(
+                    1,
+                    ChestMenuUtils.getPreviousButton(
+                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1)
+            );
+            anvilInventory.setItem(
+                    2,
+                    ChestMenuUtils.getNextButton(
+                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1)
+            );
+        }
+    }
+
+    /**
+     * Handles the event when an RTS is closed.
+     *
+     * @param event
+     *         the CloseRTSEvent to handle
+     */
+    @EventHandler
+    public void onCloseRTS(RTSEvents.CloseRTSEvent event) {
+        Player player = event.getPlayer();
+        quitRTS(player);
     }
 
     /**
      * Quits the RTS mode for a player and restores their inventory.
      *
-     * @param player the player to quit RTS mode
+     * @param player
+     *         the player to quit RTS mode
      */
-    public static void quitRTS(@NotNull Player player) {
+    public static void quitRTS(Player player) {
         if (isRTSPlayer(player)) {
             synchronized (openingPlayers) {
                 openingPlayers.remove(player);
@@ -171,179 +404,16 @@ public class RTSListener implements Listener {
     }
 
     /**
-     * Generates a unique hash for a player head ItemStack.
-     *
-     * @param item the ItemStack to generate a hash for
-     * @return the hash of the player head, or null if the item is not a player head
-     */
-    @SuppressWarnings("DataFlowIssue")
-    public static String getHash(@Nullable ItemStack item) {
-        if (item != null && (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD)) {
-            ItemMeta meta = item.getItemMeta();
-            if (meta instanceof SkullMeta) {
-                try {
-                    URL t = ((SkullMeta) meta).getOwnerProfile().getTextures().getSkin();
-                    String path = t.getPath();
-                    String[] parts = path.split("/");
-                    return parts[parts.length - 1];
-                } catch (Exception ignored) {
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Handles the event when an RTS is opened for a player.
-     *
-     * @param event the OpenRTSEvent to handle
-     */
-    @EventHandler
-    public void onOpenRTS(RTSEvents.@NotNull OpenRTSEvent event) {
-        Player player = event.getPlayer();
-        Debug.debug("[RTS] Opening for " + player.getName());
-        synchronized (openingPlayers) {
-            openingPlayers.put(player, event.getGuideMode());
-        }
-        synchronized (RTSSearchGroup.RTS_PLAYERS) {
-            RTSSearchGroup.RTS_PLAYERS.put(player, event.getOpeningInventory());
-        }
-        synchronized (RTSSearchGroup.RTS_PAGES) {
-            RTSSearchGroup.RTS_PAGES.put(player, 1);
-        }
-        JustEnoughGuide.getInstance().getRtsBackpackManager().saveInventoryBackupFor(player);
-        JustEnoughGuide.getInstance().getRtsBackpackManager().clearInventoryFor(player);
-        ItemStack[] itemStacks = new ItemStack[36];
-        for (int i = 0; i < 36; i++) {
-            itemStacks[i] = RTSSearchGroup.PLACEHOLDER.clone();
-        }
-        player.getInventory().setStorageContents(itemStacks);
-
-        String presetSearchTerm = event.getPresetSearchTerm();
-        if (presetSearchTerm != null) {
-            synchronized (RTSSearchGroup.RTS_SEARCH_TERMS) {
-                RTSSearchGroup.RTS_SEARCH_TERMS.put(player, presetSearchTerm);
-            }
-            RTSEvents.SearchTermChangeEvent e = new RTSEvents.SearchTermChangeEvent(
-                    player,
-                    player.getOpenInventory(),
-                    event.getOpeningInventory(),
-                    null,
-                    presetSearchTerm,
-                    event.getGuideMode());
-            Bukkit.getPluginManager().callEvent(e);
-        }
-    }
-
-    /**
-     * Handles the event when the search term changes in the RTS system.
-     *
-     * @param event the SearchTermChangeEvent to handle
-     */
-    @EventHandler
-    public void onRTS(RTSEvents.@NotNull SearchTermChangeEvent event) {
-        Player player = event.getPlayer();
-        Debug.debug("[RTS] Searching for " + player.getName());
-        SlimefunGuideImplementation implementation = Slimefun.getRegistry().getSlimefunGuide(event.getGuideMode());
-        SearchGroup searchGroup = new SearchGroup(
-                implementation,
-                player,
-                event.getNewSearchTerm(),
-                JustEnoughGuide.getConfigManager().isPinyinSearch(),
-                true);
-        if (isRTSPlayer(player)) {
-            synchronized (RTSSearchGroup.RTS_SEARCH_GROUPS) {
-                RTSSearchGroup.RTS_SEARCH_GROUPS.put(player, searchGroup);
-            }
-
-            synchronized (RTSSearchGroup.RTS_PAGES) {
-                RTSSearchGroup.RTS_PAGES.put(player, 1);
-            }
-
-            int page = RTSSearchGroup.RTS_PAGES.get(player);
-            for (int i = 0; i < FILL_ORDER.length; i++) {
-                int index = i + page * FILL_ORDER.length - FILL_ORDER.length;
-                if (index < searchGroup.slimefunItemList.size()) {
-                    SlimefunItem slimefunItem = searchGroup.slimefunItemList.get(index);
-                    ItemStack fake = getFakeItem(slimefunItem, player);
-                    player.getInventory().setItem(FILL_ORDER[i], fake);
-                } else {
-                    player.getInventory().setItem(FILL_ORDER[i], RTSSearchGroup.PLACEHOLDER.clone());
-                }
-            }
-            /*
-             * Page buttons' icons.
-             * For page buttons' click handler see {@link SurvivalGuideImplementation#createHeader(Player, PlayerProfile, ChestMenu)}
-             * or {@link CheatGuideImplementation#createHeader(Player, PlayerProfile, ChestMenu)}
-             */
-            AnvilInventory anvilInventory = event.getOpeningInventory();
-            anvilInventory.setItem(
-                    1,
-                    ChestMenuUtils.getPreviousButton(
-                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1));
-            anvilInventory.setItem(
-                    2,
-                    ChestMenuUtils.getNextButton(
-                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1));
-        }
-    }
-
-    /**
-     * Handles the event when the page changes in the RTS system.
-     *
-     * @param event the PageChangeEvent to handle
-     */
-    @EventHandler
-    public void onRTSPageChange(RTSEvents.@NotNull PageChangeEvent event) {
-        Player player = event.getPlayer();
-        Debug.debug("[RTS] Changing page for " + player.getName());
-        int page = event.getNewPage();
-        SearchGroup searchGroup = RTSSearchGroup.RTS_SEARCH_GROUPS.get(player);
-        if (searchGroup != null) {
-            for (int i = 0; i < FILL_ORDER.length; i++) {
-                int index = i + page * FILL_ORDER.length - FILL_ORDER.length;
-                if (index < searchGroup.slimefunItemList.size()) {
-                    SlimefunItem slimefunItem = searchGroup.slimefunItemList.get(index);
-                    ItemStack fake = getFakeItem(slimefunItem, player);
-
-                    player.getInventory().setItem(FILL_ORDER[i], fake);
-                } else {
-                    player.getInventory().setItem(FILL_ORDER[i], RTSSearchGroup.PLACEHOLDER.clone());
-                }
-            }
-            AnvilInventory anvilInventory = RTSSearchGroup.RTS_PLAYERS.get(player);
-            anvilInventory.setItem(
-                    1,
-                    ChestMenuUtils.getPreviousButton(
-                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1));
-            anvilInventory.setItem(
-                    2,
-                    ChestMenuUtils.getNextButton(
-                            player, page, (searchGroup.slimefunItemList.size() - 1) / FILL_ORDER.length + 1));
-        }
-    }
-
-    /**
-     * Handles the event when an RTS is closed.
-     *
-     * @param event the CloseRTSEvent to handle
-     */
-    @EventHandler
-    public void onCloseRTS(RTSEvents.@NotNull CloseRTSEvent event) {
-        Player player = event.getPlayer();
-        quitRTS(player);
-    }
-
-    /**
      * Restores the player's inventory when they join the server.
      *
-     * @param event the PlayerJoinEvent to handle
+     * @param event
+     *         the PlayerJoinEvent to handle
      */
     @EventHandler
-    public void restore(@NotNull PlayerJoinEvent event) {
+    public void restore(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         quitRTS(player);
-        ItemStack[] itemStacks = player.getInventory().getContents();
+        @Nullable ItemStack[] itemStacks = player.getInventory().getContents();
         for (ItemStack itemStack : itemStacks) {
             if (isFakeItem(itemStack)) {
                 itemStack.setAmount(0);
@@ -354,12 +424,29 @@ public class RTSListener implements Listener {
     }
 
     /**
+     * Checks if an ItemStack is a fake item used in the RTS system.
+     *
+     * @param itemStack
+     *         the ItemStack to check
+     *
+     * @return true if the itemStack is a fake item, false otherwise
+     */
+    public static boolean isFakeItem(@Nullable ItemStack itemStack) {
+        if (itemStack != null && itemStack.getType() != Material.AIR) {
+            return itemStack.getItemMeta().getPersistentDataContainer().get(FAKE_ITEM_KEY, PersistentDataType.STRING)
+                    != null;
+        }
+        return false;
+    }
+
+    /**
      * Restores the player's inventory when they respawn.
      *
-     * @param event the PlayerRespawnEvent to handle
+     * @param event
+     *         the PlayerRespawnEvent to handle
      */
     @EventHandler
-    public void restore(@NotNull PlayerRespawnEvent event) {
+    public void restore(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             quitRTS(player);
@@ -369,10 +456,11 @@ public class RTSListener implements Listener {
     /**
      * Quits the RTS mode for a player when they quit the server.
      *
-     * @param event the PlayerQuitEvent to handle
+     * @param event
+     *         the PlayerQuitEvent to handle
      */
     @EventHandler
-    public void onQuit(@NotNull PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             quitRTS(player);
@@ -382,10 +470,11 @@ public class RTSListener implements Listener {
     /**
      * Quits the RTS mode for a player when they die and keeps their inventory.
      *
-     * @param event the PlayerDeathEvent to handle
+     * @param event
+     *         the PlayerDeathEvent to handle
      */
     @EventHandler
-    public void onDeath(@NotNull PlayerDeathEvent event) {
+    public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         if (isRTSPlayer(player)) {
             quitRTS(player);
@@ -397,10 +486,11 @@ public class RTSListener implements Listener {
     /**
      * Quits the RTS mode for a player when they open an inventory.
      *
-     * @param event the InventoryOpenEvent to handle
+     * @param event
+     *         the InventoryOpenEvent to handle
      */
     @EventHandler
-    public void onOpenInventory(@NotNull InventoryOpenEvent event) {
+    public void onOpenInventory(InventoryOpenEvent event) {
         Player player = (Player) event.getPlayer();
         if (isRTSPlayer(player)) {
             quitRTS(player);
@@ -410,11 +500,12 @@ public class RTSListener implements Listener {
     /**
      * Handles the event when a player clicks on an item in the RTS inventory.
      *
-     * @param event the InventoryClickEvent to handle
+     * @param event
+     *         the InventoryClickEvent to handle
      */
     @SuppressWarnings("DataFlowIssue")
     @EventHandler
-    public void onLookup(@NotNull InventoryClickEvent event) {
+    public void onLookup(InventoryClickEvent event) {
         Player player = (Player) event.getView().getPlayer();
         if (isRTSPlayer(player)) {
             InventoryAction action = event.getAction();
@@ -433,9 +524,12 @@ public class RTSListener implements Listener {
                 PlayerProfile profile = PlayerProfile.find(player).orElse(null);
                 if (profile != null) {
                     SlimefunItem slimefunItem = SlimefunItem.getById(itemStack
-                            .getItemMeta()
-                            .getPersistentDataContainer()
-                            .get(FAKE_ITEM_KEY, PersistentDataType.STRING));
+                                                                             .getItemMeta()
+                                                                             .getPersistentDataContainer()
+                                                                             .get(
+                                                                                     FAKE_ITEM_KEY,
+                                                                                     PersistentDataType.STRING
+                                                                             ));
                     if (slimefunItem == null) {
                         event.setCancelled(true);
                         return;
@@ -445,7 +539,8 @@ public class RTSListener implements Listener {
                         RTSSearchGroup back = new RTSSearchGroup(
                                 RTSSearchGroup.RTS_PLAYERS.get(player),
                                 RTSSearchGroup.RTS_SEARCH_TERMS.get(player),
-                                RTSSearchGroup.RTS_PAGES.get(player));
+                                RTSSearchGroup.RTS_PAGES.get(player)
+                        );
                         profile.getGuideHistory().add(back, 1);
                         implementation.displayItem(profile, slimefunItem, true);
                         quitRTS(player);
@@ -486,10 +581,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels player interactions when they are in RTS mode.
      *
-     * @param event the PlayerInteractEvent to handle
+     * @param event
+     *         the PlayerInteractEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onInteract(@NotNull PlayerInteractEvent event) {
+    public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -505,10 +601,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player tries to drop an item while in RTS mode.
      *
-     * @param event the PlayerDropItemEvent to handle
+     * @param event
+     *         the PlayerDropItemEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onDrop(@NotNull PlayerDropItemEvent event) {
+    public void onDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -524,10 +621,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player tries to place a block while in RTS mode.
      *
-     * @param event the BlockPlaceEvent to handle
+     * @param event
+     *         the BlockPlaceEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onBlockPlace(@NotNull BlockPlaceEvent event) {
+    public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -543,10 +641,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player tries to swap items between hands while in RTS mode.
      *
-     * @param event the PlayerSwapHandItemsEvent to handle
+     * @param event
+     *         the PlayerSwapHandItemsEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onSwapHand(@NotNull PlayerSwapHandItemsEvent event) {
+    public void onSwapHand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -568,10 +667,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player sends a chat message while in RTS mode.
      *
-     * @param event the AsyncPlayerChatEvent to handle
+     * @param event
+     *         the AsyncPlayerChatEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onAsyncChat(@NotNull AsyncPlayerChatEvent event) {
+    public void onAsyncChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -581,10 +681,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player tries to execute a command while in RTS mode.
      *
-     * @param event the PlayerCommandPreprocessEvent to handle
+     * @param event
+     *         the PlayerCommandPreprocessEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onCommand(@NotNull PlayerCommandPreprocessEvent event) {
+    public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -594,10 +695,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player tries to manipulate an armor stand while in RTS mode.
      *
-     * @param event the PlayerArmorStandManipulateEvent to handle
+     * @param event
+     *         the PlayerArmorStandManipulateEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onArmorStandManipulate(@NotNull PlayerArmorStandManipulateEvent event) {
+    public void onArmorStandManipulate(PlayerArmorStandManipulateEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -607,10 +709,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player sends a chat message while in RTS mode.
      *
-     * @param event the PlayerChatEvent to handle
+     * @param event
+     *         the PlayerChatEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onChat(@NotNull PlayerChatEvent event) {
+    public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -620,10 +723,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player consumes an item while in RTS mode.
      *
-     * @param event the PlayerItemConsumeEvent to handle
+     * @param event
+     *         the PlayerItemConsumeEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onArmor(@NotNull PlayerItemConsumeEvent event) {
+    public void onArmor(PlayerItemConsumeEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -638,10 +742,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player clicks on an item in an inventory while not in RTS mode.
      *
-     * @param event the InventoryClickEvent to handle
+     * @param event
+     *         the InventoryClickEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onInventoryClick(@NotNull InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         if (!isRTSPlayer(player)) {
             ItemStack itemStack = event.getCurrentItem();
@@ -654,10 +759,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player picks up an item while in RTS mode.
      *
-     * @param event the EntityPickupItemEvent to handle
+     * @param event
+     *         the EntityPickupItemEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPickup(@NotNull EntityPickupItemEvent event) {
+    public void onPickup(EntityPickupItemEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (isRTSPlayer(player)) {
                 event.setCancelled(true);
@@ -668,10 +774,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player right-clicks while in RTS mode.
      *
-     * @param event the PlayerRightClickEvent to handle
+     * @param event
+     *         the PlayerRightClickEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onRightClick(@NotNull PlayerRightClickEvent event) {
+    public void onRightClick(PlayerRightClickEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.cancel();
@@ -686,10 +793,11 @@ public class RTSListener implements Listener {
     /**
      * Cancels the event when a player interacts with an entity while in RTS mode.
      *
-     * @param event the PlayerInteractEntityEvent to handle
+     * @param event
+     *         the PlayerInteractEntityEvent to handle
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onInteractEntity(@NotNull PlayerInteractEntityEvent event) {
+    public void onInteractEntity(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
         if (isRTSPlayer(player)) {
             event.setCancelled(true);
@@ -699,64 +807,5 @@ public class RTSListener implements Listener {
                 event.setCancelled(true);
             }
         }
-    }
-
-    /**
-     * Creates a fake ItemStack for a SlimefunItem to display in the RTS inventory.
-     *
-     * @param slimefunItem the SlimefunItem to create a fake item for
-     * @param player       the player for whom the fake item is created
-     * @return the fake ItemStack, or null if the SlimefunItem or player is null
-     */
-    @Contract("null, _ -> null; _, null -> null; !null, !null -> !null")
-    public ItemStack getFakeItem(@Nullable SlimefunItem slimefunItem, @Nullable Player player) {
-        if (slimefunItem == null || player == null) {
-            return null;
-        }
-
-        ItemStack legacy = slimefunItem.getItem();
-        Material material = legacy.getType();
-        ItemStack itemStack;
-        if (material == Material.PLAYER_HEAD || material == Material.PLAYER_WALL_HEAD) {
-            String hash = getHash(legacy);
-            if (hash != null) {
-                itemStack = PlayerHead.getItemStack(PlayerSkin.fromHashCode(hash));
-            } else {
-                itemStack = new ItemStack(material);
-            }
-        } else {
-            itemStack = new ItemStack(material);
-        }
-        itemStack.setAmount(legacy.getAmount());
-
-        ItemMeta legacyMeta = legacy.getItemMeta();
-        ItemMeta meta = itemStack.getItemMeta();
-
-        ItemGroup itemGroup = slimefunItem.getItemGroup();
-        List<String> additionLore = List.of(
-                "",
-                ChatColor.DARK_GRAY + "\u21E8 " + ChatColor.WHITE
-                        + (LocalHelper.getAddonName(itemGroup, slimefunItem.getId())) + ChatColor.WHITE + " - "
-                        + LocalHelper.getDisplayName(itemGroup, player));
-        if (legacyMeta.hasLore() && legacyMeta.getLore() != null) {
-            List<String> lore = legacyMeta.getLore();
-            lore.addAll(additionLore);
-            meta.setLore(lore);
-        } else {
-            meta.setLore(additionLore);
-        }
-
-        meta.addItemFlags(
-                ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, JEGVersionedItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-
-        meta.getPersistentDataContainer().set(FAKE_ITEM_KEY, PersistentDataType.STRING, slimefunItem.getId());
-
-        if (legacyMeta.hasDisplayName()) {
-            String name = legacyMeta.getDisplayName();
-            meta.setDisplayName(" " + name + " ");
-        }
-
-        itemStack.setItemMeta(meta);
-        return itemStack;
     }
 }

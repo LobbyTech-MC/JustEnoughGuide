@@ -30,14 +30,13 @@ package com.balugaq.jeg.api.interfaces;
 import com.balugaq.jeg.implementation.guide.CheatGuideImplementation;
 import com.balugaq.jeg.implementation.guide.SurvivalGuideImplementation;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 /**
- * This interface defines the methods that a BookmarkRelocation implementation should implement.
- * Used for relocating the buttons of the guide to a different location.
+ * This interface defines the methods that a BookmarkRelocation implementation should implement. Used for relocating the
+ * buttons of the guide to a different location.
  *
  * @author balugaq
  * @see SurvivalGuideImplementation
@@ -45,184 +44,101 @@ import java.util.List;
  * @since 1.1
  */
 @SuppressWarnings("SameReturnValue")
+@NullMarked
 public interface BookmarkRelocation {
     /**
      * Gets the slot number for the back button in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot number for the back button.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    default int getBackButtonLegacy(JEGSlimefunGuideImplementation implementation, Player player) {
-        return 1;
-    }
+    List<Integer> getBackButton(JEGSlimefunGuideImplementation implementation, Player player);
 
     /**
      * Gets the slot number for the search button in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot number for the search button.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    default int getSearchButtonLegacy(JEGSlimefunGuideImplementation implementation, Player player) {
-        return 7;
-    }
+    List<Integer> getSearchButton(JEGSlimefunGuideImplementation implementation, Player player);
 
     /**
      * Gets the slot number for the previous button in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot number for the previous button.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    default int getPreviousButtonLegacy(JEGSlimefunGuideImplementation implementation, Player player) {
-        return 46;
-    }
+    List<Integer> getPreviousButton(JEGSlimefunGuideImplementation implementation, Player player);
 
     /**
      * Gets the slot number for the next button in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot number for the next button.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    default int getNextButtonLegacy(JEGSlimefunGuideImplementation implementation, Player player) {
-        return 52;
-    }
+    List<Integer> getNextButton(JEGSlimefunGuideImplementation implementation, Player player);
 
     /**
      * Gets the slot number for the bookmark button in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot number for the bookmark button.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    default int getBookMarkLegacy(JEGSlimefunGuideImplementation implementation, Player player) {
-        return 49;
-    }
+    List<Integer> getBookMark(JEGSlimefunGuideImplementation implementation, Player player);
 
     /**
      * Gets the slot number for the item mark button in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot number for the item mark button.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    default int getItemMarkLegacy(JEGSlimefunGuideImplementation implementation, Player player) {
-        return 48;
-    }
+    List<Integer> getItemMark(JEGSlimefunGuideImplementation implementation, Player player);
 
     /**
      * Gets the slot numbers for the border in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot numbers for the border.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    int[] getBorderLegacy(JEGSlimefunGuideImplementation implementation, Player player);
+    List<Integer> getBorder(JEGSlimefunGuideImplementation implementation, Player player);
 
     /**
      * Gets the slot numbers for the main contents in the guide.
      *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
+     * @param implementation
+     *         The JEGSlimefunGuideImplementation.
+     * @param player
+     *         The player.
+     *
      * @return The slot numbers for the main contents.
      */
-    @Deprecated
-    @ParametersAreNonnullByDefault
-    int[] getMainContentsLegacy(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot number for the back button in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot number for the back button.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getBackButton(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot number for the search button in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot number for the search button.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getSearchButton(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot number for the previous button in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot number for the previous button.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getPreviousButton(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot number for the next button in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot number for the next button.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getNextButton(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot number for the bookmark button in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot number for the bookmark button.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getBookMark(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot number for the item mark button in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot number for the item mark button.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getItemMark(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot numbers for the border in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot numbers for the border.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getBorder(JEGSlimefunGuideImplementation implementation, Player player);
-
-    /**
-     * Gets the slot numbers for the main contents in the guide.
-     *
-     * @param implementation The JEGSlimefunGuideImplementation.
-     * @param player         The player.
-     * @return The slot numbers for the main contents.
-     */
-    @ParametersAreNonnullByDefault
-    @NotNull List<Integer> getMainContents(JEGSlimefunGuideImplementation implementation, Player player);
+    List<Integer> getMainContents(JEGSlimefunGuideImplementation implementation, Player player);
 }

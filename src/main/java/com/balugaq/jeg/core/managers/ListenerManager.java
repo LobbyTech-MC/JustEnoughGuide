@@ -46,7 +46,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,13 +59,14 @@ import java.util.List;
  * @since 1.0
  */
 @Getter
+@NullMarked
 public class ListenerManager extends AbstractManager {
-    private final @NotNull List<Listener> listeners = new ArrayList<>();
+    private final List<Listener> listeners = new ArrayList<>();
 
-    private final @NotNull JavaPlugin plugin;
-    private RegisteredListener slimefunGuideListener;
+    private final JavaPlugin plugin;
+    private @UnknownNullability RegisteredListener slimefunGuideListener;
 
-    public ListenerManager(@NotNull JavaPlugin plugin) {
+    public ListenerManager(JavaPlugin plugin) {
         this.plugin = plugin;
         listeners.add(new GuideListener());
         listeners.add(new SpecialMenuFixListener());
@@ -88,28 +90,17 @@ public class ListenerManager extends AbstractManager {
         }
     }
 
-    public void registerListener(@NotNull Listener listener) {
+    public void registerListener(Listener listener) {
         listeners.add(listener);
         Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
-    }
-
-    private void registerListeners() {
-        for (Listener listener : listeners) {
-            Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
-        }
-    }
-
-    private void unregisterListeners() {
-        for (Listener listener : listeners) {
-            HandlerList.unregisterAll(listener);
-        }
     }
 
     @Override
     public void load() {
         registerListeners();
         for (RegisteredListener rl : PlayerRightClickEvent.getHandlerList().getRegisteredListeners()) {
-            if (rl.getListener().getClass().getName().equals("io.github.thebusybiscuit.slimefun4.implementation.listeners.SlimefunGuideListener")) {
+            if (rl.getListener().getClass().getName().equals("io.github.thebusybiscuit.slimefun4.implementation" +
+                                                                     ".listeners.SlimefunGuideListener")) {
                 slimefunGuideListener = rl;
                 PlayerRightClickEvent.getHandlerList().unregister(rl);
                 PlayerRightClickEvent.getHandlerList().bake();
@@ -118,9 +109,21 @@ public class ListenerManager extends AbstractManager {
         }
     }
 
+    private void registerListeners() {
+        for (Listener listener : listeners) {
+            Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
+        }
+    }
+
     @Override
     public void unload() {
         unregisterListeners();
         PlayerRightClickEvent.getHandlerList().register(slimefunGuideListener);
+    }
+
+    private void unregisterListeners() {
+        for (Listener listener : listeners) {
+            HandlerList.unregisterAll(listener);
+        }
     }
 }

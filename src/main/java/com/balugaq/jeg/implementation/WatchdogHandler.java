@@ -33,12 +33,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * @author balugaq
  * @since 1.9
  */
 @SuppressWarnings({"deprecated", "deprecation", "DataFlowIssue"})
+@NullMarked
 public class WatchdogHandler implements Listener {
     public static Object instance = null;
     public static long timeoutTime = 0;
@@ -51,16 +53,6 @@ public class WatchdogHandler implements Listener {
             }
         } catch (ClassNotFoundException ignored) {
         }
-    }
-
-    public static void disableWatchdog() {
-        ReflectionUtil.setValue(instance, "timeoutTime", Long.MAX_VALUE / 2);
-        ReflectionUtil.setValue(instance, "stopping", true);
-    }
-
-    public static void enableWatchdog() {
-        ReflectionUtil.setValue(instance, "timeoutTime", timeoutTime);
-        ReflectionUtil.setValue(instance, "stopping", false);
     }
 
     @EventHandler
@@ -88,5 +80,15 @@ public class WatchdogHandler implements Listener {
                 p.sendMessage("Enabled WatchdogThread by " + player.getName());
             }
         }
+    }
+
+    public static void disableWatchdog() {
+        ReflectionUtil.setValue(instance, "timeoutTime", Long.MAX_VALUE / 2);
+        ReflectionUtil.setValue(instance, "stopping", true);
+    }
+
+    public static void enableWatchdog() {
+        ReflectionUtil.setValue(instance, "timeoutTime", timeoutTime);
+        ReflectionUtil.setValue(instance, "stopping", false);
     }
 }

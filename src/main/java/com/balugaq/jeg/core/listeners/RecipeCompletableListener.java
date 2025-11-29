@@ -36,6 +36,7 @@ import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
 import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.implementation.items.ItemsSetup;
+import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.KeyUtil;
 import com.balugaq.jeg.utils.Models;
 import com.balugaq.jeg.utils.ReflectionUtil;
@@ -49,7 +50,6 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -67,10 +67,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NullMarked;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -87,50 +87,57 @@ import java.util.function.BiConsumer;
  * @since 1.9
  */
 @SuppressWarnings({"unused", "ConstantValue"})
+@NullMarked
 public class RecipeCompletableListener implements Listener {
     public static final NamespacedKey RECIPE_COMPLETE_EXIT_KEY = KeyUtil.newKey("recipe_complete_exit");
-    public static final int[] DISPENSER_SLOTS = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
-    public static final ConcurrentHashMap<UUID, GuideEvents.ItemButtonClickEvent> LAST_EVENTS = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<UUID, GuideHistory> GUIDE_HISTORY = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<UUID, BiConsumer<GuideEvents.ItemButtonClickEvent, PlayerProfile>> PROFILE_CALLBACKS =
+    public static final int[] DISPENSER_SLOTS = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    public static final ConcurrentHashMap<Player, GuideEvents.ItemButtonClickEvent> LAST_EVENTS =
             new ConcurrentHashMap<>();
-    public static final Set<UUID> listening = ConcurrentHashMap.newKeySet();
-    public static final ConcurrentHashMap<SlimefunItem, Pair<int[], Boolean>> INGREDIENT_SLOTS = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Player, GuideHistory> GUIDE_HISTORY = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Player, BiConsumer<GuideEvents.ItemButtonClickEvent, PlayerProfile>> PROFILE_CALLBACKS =
+            new ConcurrentHashMap<>();
+    public static final Set<Player> listening = ConcurrentHashMap.newKeySet();
+    public static final ConcurrentHashMap<SlimefunItem, Pair<int[], Boolean>> INGREDIENT_SLOTS =
+            new ConcurrentHashMap<>();
     public static final ArrayList<SlimefunItem> NOT_APPLICABLE_ITEMS = new ArrayList<>();
-    public static final ConcurrentHashMap<UUID, Location> DISPENSER_LISTENING = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Player, Location> DISPENSER_LISTENING = new ConcurrentHashMap<>();
     public static final NamespacedKey LAST_RECIPE_COMPLETE_KEY = KeyUtil.newKey("last_recipe_complete");
-    public static final ConcurrentHashMap<UUID, ArrayList<ItemStack>> missingMaterials = new ConcurrentHashMap<>();
-    private static ItemStack RECIPE_COMPLETABLE_BOOK_ITEM = null;
+    public static final ConcurrentHashMap<Player, ArrayList<ItemStack>> missingMaterials = new ConcurrentHashMap<>();
+    private static @UnknownNullability ItemStack RECIPE_COMPLETABLE_BOOK_ITEM = null;
 
     static {
-        JustEnoughGuide.runTimerAsync(() -> {
-            for (UUID uuid : missingMaterials.keySet()) {
-                Player player = Bukkit.getPlayer(uuid);
-                if (player == null) {
-                    continue;
-                }
+        JustEnoughGuide.runTimerAsync(
+                () -> {
+                    for (Player oldPlayer : missingMaterials.keySet()) {
+                        Player player = GuideUtil.updatePlayer(oldPlayer);
+                        if (player == null) {
+                            continue;
+                        }
 
-                var v = missingMaterials.get(uuid);
-                ArrayList<ItemStack> clone;
-                synchronized (v) {
-                    clone = new ArrayList<>(v);
-                    v.clear();
-                }
+                        var v = missingMaterials.get(player);
+                        ArrayList<ItemStack> clone;
+                        synchronized (v) {
+                            clone = new ArrayList<>(v);
+                            v.clear();
+                        }
 
-                Map<ItemStack, Integer> map = new HashMap<>();
-                for (ItemStack item : clone) {
-                    map.merge(StackUtils.getAsQuantity(item, 1), item.getAmount(), Integer::sum);
-                }
+                        Map<ItemStack, Integer> map = new HashMap<>();
+                        for (ItemStack item : clone) {
+                            map.merge(StackUtils.getAsQuantity(item, 1), item.getAmount(), Integer::sum);
+                        }
 
-                for (var entry : map.entrySet()) {
-                    player.sendMessage(ChatColors.color("&c缺少 &7" + ItemStackHelper.getDisplayName(entry.getKey()) + "&ax" + entry.getValue()));
-                }
-            }
-        }, 1L, 20L);
+                        for (var entry : map.entrySet()) {
+                            player.sendMessage(ChatColors.color("&c缺少 &7" + ItemStackHelper.getDisplayName(entry.getKey()) + "&ax" + entry.getValue()));
+                        }
+                    }
+                }, 1L, 20L
+        );
     }
 
     /**
-     * @param slimefunItem the {@link SlimefunItem} to add
+     * @param slimefunItem
+     *         the {@link SlimefunItem} to add
+     *
      * @see NotApplicable
      */
     public static void addNotApplicableItem(SlimefunItem slimefunItem) {
@@ -138,18 +145,20 @@ public class RecipeCompletableListener implements Listener {
     }
 
     /**
-     * @param slimefunItem the {@link SlimefunItem} to remove
+     * @param slimefunItem
+     *         the {@link SlimefunItem} to remove
+     *
      * @see NotApplicable
      */
     public static void removeNotApplicableItem(SlimefunItem slimefunItem) {
         NOT_APPLICABLE_ITEMS.remove(slimefunItem);
     }
 
-    public static void registerRecipeCompletable(SlimefunItem slimefunItem, int @NotNull [] slots) {
+    public static void registerRecipeCompletable(SlimefunItem slimefunItem, int[] slots) {
         registerRecipeCompletable(slimefunItem, slots, false);
     }
 
-    public static void registerRecipeCompletable(SlimefunItem slimefunItem, int @NotNull [] slots, boolean unordered) {
+    public static void registerRecipeCompletable(SlimefunItem slimefunItem, int[] slots, boolean unordered) {
         INGREDIENT_SLOTS.put(slimefunItem, new Pair<>(slots, unordered));
     }
 
@@ -157,8 +166,123 @@ public class RecipeCompletableListener implements Listener {
         INGREDIENT_SLOTS.remove(slimefunItem);
     }
 
+    public static void addCallback(
+            final UUID uuid, BiConsumer<GuideEvents.ItemButtonClickEvent, PlayerProfile> callback) {
+        var p = GuideUtil.updatePlayer(uuid);
+        if (p != null) addCallback(p, callback);
+    }
+
+    public static void addCallback(
+            final Player player, BiConsumer<GuideEvents.ItemButtonClickEvent, PlayerProfile> callback) {
+        PROFILE_CALLBACKS.put(player, callback);
+    }
+
+    public static void removeCallback(UUID uuid) {
+        var p = GuideUtil.updatePlayer(uuid);
+        if (p != null) removeCallback(p);
+    }
+
+    public static void removeCallback(Player player) {
+        PROFILE_CALLBACKS.remove(player);
+    }
+
+    public static void tagGuideOpen(Player player) {
+        if (!PROFILE_CALLBACKS.containsKey(player)) {
+            return;
+        }
+
+        PlayerProfile profile = getPlayerProfile(player);
+        saveOriginGuideHistory(profile);
+        clearGuideHistory(profile);
+    }
+
+    @SneakyThrows
+    public static PlayerProfile getPlayerProfile(OfflinePlayer player) {
+        // Shouldn't be null;
+        return PlayerProfile.find(player).orElseThrow(() -> new RuntimeException("PlayerProfile not found"));
+    }
+
+    public static void saveOriginGuideHistory(PlayerProfile profile) {
+        GuideHistory oldHistory = profile.getGuideHistory();
+        GuideHistory newHistory = new GuideHistory(profile);
+        ReflectionUtil.setValue(newHistory, "mainMenuPage", oldHistory.getMainMenuPage());
+        LinkedList<?> queue = ReflectionUtil.getValue(oldHistory, "queue", LinkedList.class);
+        ReflectionUtil.setValue(newHistory, "queue", queue != null ? queue.clone() : new LinkedList<>());
+        var p = GuideUtil.updatePlayer(profile.getUUID());
+        if (p != null) GUIDE_HISTORY.put(p, newHistory);
+    }
+
+    public static void clearGuideHistory(PlayerProfile profile) {
+        ReflectionUtil.setValue(profile, "guideHistory", new GuideHistory(profile));
+    }
+
+    @Deprecated(forRemoval = true)
+    @Nullable
+    public static GuideEvents.ItemButtonClickEvent getLastEvent(UUID playerUUID) {
+        var p = GuideUtil.updatePlayer(playerUUID);
+        if (p != null) return getLastEvent(p);
+        return null;
+    }
+
+    @Nullable
+    public static GuideEvents.ItemButtonClickEvent getLastEvent(Player player) {
+        return LAST_EVENTS.get(player);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static void clearLastEvent(UUID playerUUID) {
+        var p = GuideUtil.updatePlayer(playerUUID);
+        if (p != null) clearLastEvent(p);
+    }
+
+    public static void clearLastEvent(Player player) {
+        LAST_EVENTS.remove(player);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static void addDispenserListening(UUID uuid, Location location) {
+        var p = GuideUtil.updatePlayer(uuid);
+        if (p != null) addDispenserListening(p, location);
+    }
+
+    public static void addDispenserListening(Player player, Location location) {
+        DISPENSER_LISTENING.put(player, location);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static boolean isOpeningDispenser(UUID uuid) {
+        var p = GuideUtil.updatePlayer(uuid);
+        if (p != null) return isOpeningDispenser(p);
+        return false;
+    }
+
+    public static boolean isOpeningDispenser(Player player) {
+        return DISPENSER_LISTENING.containsKey(player);
+    }
+
+    @Deprecated(forRemoval = true)
+    public static void removeDispenserListening(UUID uuid) {
+        var p = GuideUtil.updatePlayer(uuid);
+        if (p != null) removeDispenserListening(p);
+    }
+
+    public static void removeDispenserListening(Player player) {
+        DISPENSER_LISTENING.remove(player);
+    }
+
+    @EventHandler
+    public void prepare(InventoryOpenEvent event) {
+        if (event.getInventory().getHolder() instanceof BlockMenu blockMenu) {
+            tryAddClickHandler(blockMenu);
+        }
+
+        if (event.getInventory().getHolder() instanceof Dispenser dispenser) {
+            tryAddVanillaListen(event, dispenser.getBlock(), event.getInventory());
+        }
+    }
+
     @SuppressWarnings("deprecation")
-    private static void tryAddClickHandler(@NotNull BlockMenu blockMenu) {
+    private static void tryAddClickHandler(BlockMenu blockMenu) {
         SlimefunItem sf = blockMenu.getPreset().getSlimefunItem();
         if (!isApplicable(sf)) {
             return;
@@ -198,7 +322,8 @@ public class RecipeCompletableListener implements Listener {
                                         slots,
                                         unordered,
                                         1,
-                                        () -> exitSelectingItemStackToRecipeComplete(player));
+                                        () -> exitSelectingItemStackToRecipeComplete(player)
+                                );
                                 break;
                             }
                         }
@@ -215,24 +340,14 @@ public class RecipeCompletableListener implements Listener {
                 });
     }
 
-    public static boolean hasIngredientSlots(@NotNull SlimefunItem slimefunItem) {
-        return INGREDIENT_SLOTS.containsKey(slimefunItem);
-    }
-
-    public static int @NotNull [] getIngredientSlots(@NotNull SlimefunItem slimefunItem) {
-        return Optional.ofNullable(INGREDIENT_SLOTS.get(slimefunItem))
-                .orElse(new Pair<>(new int[0], false))
-                .first();
-    }
-
-    public static boolean isUnordered(@NotNull SlimefunItem slimefunItem) {
-        return Optional.ofNullable(INGREDIENT_SLOTS.get(slimefunItem))
-                .orElse(new Pair<>(new int[0], false))
-                .second();
+    private static void tryAddVanillaListen(InventoryOpenEvent event, Block block, Inventory inventory) {
+        var p = GuideUtil.updatePlayer(event.getPlayer().getUniqueId());
+        if (p == null) return;
+        addDispenserListening(p, block.getLocation());
     }
 
     @SuppressWarnings("RedundantIfStatement")
-    public static boolean isApplicable(@NotNull SlimefunItem slimefunItem) {
+    public static boolean isApplicable(SlimefunItem slimefunItem) {
         if (slimefunItem instanceof NotApplicable) {
             return false;
         }
@@ -245,7 +360,11 @@ public class RecipeCompletableListener implements Listener {
         return true;
     }
 
-    public static @NotNull ItemStack getRecipeCompletableBookItem() {
+    public static boolean hasIngredientSlots(SlimefunItem slimefunItem) {
+        return INGREDIENT_SLOTS.containsKey(slimefunItem);
+    }
+
+    public static ItemStack getRecipeCompletableBookItem() {
         if (RECIPE_COMPLETABLE_BOOK_ITEM == null) {
             RECIPE_COMPLETABLE_BOOK_ITEM =
                     ItemsSetup.RECIPE_COMPLETE_GUIDE.getItem().clone();
@@ -254,76 +373,96 @@ public class RecipeCompletableListener implements Listener {
         return RECIPE_COMPLETABLE_BOOK_ITEM;
     }
 
-    public static void addCallback(
-            final @NotNull UUID uuid, @NotNull BiConsumer<GuideEvents.ItemButtonClickEvent, PlayerProfile> callback) {
-        PROFILE_CALLBACKS.put(uuid, callback);
+    public static boolean isSelectingItemStackToRecipeComplete(Player player) {
+        return listening.contains(player);
     }
 
-    public static void removeCallback(@NotNull UUID uuid) {
-        PROFILE_CALLBACKS.remove(uuid);
+    public static void enterSelectingItemStackToRecipeComplete(Player player) {
+        listening.add(player);
     }
 
-    @SneakyThrows
-    @NotNull
-    public static PlayerProfile getPlayerProfile(@NotNull OfflinePlayer player) {
-        // Shouldn't be null;
-        return PlayerProfile.find(player).orElseThrow(() -> new RuntimeException("PlayerProfile not found"));
+    public static int[] getIngredientSlots(SlimefunItem slimefunItem) {
+        return Optional.ofNullable(INGREDIENT_SLOTS.get(slimefunItem))
+                .orElse(new Pair<>(new int[0], false))
+                .first();
     }
 
-    public static void tagGuideOpen(@NotNull Player player) {
-        if (!PROFILE_CALLBACKS.containsKey(player.getUniqueId())) {
+    public static boolean isUnordered(SlimefunItem slimefunItem) {
+        return Optional.ofNullable(INGREDIENT_SLOTS.get(slimefunItem))
+                .orElse(new Pair<>(new int[0], false))
+                .second();
+    }
+
+    public static void exitSelectingItemStackToRecipeComplete(Player player) {
+        listening.remove(player);
+    }
+
+    @SuppressWarnings("deprecation")
+    @EventHandler
+    public void clickVanilla(InventoryClickEvent event) {
+        Inventory inventory = event.getInventory();
+        if (event.getRawSlot() < inventory.getSize()) {
             return;
         }
 
-        PlayerProfile profile = getPlayerProfile(player);
-        saveOriginGuideHistory(profile);
-        clearGuideHistory(profile);
+        if (!(inventory.getHolder() instanceof Dispenser dispenser)) {
+            return;
+        }
+
+        Player player = GuideUtil.updatePlayer(event.getWhoClicked().getUniqueId());
+        if (player == null || !isOpeningDispenser(player)) {
+            return;
+        }
+
+        if (!StackUtils.itemsMatch(
+                event.getCurrentItem(), getRecipeCompletableBookItem(), false, false, false, false)) {
+            return;
+        }
+
+        Block block = dispenser.getBlock();
+        ClickAction clickAction = new ClickAction(event.isRightClick(), event.isShiftClick());
+        for (VanillaSource source : RecipeCompleteProvider.getVanillaSources()) {
+            // Strategy mode
+            // Default strategy see {@link DefaultPlayerInventoryRecipeCompleteVanillaSource}
+            if (source.handleable(block, inventory, player, clickAction, DISPENSER_SLOTS, false, 1)) {
+                source.openGuide(block, inventory, player, clickAction, DISPENSER_SLOTS, false, 1, null);
+                break;
+            }
+        }
+
+        event.setCancelled(true);
     }
 
-    public static void saveOriginGuideHistory(@NotNull PlayerProfile profile) {
-        GuideHistory oldHistory = profile.getGuideHistory();
-        GuideHistory newHistory = new GuideHistory(profile);
-        ReflectionUtil.setValue(newHistory, "mainMenuPage", oldHistory.getMainMenuPage());
-        LinkedList<?> queue = ReflectionUtil.getValue(oldHistory, "queue", LinkedList.class);
-        ReflectionUtil.setValue(newHistory, "queue", queue != null ? queue.clone() : new LinkedList<>());
-        GUIDE_HISTORY.put(profile.getUUID(), newHistory);
+    @EventHandler(priority = EventPriority.LOW)
+    public void exitVanilla(InventoryOpenEvent event) {
+        var p = GuideUtil.updatePlayer(event.getPlayer().getUniqueId());
+        if (p != null) removeDispenserListening(p);
     }
 
-    public static void clearGuideHistory(@NotNull PlayerProfile profile) {
-        ReflectionUtil.setValue(profile, "guideHistory", new GuideHistory(profile));
+    @EventHandler
+    public void onJEGItemClick(GuideEvents.ItemButtonClickEvent event) {
+        Player player = event.getPlayer();
+        if (!RecipeCompletableListener.PROFILE_CALLBACKS.containsKey(player)) {
+            return;
+        }
+
+        PlayerProfile profile = RecipeCompletableListener.getPlayerProfile(player);
+        rollbackGuideHistory(profile);
+        RecipeCompletableListener.PROFILE_CALLBACKS.get(player).accept(event, profile);
+        RecipeCompletableListener.PROFILE_CALLBACKS.remove(player);
+        RecipeCompletableListener.LAST_EVENTS.put(player, event);
+
+        ItemStack clickedItemStack = event.getClickedItem();
+        if (clickedItemStack != null) {
+            tryPatchRecipeCompleteBook(player, clickedItemStack);
+        }
     }
 
-    @Nullable
-    public static GuideEvents.ItemButtonClickEvent getLastEvent(@NotNull UUID playerUUID) {
-        return LAST_EVENTS.get(playerUUID);
-    }
+    public static void rollbackGuideHistory(PlayerProfile profile) {
+        var p = GuideUtil.updatePlayer(profile.getUUID());
+        if (p == null) return;
 
-    public static void clearLastEvent(@NotNull UUID playerUUID) {
-        LAST_EVENTS.remove(playerUUID);
-    }
-
-    @ParametersAreNonnullByDefault
-    public static void addDispenserListening(UUID uuid, Location location) {
-        DISPENSER_LISTENING.put(uuid, location);
-    }
-
-    @ParametersAreNonnullByDefault
-    public static boolean isOpeningDispenser(UUID uuid) {
-        return DISPENSER_LISTENING.containsKey(uuid);
-    }
-
-    @ParametersAreNonnullByDefault
-    public static void removeDispenserListening(UUID uuid) {
-        DISPENSER_LISTENING.remove(uuid);
-    }
-
-    @ParametersAreNonnullByDefault
-    private static void tryAddVanillaListen(InventoryOpenEvent event, Block block, Inventory inventory) {
-        addDispenserListening(event.getPlayer().getUniqueId(), block.getLocation());
-    }
-
-    public static void rollbackGuideHistory(@NotNull PlayerProfile profile) {
-        GuideHistory originHistory = RecipeCompletableListener.GUIDE_HISTORY.get(profile.getUUID());
+        GuideHistory originHistory = RecipeCompletableListener.GUIDE_HISTORY.get(p);
         if (originHistory == null) {
             return;
         }
@@ -332,7 +471,7 @@ public class RecipeCompletableListener implements Listener {
     }
 
     @SuppressWarnings({"deprecation", "DuplicateCondition", "ConstantValue"})
-    private static void tryPatchRecipeCompleteBook(@NotNull Player player, @NotNull ItemStack clickedItemStack) {
+    private static void tryPatchRecipeCompleteBook(Player player, ItemStack clickedItemStack) {
         for (ItemStack itemStack : player.getInventory()) {
             if (StackUtils.itemsMatch(itemStack, getRecipeCompletableBookItem(), false, false, false, false)) {
                 ItemMeta meta = itemStack.getItemMeta();
@@ -374,8 +513,13 @@ public class RecipeCompletableListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        tryRemoveRecipeCompleteBookLastRecipeCompleteLore(event.getPlayer());
+    }
+
     @SuppressWarnings({"deprecation", "DuplicateCondition", "ConstantValue"})
-    private static void tryRemoveRecipeCompleteBookLastRecipeCompleteLore(@NotNull Player player) {
+    private static void tryRemoveRecipeCompleteBookLastRecipeCompleteLore(Player player) {
         for (ItemStack itemStack : player.getInventory()) {
             if (StackUtils.itemsMatch(itemStack, getRecipeCompletableBookItem(), false, false, false, false)) {
                 ItemMeta meta = itemStack.getItemMeta();
@@ -409,97 +553,9 @@ public class RecipeCompletableListener implements Listener {
         }
     }
 
-    public static boolean isSelectingItemStackToRecipeComplete(@NotNull Player player) {
-        return listening.contains(player.getUniqueId());
-    }
-
-    public static void enterSelectingItemStackToRecipeComplete(@NotNull Player player) {
-        listening.add(player.getUniqueId());
-    }
-
-    public static void exitSelectingItemStackToRecipeComplete(@NotNull Player player) {
-        listening.remove(player.getUniqueId());
-    }
-
-    @EventHandler
-    public void prepare(@NotNull InventoryOpenEvent event) {
-        if (event.getInventory().getHolder() instanceof BlockMenu blockMenu) {
-            tryAddClickHandler(blockMenu);
-        }
-
-        if (event.getInventory().getHolder() instanceof Dispenser dispenser) {
-            tryAddVanillaListen(event, dispenser.getBlock(), event.getInventory());
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @EventHandler
-    public void clickVanilla(@NotNull InventoryClickEvent event) {
-        Inventory inventory = event.getInventory();
-        if (event.getRawSlot() < inventory.getSize()) {
-            return;
-        }
-
-        if (!(inventory.getHolder() instanceof Dispenser dispenser)) {
-            return;
-        }
-
-        Player player = (Player) event.getWhoClicked();
-        if (!isOpeningDispenser(player.getUniqueId())) {
-            return;
-        }
-
-        if (!StackUtils.itemsMatch(
-                event.getCurrentItem(), getRecipeCompletableBookItem(), false, false, false, false)) {
-            return;
-        }
-
-        Block block = dispenser.getBlock();
-        ClickAction clickAction = new ClickAction(event.isRightClick(), event.isShiftClick());
-        for (VanillaSource source : RecipeCompleteProvider.getVanillaSources()) {
-            // Strategy mode
-            // Default strategy see {@link DefaultPlayerInventoryRecipeCompleteVanillaSource}
-            if (source.handleable(block, inventory, player, clickAction, DISPENSER_SLOTS, false, 1)) {
-                source.openGuide(block, inventory, player, clickAction, DISPENSER_SLOTS, false, 1, null);
-                break;
-            }
-        }
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void exitVanilla(@NotNull InventoryOpenEvent event) {
-        removeDispenserListening(event.getPlayer().getUniqueId());
-    }
-
-    @EventHandler
-    public void onJEGItemClick(GuideEvents.@NotNull ItemButtonClickEvent event) {
-        Player player = event.getPlayer();
-        if (!RecipeCompletableListener.PROFILE_CALLBACKS.containsKey(player.getUniqueId())) {
-            return;
-        }
-
-        PlayerProfile profile = RecipeCompletableListener.getPlayerProfile(player);
-        rollbackGuideHistory(profile);
-        RecipeCompletableListener.PROFILE_CALLBACKS.get(player.getUniqueId()).accept(event, profile);
-        RecipeCompletableListener.PROFILE_CALLBACKS.remove(player.getUniqueId());
-        RecipeCompletableListener.LAST_EVENTS.put(player.getUniqueId(), event);
-
-        ItemStack clickedItemStack = event.getClickedItem();
-        if (clickedItemStack != null) {
-            tryPatchRecipeCompleteBook(player, clickedItemStack);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
-        tryRemoveRecipeCompleteBookLastRecipeCompleteLore(event.getPlayer());
-    }
-
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL)
-    public void patchItem(@NotNull PatchEvent event) {
+    public void patchItem(PatchEvent event) {
         PatchScope scope = event.getPatchScope();
         if (scope != PatchScope.SlimefunItem && scope != PatchScope.SearchItem) {
             return;
@@ -535,7 +591,7 @@ public class RecipeCompletableListener implements Listener {
 
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.NORMAL)
-    public void patchBackground(@NotNull PatchEvent event) {
+    public void patchBackground(PatchEvent event) {
         PatchScope scope = event.getPatchScope();
         if (scope != PatchScope.Background) {
             return;
@@ -570,7 +626,7 @@ public class RecipeCompletableListener implements Listener {
     }
 
     @EventHandler
-    public void exit(@NotNull InventoryClickEvent event) {
+    public void exit(InventoryClickEvent event) {
         ItemStack itemStack = event.getCurrentItem();
         if (itemStack == null) {
             return;
@@ -596,7 +652,7 @@ public class RecipeCompletableListener implements Listener {
         exitSelectingItemStackToRecipeComplete(player);
         PlayerProfile profile = RecipeCompletableListener.getPlayerProfile(player);
         rollbackGuideHistory(profile);
-        RecipeCompletableListener.PROFILE_CALLBACKS.remove(player.getUniqueId());
+        RecipeCompletableListener.PROFILE_CALLBACKS.remove(player);
         player.closeInventory();
     }
 

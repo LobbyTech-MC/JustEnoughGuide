@@ -41,8 +41,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -50,16 +50,17 @@ import java.util.List;
  * @author balugaq
  * @since 1.9
  */
+@NullMarked
 public class NetworksExpansionRecipeCompleteVanillaSource implements VanillaSource {
 
     @SuppressWarnings("deprecation")
     @Override
     public boolean handleable(
-            @NotNull Block block,
-            @NotNull Inventory inventory,
-            @NotNull Player player,
-            @NotNull ClickAction clickAction,
-            int @NotNull [] ingredientSlots,
+            Block block,
+            Inventory inventory,
+            Player player,
+            ClickAction clickAction,
+            int[] ingredientSlots,
             boolean unordered,
             int recipeDepth) {
         return NetworksIntegrationMain.findNearbyNetworkRoot(block.getLocation()) != null;
@@ -67,10 +68,10 @@ public class NetworksExpansionRecipeCompleteVanillaSource implements VanillaSour
 
     @Override
     public boolean completeRecipeWithGuide(
-            @NotNull Block block,
-            @NotNull Inventory inventory,
-            GuideEvents.@NotNull ItemButtonClickEvent event,
-            int @NotNull [] ingredientSlots,
+            Block block,
+            Inventory inventory,
+            GuideEvents.ItemButtonClickEvent event,
+            int[] ingredientSlots,
             boolean unordered,
             int recipeDepth) {
         NetworkRoot root = NetworksIntegrationMain.findNearbyNetworkRoot(block.getLocation());
@@ -86,7 +87,7 @@ public class NetworksExpansionRecipeCompleteVanillaSource implements VanillaSour
         }
 
         // choices.size() must be 9
-        List<RecipeChoice> choices = getRecipe(clickedItem);
+        List<@Nullable RecipeChoice> choices = getRecipe(clickedItem);
         if (choices == null) {
             sendMissingMaterial(player, clickedItem);
             return false;
@@ -135,10 +136,16 @@ public class NetworksExpansionRecipeCompleteVanillaSource implements VanillaSour
                             completeRecipeWithGuide(
                                     block,
                                     inventory,
-                                    new GuideEvents.ItemButtonClickEvent(event.getPlayer(), itemStack, event.getClickedSlot(), event.getClickAction(), event.getMenu(), event.getGuide()),
+                                    new GuideEvents.ItemButtonClickEvent(
+                                            event.getPlayer(), itemStack,
+                                            event.getClickedSlot(),
+                                            event.getClickAction(), event.getMenu(),
+                                            event.getGuide()
+                                    ),
                                     ingredientSlots,
                                     unordered,
-                                    recipeDepth + 1);
+                                    recipeDepth + 1
+                            );
                         } else {
                             sendMissingMaterial(player, itemStack);
                         }
@@ -158,10 +165,16 @@ public class NetworksExpansionRecipeCompleteVanillaSource implements VanillaSour
                             completeRecipeWithGuide(
                                     block,
                                     inventory,
-                                    new GuideEvents.ItemButtonClickEvent(event.getPlayer(), itemStack, event.getClickedSlot(), event.getClickAction(), event.getMenu(), event.getGuide()),
+                                    new GuideEvents.ItemButtonClickEvent(
+                                            event.getPlayer(), itemStack,
+                                            event.getClickedSlot(),
+                                            event.getClickAction(), event.getMenu(),
+                                            event.getGuide()
+                                    ),
                                     ingredientSlots,
                                     unordered,
-                                    recipeDepth + 1);
+                                    recipeDepth + 1
+                            );
                         } else {
                             sendMissingMaterial(player, itemStack);
                         }
@@ -175,18 +188,18 @@ public class NetworksExpansionRecipeCompleteVanillaSource implements VanillaSour
     }
 
     @Nullable
-    private ItemStack getItemStack(@NotNull NetworkRoot root, @NotNull Player player, @NotNull ItemStack itemStack) {
+    private ItemStack getItemStack(NetworkRoot root, Player player, ItemStack itemStack) {
         ItemStack i1 = getItemStackFromPlayerInventory(player, itemStack);
         if (i1 != null) {
             return i1;
         }
 
         // get from root
-        return root.getItemStack0(player.getLocation(), new ItemRequest(itemStack, 1));
+        return root.getItemStack0(player.getLocation(), new ItemRequest(itemStack, Math.max(1, Math.min(itemStack.getAmount(), itemStack.getMaxStackSize()))));
     }
 
     @Override
-    public @NotNull JavaPlugin plugin() {
+    public JavaPlugin plugin() {
         return NetworksExpansionIntegrationMain.getPlugin();
     }
 }
