@@ -1142,7 +1142,7 @@ public class SurvivalGuideImplementation extends SurvivalSlimefunGuide implement
     @Override
     public void printErrorMessage0(Player p, Throwable x) {
         p.sendMessage(ChatColor.DARK_RED + "服务器发生了一个内部错误. 请联系管理员处理.");
-        JustEnoughGuide.getInstance().getLogger().log(Level.SEVERE, "在打开指南书里的 Slimefun 物品时发生了意外!", x);
+        JustEnoughGuide.getInstance().getLogger().log(Level.SEVERE, "在打开指南书里的粘液科技物品时发生了意外!", x);
         JustEnoughGuide.getInstance().getLogger().warning("我们正在尝试恢复玩家 \"" + p.getName() + "\" 的指南...");
         PlayerProfile profile = PlayerProfile.find(p).orElse(null);
         if (profile == null) {

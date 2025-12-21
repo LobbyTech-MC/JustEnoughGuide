@@ -116,7 +116,7 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
                         ));
             } else {
                 String cost = VaultIntegration.isEnabled()
-                        ? String.format("%.2f", research.getCurrencyCost()) + " 游戏币"
+                        ? " &a" + String.format("%.2f", research.getCurrencyCost()) + " &e⛁"
                         : research.getLevelCost() + " 级经验";
                 return ItemStackUtil.getCleanItem(
                         slimefunItem.canUse(p, false)
