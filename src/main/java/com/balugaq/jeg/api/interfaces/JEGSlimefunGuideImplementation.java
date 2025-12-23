@@ -83,7 +83,7 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
             ItemGroup itemGroup = slimefunItem.getItemGroup();
             if (slimefunItem.isDisabledIn(p.getWorld())) {
                 return ItemStackUtil.getCleanItem(
-                        Converter.getItem(Material.BARRIER, ItemUtils.getItemName(item), "&4&l 该 Slimefun 物品已被禁用"));
+                        Converter.getItem(Material.BARRIER, ItemUtils.getItemName(item), "&4&l 该粘液科技物品已被禁用"));
             }
             String lore = hasPermission0(p, slimefunItem)
                     ? String.format(
