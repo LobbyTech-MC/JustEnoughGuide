@@ -28,7 +28,6 @@
 package com.balugaq.jeg.api.objects.enums;
 
 import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.api.interfaces.Api;
 import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.LocalHelper;
 import com.balugaq.jeg.utils.SpecialMenuProvider;
@@ -58,7 +57,7 @@ import java.util.Set;
 public enum FilterType {
     BY_FULL_NAME(
             "!!",
-            (player, item, lowerFilterValue, pinyin) -> SearchGroup.isFullNameApplicable(item, lowerFilterValue, pinyin)
+            SearchGroup::isFullNameApplicable
     ),
     BY_RECIPE_ITEM_NAME(
             "#", (player, item, lowerFilterValue, pinyin) -> {
@@ -152,8 +151,7 @@ public enum FilterType {
     }
     ),
     BY_ITEM_NAME(
-            "!", (player, item, lowerFilterValue, pinyin) ->
-            SearchGroup.isSearchFilterApplicable(item, lowerFilterValue, pinyin)
+            "!", SearchGroup::isSearchFilterApplicable
     ),
     BY_ITEM_LORE(
             "^", (player, item, lowerFilterValue, pinyin) -> {
@@ -191,7 +189,6 @@ public enum FilterType {
     }
 
     @Deprecated
-    @Api
     public String getFlag() {
         return symbol;
     }
