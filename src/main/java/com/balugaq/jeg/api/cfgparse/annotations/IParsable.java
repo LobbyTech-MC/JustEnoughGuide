@@ -27,12 +27,13 @@
 
 package com.balugaq.jeg.api.cfgparse.annotations;
 
-import lombok.SneakyThrows;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
+import lombok.SneakyThrows;
 
 /**
  * @author balugaq

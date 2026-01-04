@@ -27,14 +27,8 @@
 
 package com.balugaq.jeg.core.integrations.slimeaeplugin;
 
-import com.balugaq.jeg.api.objects.events.GuideEvents;
-import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
-import com.balugaq.jeg.utils.BlockMenuUtil;
-import me.ddggdd135.guguslimefunlib.items.ItemKey;
-import me.ddggdd135.slimeae.api.interfaces.IStorage;
-import me.ddggdd135.slimeae.api.items.ItemRequest;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -43,7 +37,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+import com.balugaq.jeg.utils.BlockMenuUtil;
+
+import me.ddggdd135.guguslimefunlib.items.ItemKey;
+import me.ddggdd135.slimeae.api.interfaces.IStorage;
+import me.ddggdd135.slimeae.api.items.ItemRequest;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 /**
  * @author balugaq

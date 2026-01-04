@@ -27,15 +27,17 @@
 
 package com.balugaq.jeg.core.commands;
 
-import com.balugaq.jeg.api.interfaces.JEGCommand;
-import lombok.Getter;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import com.balugaq.jeg.api.interfaces.JEGCommand;
+
+import lombok.Getter;
 
 /**
  * This is the implementation of the "/jeg help" command. It shows the list of available commands and their usage.

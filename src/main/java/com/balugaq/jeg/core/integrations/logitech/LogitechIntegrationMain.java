@@ -31,14 +31,16 @@
  */
 package com.balugaq.jeg.core.integrations.logitech;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.core.integrations.Integration;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 
 /**
  * @author balugaq

@@ -27,19 +27,21 @@
 
 package com.balugaq.jeg.implementation.option;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.GuideUtil;
-import com.balugaq.jeg.utils.KeyUtil;
-import com.balugaq.jeg.utils.compatibility.Converter;
-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
-import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
+import java.util.Optional;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Optional;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.compatibility.Converter;
+
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
 
 /**
  * @author balugaq

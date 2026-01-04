@@ -27,16 +27,6 @@
 
 package com.balugaq.jeg.api.cfgparse.parser;
 
-import com.balugaq.jeg.api.cfgparse.annotations.IDefaultValue;
-import com.balugaq.jeg.api.cfgparse.annotations.Key;
-import com.balugaq.jeg.utils.ReflectionUtil;
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NullMarked;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -49,6 +39,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.cfgparse.annotations.IDefaultValue;
+import com.balugaq.jeg.api.cfgparse.annotations.Key;
+import com.balugaq.jeg.utils.ReflectionUtil;
+
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 /**
  * @author balugaq

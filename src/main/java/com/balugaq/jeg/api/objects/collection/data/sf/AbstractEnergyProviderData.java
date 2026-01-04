@@ -27,16 +27,18 @@
 
 package com.balugaq.jeg.api.objects.collection.data.sf;
 
-import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.api.objects.collection.data.MachineData;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
+import java.util.List;
+import java.util.Set;
+
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
-import java.util.Set;
+import com.balugaq.jeg.api.groups.CERRecipeGroup;
+import com.balugaq.jeg.api.objects.collection.data.MachineData;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineFuel;
 
 /**
  * @author balugaq

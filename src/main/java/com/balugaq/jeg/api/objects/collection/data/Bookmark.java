@@ -27,10 +27,11 @@
 
 package com.balugaq.jeg.api.objects.collection.data;
 
+import org.jspecify.annotations.NullMarked;
+
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * @author balugaq

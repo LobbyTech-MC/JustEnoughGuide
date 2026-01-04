@@ -27,16 +27,18 @@
 
 package com.balugaq.jeg.api.objects.collection.data.infinityexpansion;
 
-import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.api.objects.collection.data.MachineData;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
-import java.util.Map;
+import com.balugaq.jeg.api.groups.CERRecipeGroup;
+import com.balugaq.jeg.api.objects.collection.data.MachineData;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author balugaq

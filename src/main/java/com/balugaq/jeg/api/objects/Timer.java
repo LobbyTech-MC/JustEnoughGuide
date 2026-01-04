@@ -27,8 +27,9 @@
 
 package com.balugaq.jeg.api.objects;
 
-import com.balugaq.jeg.utils.Debug;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.utils.Debug;
 
 /**
  * A simple timer class.

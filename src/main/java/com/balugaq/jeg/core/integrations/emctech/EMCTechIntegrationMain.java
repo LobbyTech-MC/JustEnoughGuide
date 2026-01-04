@@ -27,13 +27,15 @@
 
 package com.balugaq.jeg.core.integrations.emctech;
 
-import com.balugaq.jeg.core.integrations.Integration;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import io.github.sefiraat.emctech.utils.EmcUtils;
-import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettings;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.core.integrations.Integration;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+
+import io.github.sefiraat.emctech.utils.EmcUtils;
+import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettings;
 
 /**
  * @author balugaq

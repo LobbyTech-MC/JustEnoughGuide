@@ -27,18 +27,20 @@
 
 package com.balugaq.jeg.api.objects.events;
 
-import com.balugaq.jeg.api.objects.enums.PatchScope;
-import com.balugaq.jeg.utils.Debug;
-import com.balugaq.jeg.utils.ItemStackUtil;
-import com.balugaq.jeg.utils.compatibility.Converter;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.objects.enums.PatchScope;
+import com.balugaq.jeg.utils.Debug;
+import com.balugaq.jeg.utils.ItemStackUtil;
+import com.balugaq.jeg.utils.compatibility.Converter;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author balugaq

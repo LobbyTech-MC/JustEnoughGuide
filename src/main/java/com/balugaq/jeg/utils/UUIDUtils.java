@@ -27,9 +27,9 @@
 
 package com.balugaq.jeg.utils;
 
-import org.jspecify.annotations.NullMarked;
-
 import java.util.UUID;
+
+import org.jspecify.annotations.NullMarked;
 
 /**
  * @author Ddggdd135

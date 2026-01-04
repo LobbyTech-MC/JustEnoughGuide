@@ -27,7 +27,6 @@
 
 package com.balugaq.jeg.utils.compatibility;
 
-import com.balugaq.jeg.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
@@ -37,6 +36,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.utils.ReflectionUtil;
 
 /**
  * @author balugaq

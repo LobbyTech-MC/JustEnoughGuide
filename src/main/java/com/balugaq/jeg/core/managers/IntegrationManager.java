@@ -27,6 +27,15 @@
 
 package com.balugaq.jeg.core.managers;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.managers.AbstractManager;
 import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import com.balugaq.jeg.core.integrations.Integration;
@@ -65,17 +74,10 @@ import com.balugaq.jeg.core.integrations.tsingshantechnology.TsingshanTechnology
 import com.balugaq.jeg.core.integrations.wildernether.WilderNetherIntegrationMain;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.Debug;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * This class is responsible for managing integrations with other plugins.

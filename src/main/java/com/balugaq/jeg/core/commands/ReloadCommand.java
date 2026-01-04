@@ -27,17 +27,19 @@
 
 package com.balugaq.jeg.core.commands;
 
-import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.api.interfaces.JEGCommand;
-import com.balugaq.jeg.utils.Debug;
-import lombok.Getter;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.interfaces.JEGCommand;
+import com.balugaq.jeg.utils.Debug;
+
+import lombok.Getter;
 
 /**
  * This is the implementation of the "/jeg reload" command. It reloads the JEG plugin configuration.

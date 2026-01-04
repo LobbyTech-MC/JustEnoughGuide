@@ -27,29 +27,17 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import com.balugaq.jeg.api.objects.collection.Pair;
-import com.balugaq.jeg.api.objects.enums.PatchScope;
-import com.balugaq.jeg.api.objects.events.GuideEvents;
-import com.balugaq.jeg.api.objects.events.PatchEvent;
-import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
-import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
-import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.implementation.items.ItemsSetup;
-import com.balugaq.jeg.utils.GuideUtil;
-import com.balugaq.jeg.utils.KeyUtil;
-import com.balugaq.jeg.utils.Models;
-import com.balugaq.jeg.utils.ReflectionUtil;
-import com.balugaq.jeg.utils.StackUtils;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
-import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
-import lombok.SneakyThrows;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -71,16 +59,30 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
+import com.balugaq.jeg.api.objects.collection.Pair;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.api.objects.events.PatchEvent;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.implementation.items.ItemsSetup;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.Models;
+import com.balugaq.jeg.utils.ReflectionUtil;
+import com.balugaq.jeg.utils.StackUtils;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import lombok.SneakyThrows;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
 
 /**
  * @author balugaq

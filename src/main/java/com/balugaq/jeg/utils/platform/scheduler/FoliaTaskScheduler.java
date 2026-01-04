@@ -27,11 +27,13 @@
 
 package com.balugaq.jeg.utils.platform.scheduler;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;
+
 import lombok.Getter;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * @author balugaq

@@ -27,22 +27,24 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this.CERCalculator;
-import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.api.objects.enums.PatchScope;
-import com.balugaq.jeg.api.objects.events.PatchEvent;
-import com.balugaq.jeg.implementation.option.CerPatchGuideOption;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this.CERCalculator;
+import com.balugaq.jeg.api.groups.CERRecipeGroup;
+import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
+import com.balugaq.jeg.api.objects.events.PatchEvent;
+import com.balugaq.jeg.implementation.option.CerPatchGuideOption;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 
 /**
  * @author balugaq

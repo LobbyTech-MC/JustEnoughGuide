@@ -27,9 +27,10 @@
 
 package com.balugaq.jeg.api.objects.collection;
 
+import org.jspecify.annotations.NullMarked;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * @author balugaq

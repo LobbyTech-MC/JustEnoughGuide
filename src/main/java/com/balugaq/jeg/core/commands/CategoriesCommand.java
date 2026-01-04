@@ -27,16 +27,9 @@
 
 package com.balugaq.jeg.core.commands;
 
-import com.balugaq.jeg.api.interfaces.JEGCommand;
-import com.balugaq.jeg.utils.ClipboardUtil;
-import com.balugaq.jeg.utils.ItemStackUtil;
-import com.balugaq.jeg.utils.compatibility.Converter;
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
-import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import lombok.Getter;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -48,8 +41,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.balugaq.jeg.api.interfaces.JEGCommand;
+import com.balugaq.jeg.utils.ClipboardUtil;
+import com.balugaq.jeg.utils.ItemStackUtil;
+import com.balugaq.jeg.utils.compatibility.Converter;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
+import lombok.Getter;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 
 /**
  * This is the implementation of the "/jeg categories" command.

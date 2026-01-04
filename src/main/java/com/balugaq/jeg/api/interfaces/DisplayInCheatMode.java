@@ -27,13 +27,14 @@
 
 package com.balugaq.jeg.api.interfaces;
 
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import org.jspecify.annotations.NullMarked;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.jspecify.annotations.NullMarked;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 
 /**
  * This annotation is used to indicate that a class should be displayed in the cheat mode menu. Priority lower than

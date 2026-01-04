@@ -27,17 +27,19 @@
 
 package com.balugaq.jeg.api.objects.collection.data.infinityexpansion;
 
-import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.api.objects.collection.data.MachineData;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Arrays;
-import java.util.List;
+import com.balugaq.jeg.api.groups.CERRecipeGroup;
+import com.balugaq.jeg.api.objects.collection.data.MachineData;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author balugaq

@@ -27,8 +27,9 @@
 
 package com.balugaq.jeg.core.commands;
 
-import com.balugaq.jeg.api.interfaces.JEGCommand;
-import lombok.Getter;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -38,8 +39,9 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.balugaq.jeg.api.interfaces.JEGCommand;
+
+import lombok.Getter;
 
 /**
  * This class is the command system of JEG. It handles all the commands and tab-completions.

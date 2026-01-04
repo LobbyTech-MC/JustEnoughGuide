@@ -27,18 +27,20 @@
 
 package com.balugaq.jeg.core.integrations.slimefuntranslation;
 
-import com.balugaq.jeg.core.integrations.Integration;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.ReflectionUtil;
-import com.balugaq.jeg.utils.compatibility.Converter;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import lombok.Getter;
-import net.guizhanss.slimefuntranslation.SlimefunTranslation;
-import net.guizhanss.slimefuntranslation.api.SlimefunTranslationAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.core.integrations.Integration;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.ReflectionUtil;
+import com.balugaq.jeg.utils.compatibility.Converter;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import lombok.Getter;
+import net.guizhanss.slimefuntranslation.SlimefunTranslation;
+import net.guizhanss.slimefuntranslation.api.SlimefunTranslationAPI;
 
 /**
  * @author balugaq

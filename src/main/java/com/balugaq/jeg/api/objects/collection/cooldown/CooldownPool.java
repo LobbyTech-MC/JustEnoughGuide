@@ -27,11 +27,12 @@
 
 package com.balugaq.jeg.api.objects.collection.cooldown;
 
-import lombok.Data;
-import org.jspecify.annotations.NullMarked;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.jspecify.annotations.NullMarked;
+
+import lombok.Data;
 
 /**
  * @author balugaq

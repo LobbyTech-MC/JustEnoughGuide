@@ -27,14 +27,16 @@
 
 package com.balugaq.jeg.api.recipe_complete.source.base;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import lombok.Getter;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+
+import lombok.Getter;
 
 /**
  * @author balugaq

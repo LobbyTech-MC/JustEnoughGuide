@@ -27,11 +27,13 @@
 
 package com.balugaq.jeg.api.groups;
 
-import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
-import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
+
+import lombok.Getter;
 
 /**
  * A classic implementation of GuideGroup.

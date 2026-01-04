@@ -27,6 +27,16 @@
 
 package com.balugaq.jeg.api;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.cfgparse.parser.ConfigurationParser;
 import com.balugaq.jeg.api.groups.CustomGroup;
 import com.balugaq.jeg.api.objects.CustomGroupConfiguration;
@@ -34,16 +44,8 @@ import com.balugaq.jeg.api.objects.annotations.CallTimeSensitive;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.formatter.Formats;
-import lombok.Getter;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jspecify.annotations.NullMarked;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.Getter;
 
 /**
  * @author balugaq

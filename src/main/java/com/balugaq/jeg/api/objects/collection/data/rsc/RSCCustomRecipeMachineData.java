@@ -27,13 +27,15 @@
 
 package com.balugaq.jeg.api.objects.collection.data.rsc;
 
-import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.api.objects.collection.data.MachineData;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.util.List;
+
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import com.balugaq.jeg.api.groups.CERRecipeGroup;
+import com.balugaq.jeg.api.objects.collection.data.MachineData;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author balugaq

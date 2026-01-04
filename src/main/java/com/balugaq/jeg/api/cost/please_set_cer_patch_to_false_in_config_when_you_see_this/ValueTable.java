@@ -27,11 +27,11 @@
 
 package com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this;
 
-import com.balugaq.jeg.api.objects.annotations.CallTimeSensitive;
-import com.balugaq.jeg.core.managers.IntegrationManager;
-import com.balugaq.jeg.utils.StackUtils;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.CookingRecipe;
@@ -45,10 +45,12 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.balugaq.jeg.api.objects.annotations.CallTimeSensitive;
+import com.balugaq.jeg.core.managers.IntegrationManager;
+import com.balugaq.jeg.utils.StackUtils;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 /**
  * @author balugaq

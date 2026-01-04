@@ -27,10 +27,12 @@
 
 package com.balugaq.jeg.utils;
 
-import com.balugaq.jeg.utils.compatibility.Converter;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import com.balugaq.jeg.utils.compatibility.Converter;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 
 /**
  * @author balugaq

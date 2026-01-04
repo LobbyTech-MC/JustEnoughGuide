@@ -27,14 +27,10 @@
 
 package com.balugaq.jeg.api.recipe_complete.source.base;
 
-import com.balugaq.jeg.api.objects.SimpleRecipeChoice;
-import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
-import com.balugaq.jeg.implementation.option.NoticeMissingMaterialGuideOption;
-import com.balugaq.jeg.implementation.option.RecursiveRecipeFillingGuideOption;
-import com.balugaq.jeg.utils.GuideUtil;
-import com.balugaq.jeg.utils.StackUtils;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -46,9 +42,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.balugaq.jeg.api.objects.SimpleRecipeChoice;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
+import com.balugaq.jeg.implementation.option.NoticeMissingMaterialGuideOption;
+import com.balugaq.jeg.implementation.option.RecursiveRecipeFillingGuideOption;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.StackUtils;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 
 /**
  * @author balugaq

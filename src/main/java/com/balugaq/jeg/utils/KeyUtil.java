@@ -27,14 +27,16 @@
 
 package com.balugaq.jeg.utils;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import lombok.experimental.UtilityClass;
+import java.util.UUID;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.UUID;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+
+import lombok.experimental.UtilityClass;
 
 /**
  * @author balugaq

@@ -27,10 +27,11 @@
 
 package com.balugaq.jeg.api.objects.collection.data.infinitylib;
 
-import lombok.Data;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+
+import lombok.Data;
 
 /**
  * @author balugaq

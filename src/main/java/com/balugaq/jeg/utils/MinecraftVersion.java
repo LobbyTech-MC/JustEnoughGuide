@@ -27,9 +27,10 @@
 
 package com.balugaq.jeg.utils;
 
+import org.jspecify.annotations.NullMarked;
+
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import lombok.Getter;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * This class represents a Minecraft version. It contains a major and minor version number, and provides methods to

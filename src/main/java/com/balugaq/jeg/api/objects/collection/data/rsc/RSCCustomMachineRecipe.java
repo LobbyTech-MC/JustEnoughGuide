@@ -27,14 +27,15 @@
 
 package com.balugaq.jeg.api.objects.collection.data.rsc;
 
-import it.unimi.dsi.fastutil.ints.IntList;
-import lombok.Getter;
-import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
+import java.util.List;
+
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import it.unimi.dsi.fastutil.ints.IntList;
+import lombok.Getter;
+import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 
 /**
  * @author balugaq

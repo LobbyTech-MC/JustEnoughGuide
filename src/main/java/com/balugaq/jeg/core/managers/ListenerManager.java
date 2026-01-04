@@ -27,6 +27,17 @@
 
 package com.balugaq.jeg.core.managers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredListener;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.managers.AbstractManager;
 import com.balugaq.jeg.core.listeners.BundleListener;
 import com.balugaq.jeg.core.listeners.CerPatchListener;
@@ -39,18 +50,9 @@ import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
 import com.balugaq.jeg.core.listeners.SpecialMenuFixListener;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.implementation.WatchdogHandler;
+
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.RegisteredListener;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.UnknownNullability;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is responsible for managing the listeners of the plugin.

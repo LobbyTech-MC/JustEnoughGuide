@@ -27,6 +27,11 @@
 
 package com.balugaq.jeg.api.groups;
 
+import java.util.List;
+
+import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.interfaces.BookmarkRelocation;
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
 import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
@@ -40,6 +45,7 @@ import com.balugaq.jeg.utils.Models;
 import com.balugaq.jeg.utils.clickhandler.OnClick;
 import com.balugaq.jeg.utils.clickhandler.OnDisplay;
 import com.balugaq.jeg.utils.formatter.Formats;
+
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
@@ -51,10 +57,6 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * This class used to create groups to mark items into {@link BookmarkGroup} in the guide. Will not display Item Mark

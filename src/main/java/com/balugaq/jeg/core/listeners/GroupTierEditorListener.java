@@ -27,10 +27,6 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import com.balugaq.jeg.api.editor.GroupResorter;
-import com.balugaq.jeg.implementation.items.GroupTierEditorGuide;
-import io.github.thebusybiscuit.slimefun4.api.events.SlimefunGuideOpenEvent;
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,6 +38,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.editor.GroupResorter;
+import com.balugaq.jeg.implementation.items.GroupTierEditorGuide;
+
+import io.github.thebusybiscuit.slimefun4.api.events.SlimefunGuideOpenEvent;
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 
 /**
  * @author balugaq

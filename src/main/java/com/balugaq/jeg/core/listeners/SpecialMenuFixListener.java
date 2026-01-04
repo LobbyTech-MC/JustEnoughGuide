@@ -27,18 +27,20 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import com.balugaq.jeg.utils.Debug;
-import com.balugaq.jeg.utils.ReflectionUtil;
-import com.balugaq.jeg.utils.SpecialMenuProvider;
-import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import java.util.Deque;
+import java.util.Optional;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Deque;
-import java.util.Optional;
+import com.balugaq.jeg.utils.Debug;
+import com.balugaq.jeg.utils.ReflectionUtil;
+import com.balugaq.jeg.utils.SpecialMenuProvider;
+
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 
 /**
  * @author balugaq

@@ -27,12 +27,13 @@
 
 package com.balugaq.jeg.api.objects.collection.data.rsc;
 
-import lombok.Data;
+import java.util.Map;
+import java.util.Set;
+
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Map;
-import java.util.Set;
+import lombok.Data;
 
 /**
  * @author balugaq

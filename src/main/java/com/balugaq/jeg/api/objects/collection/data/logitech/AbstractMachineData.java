@@ -27,14 +27,16 @@
 
 package com.balugaq.jeg.api.objects.collection.data.logitech;
 
+import java.util.List;
+
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.groups.CERRecipeGroup;
 import com.balugaq.jeg.api.objects.collection.data.MachineData;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * @author balugaq

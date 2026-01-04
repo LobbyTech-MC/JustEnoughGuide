@@ -27,17 +27,19 @@
 
 package com.balugaq.jeg.api.objects.menu;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.Getter;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
-import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NullMarked;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
+
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import lombok.Getter;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 
 /**
  * @author balugaq

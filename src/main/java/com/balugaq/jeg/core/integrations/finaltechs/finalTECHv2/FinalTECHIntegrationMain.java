@@ -27,17 +27,19 @@
 
 package com.balugaq.jeg.core.integrations.finaltechs.finalTECHv2;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.core.integrations.Integration;
 import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTECHItemPatchListener;
 import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTECHValueDisplayOption;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettings;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author balugaq

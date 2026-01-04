@@ -27,12 +27,13 @@
 
 package com.balugaq.jeg.api.interfaces;
 
-import com.balugaq.jeg.implementation.guide.CheatGuideImplementation;
-import com.balugaq.jeg.implementation.guide.SurvivalGuideImplementation;
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import com.balugaq.jeg.implementation.guide.CheatGuideImplementation;
+import com.balugaq.jeg.implementation.guide.SurvivalGuideImplementation;
 
 /**
  * This interface defines the methods that a BookmarkRelocation implementation should implement. Used for relocating the

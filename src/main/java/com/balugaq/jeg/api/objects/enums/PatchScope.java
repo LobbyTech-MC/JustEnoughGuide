@@ -27,11 +27,13 @@
 
 package com.balugaq.jeg.api.objects.enums;
 
-import com.balugaq.jeg.api.objects.events.PatchEvent;
-import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.objects.events.PatchEvent;
+
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 
 /**
  * @author balugaq

@@ -27,20 +27,22 @@
 
 package com.balugaq.jeg.utils;
 
-import com.balugaq.jeg.utils.compatibility.Converter;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.experimental.UtilityClass;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.balugaq.jeg.utils.compatibility.Converter;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import lombok.experimental.UtilityClass;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 /**
  * @author balugaq

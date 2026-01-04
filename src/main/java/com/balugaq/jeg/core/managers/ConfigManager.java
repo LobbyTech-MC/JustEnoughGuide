@@ -27,16 +27,6 @@
 
 package com.balugaq.jeg.core.managers;
 
-import com.balugaq.jeg.api.managers.AbstractManager;
-import com.balugaq.jeg.api.objects.collection.Pair;
-import com.balugaq.jeg.utils.Debug;
-import com.github.houbb.opencc4j.support.data.impl.OpenccDatas;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jspecify.annotations.NullMarked;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +37,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.managers.AbstractManager;
+import com.balugaq.jeg.api.objects.collection.Pair;
+import com.balugaq.jeg.utils.Debug;
+import com.github.houbb.opencc4j.support.data.impl.OpenccDatas;
 
 /**
  * This class is responsible for managing the configuration of the plugin. Includes the following features'

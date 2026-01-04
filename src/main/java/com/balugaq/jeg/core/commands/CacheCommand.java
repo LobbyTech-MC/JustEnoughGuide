@@ -27,21 +27,23 @@
 
 package com.balugaq.jeg.core.commands;
 
-import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.api.interfaces.JEGCommand;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import lombok.Getter;
+import java.lang.ref.Reference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
-import java.lang.ref.Reference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.interfaces.JEGCommand;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import lombok.Getter;
 
 /**
  * This is the implementation of the "/jeg cache" command. It allows the server administrator to check the validity of

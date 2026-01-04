@@ -27,12 +27,14 @@
 
 package com.balugaq.jeg.utils;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import lombok.experimental.UtilityClass;
+import java.lang.reflect.Field;
+
 import org.bukkit.inventory.ItemFlag;
 import org.jspecify.annotations.NullMarked;
 
-import java.lang.reflect.Field;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+
+import lombok.experimental.UtilityClass;
 
 /**
  * This class provides a way to access the ItemFlag constants that were added in different versions of Minecraft. Used

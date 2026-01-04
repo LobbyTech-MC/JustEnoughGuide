@@ -27,7 +27,6 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import city.norain.slimefun4.holder.SlimefunInventoryHolder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -35,6 +34,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+
+import city.norain.slimefun4.holder.SlimefunInventoryHolder;
 
 /**
  * @author balugaq

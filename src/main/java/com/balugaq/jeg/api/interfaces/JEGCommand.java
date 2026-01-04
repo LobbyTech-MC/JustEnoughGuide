@@ -27,13 +27,14 @@
 
 package com.balugaq.jeg.api.interfaces;
 
-import com.balugaq.jeg.core.commands.JEGCommands;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.balugaq.jeg.core.commands.JEGCommands;
 
 /**
  * This interface is used to define a command that can be executed by JEG. Used by {@link JEGCommands}.

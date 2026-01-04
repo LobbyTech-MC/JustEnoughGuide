@@ -27,8 +27,9 @@
 
 package com.balugaq.jeg.utils.formatter;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.implementation.JustEnoughGuide;
 
 /**
  * @author balugaq

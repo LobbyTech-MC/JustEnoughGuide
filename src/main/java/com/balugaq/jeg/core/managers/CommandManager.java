@@ -27,6 +27,11 @@
 
 package com.balugaq.jeg.core.managers;
 
+import java.util.List;
+
+import org.bukkit.command.PluginCommand;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.managers.AbstractManager;
 import com.balugaq.jeg.core.commands.CacheCommand;
 import com.balugaq.jeg.core.commands.CategoriesCommand;
@@ -36,11 +41,8 @@ import com.balugaq.jeg.core.commands.HelpCommand;
 import com.balugaq.jeg.core.commands.JEGCommands;
 import com.balugaq.jeg.core.commands.ReloadCommand;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
-import lombok.Getter;
-import org.bukkit.command.PluginCommand;
-import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import lombok.Getter;
 
 /**
  * This class is responsible for managing the commands of JEG.

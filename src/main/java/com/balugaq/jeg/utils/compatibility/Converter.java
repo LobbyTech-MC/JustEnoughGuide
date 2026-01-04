@@ -27,8 +27,11 @@
 
 package com.balugaq.jeg.utils.compatibility;
 
-import com.balugaq.jeg.utils.ReflectionUtil;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -38,10 +41,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import com.balugaq.jeg.utils.ReflectionUtil;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 
 /**
  * @author balugaq

@@ -27,12 +27,13 @@
 
 package com.balugaq.jeg.api.objects;
 
-import com.balugaq.jeg.utils.StackUtils;
+import java.util.List;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import com.balugaq.jeg.utils.StackUtils;
 
 /**
  * @author balugaq

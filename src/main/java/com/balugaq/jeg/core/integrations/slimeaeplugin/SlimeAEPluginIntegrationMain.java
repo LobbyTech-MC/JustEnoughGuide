@@ -27,14 +27,9 @@
 
 package com.balugaq.jeg.core.integrations.slimeaeplugin;
 
-import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
-import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
-import com.balugaq.jeg.core.integrations.Integration;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import me.ddggdd135.slimeae.SlimeAEPlugin;
-import me.ddggdd135.slimeae.api.interfaces.IStorage;
-import me.ddggdd135.slimeae.core.NetworkInfo;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -42,8 +37,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.core.integrations.Integration;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import me.ddggdd135.slimeae.SlimeAEPlugin;
+import me.ddggdd135.slimeae.api.interfaces.IStorage;
+import me.ddggdd135.slimeae.core.NetworkInfo;
 
 /**
  * @author balugaq

@@ -27,10 +27,11 @@
 
 package com.balugaq.jeg.utils.platform;
 
+import org.jspecify.annotations.NullMarked;
+
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * @author balugaq

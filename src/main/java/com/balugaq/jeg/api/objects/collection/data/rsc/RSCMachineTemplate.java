@@ -27,10 +27,10 @@
 
 package com.balugaq.jeg.api.objects.collection.data.rsc;
 
+import java.util.List;
+
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
 
 /**
  * @author balugaq

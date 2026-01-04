@@ -27,17 +27,18 @@
 
 package com.balugaq.jeg.api.clickhandler;
 
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
-import lombok.Data;
-import lombok.Getter;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
+
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
+import lombok.Data;
+import lombok.Getter;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**
  * @author balugaq

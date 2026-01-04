@@ -27,8 +27,11 @@
 
 package com.balugaq.jeg.utils;
 
-import com.balugaq.jeg.utils.compatibility.Converter;
-import lombok.experimental.UtilityClass;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -36,10 +39,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.balugaq.jeg.utils.compatibility.Converter;
+
+import lombok.experimental.UtilityClass;
 
 /**
  * @author balugaq

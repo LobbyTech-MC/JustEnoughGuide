@@ -27,18 +27,12 @@
 
 package com.balugaq.jeg.core.managers;
 
-import com.balugaq.jeg.api.managers.AbstractManager;
-import com.balugaq.jeg.api.objects.collection.data.Bookmark;
-import com.balugaq.jeg.utils.ItemStackUtil;
-import com.balugaq.jeg.utils.compatibility.Converter;
-import com.xzavier0722.mc.plugin.slimefun4.storage.controller.ProfileDataController;
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
-import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
-import io.github.thebusybiscuit.slimefun4.core.config.SlimefunDatabaseManager;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import lombok.Getter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -50,11 +44,19 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import com.balugaq.jeg.api.managers.AbstractManager;
+import com.balugaq.jeg.api.objects.collection.data.Bookmark;
+import com.balugaq.jeg.utils.ItemStackUtil;
+import com.balugaq.jeg.utils.compatibility.Converter;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.ProfileDataController;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.core.config.SlimefunDatabaseManager;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import lombok.Getter;
 
 /**
  * This class is responsible for managing bookmarks. It provides methods to add, remove, get, and clear bookmarks. This

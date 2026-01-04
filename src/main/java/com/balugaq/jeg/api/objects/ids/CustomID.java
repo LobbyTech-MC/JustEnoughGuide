@@ -27,10 +27,11 @@
 
 package com.balugaq.jeg.api.objects.ids;
 
-import lombok.Data;
+import java.util.UUID;
+
 import org.jspecify.annotations.NullMarked;
 
-import java.util.UUID;
+import lombok.Data;
 
 @SuppressWarnings("unused")
 @Data

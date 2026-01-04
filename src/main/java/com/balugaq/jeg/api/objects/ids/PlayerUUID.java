@@ -27,10 +27,10 @@
 
 package com.balugaq.jeg.api.objects.ids;
 
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
-
-import java.util.UUID;
 
 @SuppressWarnings("unused")
 @NullMarked

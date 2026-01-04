@@ -27,13 +27,14 @@
 
 package com.balugaq.jeg.implementation;
 
-import com.balugaq.jeg.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.utils.ReflectionUtil;
 
 /**
  * @author balugaq

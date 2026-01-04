@@ -27,12 +27,13 @@
 
 package com.balugaq.jeg.utils.clickhandler;
 
-import com.balugaq.jeg.utils.KeyUtil;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.utils.KeyUtil;
 
 /**
  * @author balugaq
