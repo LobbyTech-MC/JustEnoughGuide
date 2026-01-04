@@ -117,7 +117,7 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
                         ));
             } else {
                 String cost = VaultIntegration.isEnabled()
-                        ? " &a" + String.format("%.2f", research.getCurrencyCost()) + " &e⛁"
+                        ? " §r§6" + String.format("%.2f", research.getCurrencyCost()) + " §r&e⛁"
                         : research.getLevelCost() + " 级经验";
                 return ItemStackUtil.getCleanItem(
                         slimefunItem.canUse(p, false)
@@ -134,8 +134,7 @@ public interface JEGSlimefunGuideImplementation extends SlimefunGuideImplementat
                                         "",
                                         "&a单击解锁",
                                         "",
-                                        "&7需要",
-                                        "&b" + cost
+                                        "&e需要" + cost
                                 ),
                                 meta -> meta.getPersistentDataContainer()
                                         .set(
