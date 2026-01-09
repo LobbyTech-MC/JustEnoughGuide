@@ -481,10 +481,10 @@ public interface OnDisplay {
                         "",
                         "&a> 单击解锁",
                         "",
-                        "&7需要 &b",
+                        "&e需要 &6&l" +
                         VaultIntegration.isEnabled()
-                                ? String.format("%.2f", research.getCurrencyCost()) + " 游戏币"
-                                : research.getLevelCost() + " 级经验"
+                                ?  + String.format("%.2f", research.getCurrencyCost()) + " &r&e⛁"
+                                : research.getLevelCost() + " &e级经验"
                 );
 
                 ItemMeta meta = icon.getItemMeta();
