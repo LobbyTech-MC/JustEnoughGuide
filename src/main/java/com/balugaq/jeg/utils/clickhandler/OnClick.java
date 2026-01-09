@@ -113,6 +113,14 @@ public interface OnClick {
                                                     p.isOp() || p.hasPermission("slimefun.cheat.items")
         );
         menu.addMenuOpeningHandler(pl -> pl.playSound(pl.getLocation(), Sounds.GUIDE_BUTTON_CLICK_SOUND, 1, 1));
+        menu.addMenuClickHandler(-999, (p, s, i, a) -> {
+            // it called when the player clicks outside the inventory
+            if (p.isOp() || p.hasPermission("slimefun.cheat.items")) {
+                // op or permissible players are allowed to drop item
+                return true;
+            }
+            return false;
+        });
     }
 
     static void share(Player player, String itemName) {
@@ -236,12 +244,19 @@ public interface OnClick {
         default Action findAction(Player player, String key) {
             for (Action action : listActions()) {
                 String k = action.getKey().getKey();
-                if (JustEnoughGuide.getConfigManager().isAllowActionRedirect()) {
-                    String remap = ACTION_KEY.get(player, k);
-                    if (remap != null) k = remap;
+                if (k.equals(key)) {
+                    if (JustEnoughGuide.getConfigManager().isAllowActionRedirect()) {
+                        String remap = ACTION_KEY.get(player, k);
+                        if (remap != null) {
+                            for (Action act : listActions()) {
+                                 if (act.getKey().getKey().equals(remap)) {
+                                     return act;
+                                 }
+                            }
+                        }
+                    }
+                    return action;
                 }
-
-                if (k.equals(key)) return action;
             }
 
             return new Action() {
@@ -259,7 +274,7 @@ public interface OnClick {
                 public boolean click(JEGSlimefunGuideImplementation guide, InventoryClickEvent event, Player player,
                                      int slot, io.github.thebusybiscuit.slimefun4.api.items.ItemGroup itemGroup,
                                      ClickAction clickAction, ChestMenu menu, int page) {
-                    player.sendMessage("&c未找到按键: " + key);
+                    player.sendMessage(ChatColors.color("&c未找到按键: " + key));
                     return false;
                 }
 
@@ -470,6 +485,26 @@ public interface OnClick {
                                 }
                             }
                     ),
+                    OpAction.of(
+                            "copy-full-class", "OP: 复制物品组的class", Material.COMMAND_BLOCK, (guide, event, player, slot,
+                                                                                                itemGroup, action,
+                                                                                                menu, page) -> {
+                                if (!player.isOp()) {
+                                    return;
+                                }
+
+                                String s = itemGroup.getClass().toString();
+                                if (PlatformUtil.isPaper()) {
+                                    Component base =
+                                            Component.text("点击复制物品组的class: ", TextColor.color(0x00FF00)).append(Component.text(s, TextColor.color(0xFFFF00))).hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(Component.text("点击复制", TextColor.color(0xFFFF00))));
+                                    Component clickToCopy =
+                                            base.clickEvent(net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.COPY_TO_CLIPBOARD, s));
+                                    player.sendMessage(clickToCopy);
+                                } else {
+                                    ClipboardUtil.send(player, ClipboardUtil.makeComponent("&e点击复制物品组的class", s, s));
+                                }
+                            }
+                    ),
                     Action.of(
                             "right-click", "收藏物品组/选择待交换的物品组", Material.KNOWLEDGE_BOOK, (guide, event, player, slot,
                                                                                                       itemGroup,
@@ -622,12 +657,19 @@ public interface OnClick {
         default Action findAction(Player player, String key) {
             for (Action action : listActions()) {
                 String k = action.getKey().getKey();
-                if (JustEnoughGuide.getConfigManager().isAllowActionRedirect()) {
-                    String remap = ACTION_KEY.get(player, k);
-                    if (remap != null) k = remap;
+                if (k.equals(key)) {
+                    if (JustEnoughGuide.getConfigManager().isAllowActionRedirect()) {
+                        String remap = ACTION_KEY.get(player, k);
+                        if (remap != null) {
+                            for (Action act : listActions()) {
+                                if (act.getKey().getKey().equals(remap)) {
+                                    return act;
+                                }
+                            }
+                        }
+                    }
+                    return action;
                 }
-
-                if (k.equals(key)) return action;
             }
 
             return new Action() {
@@ -645,7 +687,7 @@ public interface OnClick {
                 public boolean click(JEGSlimefunGuideImplementation guide, Player player, int slot,
                                      io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType recipeType,
                                      ClickAction clickAction, ChestMenu menu, int page) {
-                    player.sendMessage("&c未找到按键: " + key);
+                    player.sendMessage(ChatColors.color("&c未找到按键: " + key));
                     return false;
                 }
 
@@ -835,16 +877,23 @@ public interface OnClick {
         }
 
         default Action findAction(Player player, String key) {
-            if (JustEnoughGuide.getConfigManager().isAllowActionRedirect()) {
-                String remap = ACTION_KEY.get(player, key);
-                if (remap != null) key = remap;
-            }
-
             for (Action action : listActions()) {
-                if (action.getKey().getKey().equals(key)) return action;
+                String k = action.getKey().getKey();
+                if (k.equals(key)) {
+                    if (JustEnoughGuide.getConfigManager().isAllowActionRedirect()) {
+                        String remap = ACTION_KEY.get(player, k);
+                        if (remap != null) {
+                            for (Action act : listActions()) {
+                                if (act.getKey().getKey().equals(remap)) {
+                                    return act;
+                                }
+                            }
+                        }
+                    }
+                    return action;
+                }
             }
 
-            String finalKey = key;
             return new Action() {
                 @Override
                 public Material material() {
@@ -865,7 +914,7 @@ public interface OnClick {
 
                 @Override
                 public NamespacedKey getKey() {
-                    return KeyUtil.newKey(finalKey);
+                    return KeyUtil.newKey(key);
                 }
             };
         }
@@ -1260,11 +1309,21 @@ public interface OnClick {
                             }
                     ),
                     Action.of(
-                            "shift-left-click", "打开物品所在物品组", Material.CAULDRON, (guide, player, slot, slimefunItem,
+                            "shift-left-click", "打开物品所在物品组/OP: 取下物品", Material.CAULDRON, (guide, player, slot, slimefunItem,
                                                                                           item, clickAction, menu,
                                                                                           p2) -> {
                                 if (slimefunItem == null) slimefunItem = SlimefunItem.getByItem(item);
                                 if (slimefunItem == null) return;
+
+                                if (player.isOp() || player.hasPermission("slimefun.cheat.items")) {
+                                    int amount = 1;
+                                    if (clickAction.isShiftClicked()) amount = item.getMaxStackSize();
+
+                                    ItemStack itemStack = slimefunItem == null ? item :
+                                            Converter.getItem(slimefunItem.getItem());
+                                    player.getInventory().addItem(StackUtils.getAsQuantity(itemStack, amount));
+                                    return;
+                                }
 
                                 final io.github.thebusybiscuit.slimefun4.api.items.ItemGroup itemGroup =
                                         slimefunItem.getItemGroup();

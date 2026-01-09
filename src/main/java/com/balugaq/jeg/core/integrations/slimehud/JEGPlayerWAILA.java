@@ -74,7 +74,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 @NullMarked
 public class JEGPlayerWAILA extends PlayerWAILA {
     public static final boolean IS_1_20_1 =
-            JustEnoughGuide.getMinecraftVersion().isAtLeast(MinecraftVersion.MINECRAFT_1_20_1);
+            JustEnoughGuide.getMinecraftVersion().isAtLeast(MinecraftVersion.V1_20_1);
     public static final long TICK_RATE = SlimeHUD.getInstance().getConfig().getLong("waila.tick-rate");
     public final Supplier<BossBar> kyoriBossBarSupplier;
     public boolean visible;

@@ -27,28 +27,11 @@
 
 package com.balugaq.jeg.implementation;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Level;
-
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnknownNullability;
-import org.jspecify.annotations.NullMarked;
-
 import com.balugaq.jeg.api.CustomGroupConfigurations;
 import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this.CERCalculator;
 import com.balugaq.jeg.api.editor.GroupResorter;
 import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.groups.VanillaItemsGroup;
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTECHValueDisplayOption;
@@ -78,7 +61,6 @@ import com.balugaq.jeg.utils.SpecialMenuProvider;
 import com.balugaq.jeg.utils.UUIDUtils;
 import com.balugaq.jeg.utils.platform.PlatformUtil;
 import com.balugaq.jeg.utils.platform.scheduler.TaskScheduler;
-
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
@@ -89,6 +71,26 @@ import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunG
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import lombok.Getter;
 import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
+import org.jspecify.annotations.NullMarked;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * This is the main class of the JustEnoughGuide plugin. It depends on the Slimefun4 plugin and provides a set of
@@ -101,8 +103,10 @@ import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
 @Getter
 @NullMarked
 public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
-    public static final int RECOMMENDED_JAVA_VERSION = 17;
-    public static final MinecraftVersion RECOMMENDED_MC_VERSION = MinecraftVersion.MINECRAFT_1_16;
+    public static final int RECOMMENDED_JAVA_VERSION = 21;
+    public static final int LEAST_JAVA_VERSION = 17;
+    public static final MinecraftVersion RECOMMENDED_MC_VERSION = MinecraftVersion.V1_20_1;
+    public static final MinecraftVersion LEAST_MC_VERSION = MinecraftVersion.V1_16;
 
     @Getter
     @UnknownNullability
@@ -172,13 +176,17 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
 
     public static CommandManager getCommandManager() {
         return getInstance().commandManager;
-    }    public static ConfigManager getConfigManager() {
+    }
+
+    public static ConfigManager getConfigManager() {
         return getInstance().configManager;
     }
 
     public static ListenerManager getListenerManager() {
         return getInstance().listenerManager;
-    }    public static IntegrationManager getIntegrationManager() {
+    }
+
+    public static IntegrationManager getIntegrationManager() {
         return getInstance().integrationManager;
     }
 
@@ -228,6 +236,27 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         getScheduler().runTimerAsync(runnable, delay, period);
     }
 
+    public static void reload(@Nullable Plugin plugin, CommandSender sender) {
+        sender.sendMessage(ChatColor.GREEN + "Reloading plugin...");
+        try {
+            if (plugin == null) {
+                sender.sendMessage(ChatColor.RED + "Failed to reload plugin.");
+                return;
+            }
+
+            plugin.onDisable();
+            plugin.onEnable();
+            plugin.reloadConfig(); // 1st reload
+            SearchGroup.LOADED = false;
+            SearchGroup.init();
+            plugin.reloadConfig(); // 2nd reload
+            sender.sendMessage(ChatColor.GREEN + "plugin has been reloaded.");
+        } catch (Exception e) {
+            sender.sendMessage(ChatColor.RED + "Failed to reload plugin.");
+            Debug.trace(e);
+        }
+    }
+
     /**
      * Returns the JavaPlugin instance.
      *
@@ -256,10 +285,10 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
      *         the debug message to log
      */
     public void debug(String message) {
-        if (getConfigManager().isDebug()) {
-            getLogger().warning("[DEBUG] " + message);
-        }
-    }    /**
+        Debug.debug(message);
+    }
+
+    /**
      * Initializes the plugin and sets up all necessary components.
      */
     @SuppressWarnings("DuplicateExpressions")
@@ -389,7 +418,9 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
 
     public String getVersion() {
         return getDescription().getVersion();
-    }    /**
+    }
+
+    /**
      * Cleans up resources and shuts down the plugin.
      */
     @Override
@@ -463,6 +494,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         this.commandManager = null;
         this.listenerManager = null;
         this.configManager = null;
+        Debug.setPlugin(null);
 
         // Other fields
         this.minecraftVersion = null;
@@ -482,19 +514,13 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         return getConfigManager().isDebug();
     }
 
-
-
-
-
-
-
     /**
      * Checks the environment compatibility for the plugin.
      *
      * @return true if the environment is compatible, false otherwise
      */
     private boolean environmentCheck() {
-        this.minecraftVersion = MinecraftVersion.getCurrentVersion();
+        this.minecraftVersion = MinecraftVersion.current();
         this.javaVersion = NumberUtils.getJavaVersion();
         if (minecraftVersion == null) {
             getLogger().warning("无法获取到 Minecraft 版本!");
@@ -503,13 +529,13 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
 
         if (minecraftVersion == MinecraftVersion.UNKNOWN) {
             getLogger().warning("无法识别当前的 Minecraft 版本! (" + javaVersion + ")");
-        } else if (!minecraftVersion.isAtLeast(RECOMMENDED_MC_VERSION)) {
+        } else if (!minecraftVersion.isAtLeast(LEAST_MC_VERSION)) {
             getLogger()
                     .warning("当前 Minecraft 版本过低(" + minecraftVersion.humanize() + "), 请使用 Minecraft "
                                      + RECOMMENDED_MC_VERSION.humanize() + " 或以上版本!");
         }
 
-        if (javaVersion < RECOMMENDED_JAVA_VERSION) {
+        if (javaVersion < LEAST_JAVA_VERSION) {
             getLogger().warning("Java 版本过低，请使用 Java " + RECOMMENDED_JAVA_VERSION + " 或以上版本!");
         }
 
@@ -517,12 +543,11 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             getLogger().log(Level.SEVERE, "本插件需要 鬼斩前置库插件(GuizhanLibPlugin) 才能运行!");
             getLogger().log(Level.SEVERE, "从此处下载: https://50l.cc/gzlib");
             getLogger().log(Level.SEVERE, "当出现该报错时, 作者对一切后续的报错不负责");
+            return false;
         }
 
         return true;
     }
-
-
 
     /**
      * Attempts to update the plugin if auto-update is enabled.

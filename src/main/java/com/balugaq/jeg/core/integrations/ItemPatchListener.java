@@ -25,43 +25,39 @@
  *
  */
 
-package com.balugaq.jeg.utils;
+package com.balugaq.jeg.core.integrations;
 
-import java.lang.reflect.Field;
-
-import org.bukkit.inventory.ItemFlag;
+import io.github.sefiraat.networks.utils.Keys;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-
-import lombok.experimental.UtilityClass;
-
 /**
- * This class provides a way to access the ItemFlag constants that were added in different versions of Minecraft. Used
- * to fix compatibility issues with different versions of Minecraft.
- *
  * @author balugaq
- * @since 1.2
  */
-@UtilityClass
 @NullMarked
-public class JEGVersionedItemFlag {
-    public static final ItemFlag HIDE_ADDITIONAL_TOOLTIP;
-
-    static {
-        MinecraftVersion version = JustEnoughGuide.getMinecraftVersion();
-        HIDE_ADDITIONAL_TOOLTIP = version.isAtLeast(MinecraftVersion.V1_20_5)
-                ? getKey("HIDE_ADDITIONAL_TOOLTIP")
-                : getKey("HIDE_POTION_EFFECTS");
+public interface ItemPatchListener extends Listener, Keyed {
+    default void tagMeta(ItemMeta meta) {
+        meta.getPersistentDataContainer().set(getKey(), PersistentDataType.BOOLEAN, true);
     }
 
-    @SuppressWarnings("DataFlowIssue")
-    private static ItemFlag getKey(String key) {
-        try {
-            Field field = ItemFlag.class.getDeclaredField(key);
-            return (ItemFlag) field.get(null);
-        } catch (Exception ignored) {
-            return null;
-        }
+    default boolean isTagged(@Nullable ItemStack stack) {
+        if (stack == null) return true;
+        var meta = stack.getItemMeta();
+        if (meta == null) return true;
+        return isTagged(meta);
+    }
+
+    default boolean isTagged(ItemMeta meta) {
+        return meta.getPersistentDataContainer().has(getKey(), PersistentDataType.BOOLEAN);
+    }
+
+    default NamespacedKey getKey() {
+        return Keys.newKey(getClass().getSimpleName().toLowerCase());
     }
 }

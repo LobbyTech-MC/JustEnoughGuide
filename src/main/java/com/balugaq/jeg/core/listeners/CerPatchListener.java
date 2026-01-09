@@ -27,31 +27,30 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this.CERCalculator;
+import com.balugaq.jeg.api.groups.CERRecipeGroup;
+import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
+import com.balugaq.jeg.api.objects.events.PatchEvent;
+import com.balugaq.jeg.core.integrations.ItemPatchListener;
+import com.balugaq.jeg.implementation.option.CerPatchGuideOption;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this.CERCalculator;
-import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.api.objects.enums.PatchScope;
-import com.balugaq.jeg.api.objects.events.PatchEvent;
-import com.balugaq.jeg.implementation.option.CerPatchGuideOption;
-
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author balugaq
  * @since 1.9
  */
 @SuppressWarnings("deprecation")
-public class CerPatchListener implements Listener {
+public class CerPatchListener implements ItemPatchListener {
     @EventHandler
     public void onSearch(PatchEvent event) {
         if (event.getPatchScope() != PatchScope.SearchItem) {
@@ -64,6 +63,10 @@ public class CerPatchListener implements Listener {
         }
 
         ItemStack is = event.getItemStack();
+        if (isTagged(is)) {
+            return;
+        }
+
         SlimefunItem sf = SlimefunItem.getByItem(is);
         if (sf == null) {
             return;
@@ -77,6 +80,7 @@ public class CerPatchListener implements Listener {
             lore.add("");
             lore.add(ChatColors.color("&a机器性价比: " + CERRecipeGroup.FORMAT.format(cer)));
             meta.setLore(lore);
+            tagMeta(meta);
             is.setItemMeta(meta);
         }
         event.setItemStack(is);
