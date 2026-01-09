@@ -473,6 +473,9 @@ public interface OnDisplay {
                 io.github.thebusybiscuit.slimefun4.api.researches.Research research = item.getResearch();
                 if (research == null) return;
 
+                String lockNeedInfo = VaultIntegration.isEnabled()
+                                ? String.format("%.2f", research.getCurrencyCost()) + " &r&e⛁"
+                                : research.getLevelCost() + " &e级经验";
                 ItemStack icon = Converter.getItem(
                         ChestMenuUtils.getNoPermissionItem(),
                         "&f" + ItemUtils.getItemName(item.getItem()),
@@ -481,10 +484,8 @@ public interface OnDisplay {
                         "",
                         "&a> 单击解锁",
                         "",
-                        "&e需要 &6&l" +
-                        VaultIntegration.isEnabled()
-                                ?  + String.format("%.2f", research.getCurrencyCost()) + " &r&e⛁"
-                                : research.getLevelCost() + " &e级经验"
+                        "&e需要 &6&l" + lockNeedInfo
+                        
                 );
 
                 ItemMeta meta = icon.getItemMeta();
