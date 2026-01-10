@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2024-2026 balugaq
  *
@@ -69,7 +68,6 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
  * @see CheatGuideImplementation
  * @since 1.3
  */
-@SuppressWarnings({"unchecked", "unused", "deprecation", "UnusedReturnValue", "ConstantValue", "DeprecatedIsStillUsed"})
 @UtilityClass
 @NullMarked
 public class SpecialMenuProvider {
