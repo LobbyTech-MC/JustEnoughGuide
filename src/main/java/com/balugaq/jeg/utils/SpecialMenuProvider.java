@@ -794,9 +794,7 @@ public class SpecialMenuProvider {
         public ChestMenu.MenuClickHandler getInstance(
                 me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenu menu) {
             return (p, s, i, a) -> {
-                PlayerProfile.find(p).ifPresent(playerProfile -> playerProfile
-                        .getGuideHistory()
-                        .goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE)));
+                PlayerProfile.find(p).ifPresent(GuideUtil::goBack);
                 return false;
             };
         }
@@ -815,9 +813,7 @@ public class SpecialMenuProvider {
         public ChestMenu.MenuClickHandler getInstance(
                 me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenu menu) {
             return (p, s, i, a) -> {
-                PlayerProfile.find(p).ifPresent(playerProfile -> playerProfile
-                        .getGuideHistory()
-                        .goBack(Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE)));
+                PlayerProfile.find(p).ifPresent(GuideUtil::goBack);
                 return false;
             };
         }

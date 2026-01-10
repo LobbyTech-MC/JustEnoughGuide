@@ -226,7 +226,7 @@ public class CERRecipeGroup extends BaseGroup<CERRecipeGroup> {
                                     SlimefunGuide.openMainMenu(
                                             playerProfile, slimefunGuideMode, guideHistory.getMainMenuPage());
                                 } else {
-                                    guideHistory.goBack(Slimefun.getRegistry().getSlimefunGuide(slimefunGuideMode));
+                                    GuideUtil.goBack(guideHistory);
                                 }
                                 return false;
                             })
@@ -280,7 +280,7 @@ public class CERRecipeGroup extends BaseGroup<CERRecipeGroup> {
                                         msg -> implementation.openSearch(
                                                 playerProfile,
                                                 msg,
-                                                implementation.getMode() == SlimefunGuideMode.SURVIVAL_MODE
+                                                true
                                         )
                                 );
 

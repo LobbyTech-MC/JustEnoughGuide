@@ -101,6 +101,7 @@ public class ConfigManager extends AbstractManager {
     private final boolean CER_PATCH;
     private final boolean ALLOW_ACTION_REDIRECT;
     private final boolean LOGITECH_MACHINE_STACKABLE_DISPLAY;
+    private final boolean SLIMEFUN_ID_DISPLAY;
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -346,6 +347,7 @@ public class ConfigManager extends AbstractManager {
         this.CER_PATCH = cfg.getBoolean("improvements.cer-patch", true);
         this.ALLOW_ACTION_REDIRECT = cfg.getBoolean("improvements.allow-action-redirect", true);
         this.LOGITECH_MACHINE_STACKABLE_DISPLAY = cfg.getBoolean("improvements.logitech-machine-stackable-display", true);
+        this.SLIMEFUN_ID_DISPLAY = cfg.getBoolean("improvements.slimefun-id-display", true);
     }
 
     private void setupDefaultConfig() {
@@ -542,5 +544,9 @@ public class ConfigManager extends AbstractManager {
                 this.SHARED_CHARS.add(" " + p.first.charAt(i) + p.second.charAt(i));
             }
         }
+    }
+
+    public boolean isSlimefunIdDisplay() {
+        return SLIMEFUN_ID_DISPLAY;
     }
 }

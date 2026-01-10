@@ -114,7 +114,7 @@ public class HiddenItemsGroup extends BaseGroup<HiddenItemsGroup> {
                                     SlimefunGuide.openMainMenu(
                                             playerProfile, slimefunGuideMode, guideHistory.getMainMenuPage());
                                 } else {
-                                    guideHistory.goBack(Slimefun.getRegistry().getSlimefunGuide(slimefunGuideMode));
+                                    GuideUtil.goBack(guideHistory);
                                 }
                                 return false;
                             })
@@ -139,7 +139,7 @@ public class HiddenItemsGroup extends BaseGroup<HiddenItemsGroup> {
                                         msg -> implementation.openSearch(
                                                 playerProfile,
                                                 msg,
-                                                implementation.getMode() == SlimefunGuideMode.SURVIVAL_MODE
+                                                true
                                         )
                                 );
 
