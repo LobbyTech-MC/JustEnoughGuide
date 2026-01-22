@@ -32,6 +32,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -297,6 +298,7 @@ public class SpecialMenuProvider {
                         classLogitech_CustomMenu =
                                 Class.forName("me.matl114.logitech.utils.util_class.menu_class.CustomMenu");
                     } catch (ClassNotFoundException ignored4) {
+                    	org.bukkit.Bukkit.getLogger().log(Level.WARNING, PLACEHOLDER_SEARCH_TERM);
                     }
                 }
             }

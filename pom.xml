@@ -213,9 +213,8 @@
         <dependency>
             <groupId>com.github.SlimefunGuguProject</groupId>
             <artifactId>Slimefun4</artifactId>
-            <version>38953fe13a</version>
-            <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\Slimefun.jar</systemPath>
+            <version>master-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Tools etc. -->
