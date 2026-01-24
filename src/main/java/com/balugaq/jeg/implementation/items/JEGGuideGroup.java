@@ -27,13 +27,6 @@
 
 package com.balugaq.jeg.implementation.items;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NullMarked;
-
 import com.balugaq.jeg.api.groups.ClassicGuideGroup;
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
 import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
@@ -55,6 +48,13 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
+
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * An implementation of the ClassicGuideGroup for JEG.
@@ -158,7 +158,7 @@ public class JEGGuideGroup extends ClassicGuideGroup {
                                 }
 
                                 for (ItemGroup itemGroup :
-                                        Slimefun.getRegistry().getAllItemGroups()) {
+                                        new ArrayList<>(Slimefun.getRegistry().getAllItemGroups())) {
                                     if (itemGroup
                                             .getKey()
                                             .equals(new NamespacedKey(Slimefun.instance(), "basic_machines"))) {
