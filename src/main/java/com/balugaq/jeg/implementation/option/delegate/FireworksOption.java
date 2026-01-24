@@ -46,6 +46,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+
+import java.util.Optional;
 /**
  * @author TheBusyBiscuit
  * @author balugaq
