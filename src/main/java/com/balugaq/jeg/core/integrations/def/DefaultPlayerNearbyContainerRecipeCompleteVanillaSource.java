@@ -25,37 +25,46 @@
  *
  */
 
-package com.balugaq.jeg.core.integrations.networks;
+package com.balugaq.jeg.core.integrations.def;
 
-import java.util.List;
-
-import org.bukkit.Material;
 import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+import com.balugaq.jeg.implementation.option.RecipeFillingWithNearbyContainerGuideOption;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Range;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
-
-import com.balugaq.jeg.api.objects.events.GuideEvents;
-import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
-import com.balugaq.jeg.core.integrations.networksexpansion.NetworksExpansionIntegrationMain;
-import com.balugaq.jeg.utils.InventoryUtil;
-
-import io.github.sefiraat.networks.network.NetworkRoot;
-import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**
  * @author balugaq
- * @since 1.9
+ * @since 2.0
  */
 @NullMarked
-public class NetworksRecipeCompleteVanillaSource implements VanillaSource, NetworksSource {
-    @Override
+public class DefaultPlayerNearbyContainerRecipeCompleteVanillaSource implements VanillaSource, JEGSource {
     @SuppressWarnings("deprecation")
-    public boolean handleable(final Block block, final Inventory inventory, final Player player, final ClickAction clickAction, @Range(from = 0, to = 53) final int[] ingredientSlots, final boolean unordered, final int recipeDepth) {
-        return NetworksSource.super.handleable(block, inventory, player, clickAction, ingredientSlots, unordered, recipeDepth);
+    @Override
+    public boolean handleable(
+            Block block,
+            Inventory inventory,
+            Player player,
+            ClickAction clickAction,
+            int[] ingredientSlots,
+            boolean unordered,
+            int recipeDepth) {
+        return RecipeFillingWithNearbyContainerGuideOption.getRadiusDistance(player) > 0;
+    }
+
+    @Override
+    @Nullable
+    public ItemStack getItemStack(Player player, Location target, ItemStack itemStack) {
+        ItemStack i1 = getItemStackFromPlayerInventory(player, itemStack);
+        if (i1 != null) {
+            return i1;
+        }
+
+        return getItemStackFromNearbyContainer(player, target, itemStack);
     }
 }

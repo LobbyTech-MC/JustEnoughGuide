@@ -27,6 +27,13 @@
 
 package com.balugaq.jeg.api.recipe_complete.source.base;
 
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.InventoryUtil;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
@@ -35,12 +42,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.objects.events.GuideEvents;
-import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
-import com.balugaq.jeg.utils.GuideUtil;
-
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**
  * Target block has {@link Inventory} ex. {@link Dispenser}
@@ -113,12 +114,19 @@ public interface VanillaSource extends Source {
         return true;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    boolean completeRecipeWithGuide(
+    @CanIgnoreReturnValue
+    default boolean completeRecipeWithGuide(
             Block block,
             Inventory inventory,
             GuideEvents.ItemButtonClickEvent event,
-            @Range(from = 0, to = 53) int[] ingredientSlots,
+            int[] ingredientSlots,
             boolean unordered,
-            int recipeDepth);
+            int recipeDepth) {
+        return completeRecipeWithGuide(
+                event, block.getLocation(), ingredientSlots, unordered, recipeDepth,
+                inventory::getItem,
+                (received, i) ->
+                    InventoryUtil.pushItem(inventory, received, unordered ? ingredientSlots : new int[] {ingredientSlots[i]})
+        );
+    }
 }

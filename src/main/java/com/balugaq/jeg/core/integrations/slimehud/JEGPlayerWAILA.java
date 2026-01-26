@@ -236,7 +236,6 @@ public class JEGPlayerWAILA extends PlayerWAILA {
                     bossbar(facing);
                 }
                 case "hotbar", "actionbar" -> {
-                    setVisible(false); // Hide the BossBar
                     actionbar(facing);
                 }
             }
@@ -251,16 +250,28 @@ public class JEGPlayerWAILA extends PlayerWAILA {
     }
 
     public void updateFacing0() {
-        Block targetBlock = getPlayer().getTargetBlockExact(5);
-        if (targetBlock == null) {
+        Block targetBlock = getPlayer().getTargetBlockExact(HUDReachBlockGuideOption.getReachBlock(getPlayer()));
+        if (targetBlock == null || targetBlock.getType().isAir()) {
             clearFacing0();
             return;
         }
 
         SlimefunItem item = StorageCacheUtils.getSfItem(targetBlock.getLocation());
         if (item == null) {
-            clearFacing0();
-            return;
+            if (VanillaBlockHUDDisplayGuideOption.isEnabled(getPlayer())) {
+                ReflectionUtil.setValue(this, "facingBlock", SlimeHUDIntegrationMain.getVanillaBlockName(getPlayer(), targetBlock));
+                ReflectionUtil.setValue(this, "facingBlockInfo", "");
+                ReflectionUtil.setValue(
+                        this, "facing", ChatColor.translateAlternateColorCodes(
+                                '&',
+                                getFacingBlock() + (getFacingBlockInfo().isEmpty() ? "" : " &7| " + getFacingBlockInfo())
+                        )
+                );
+                return;
+            } else {
+                clearFacing0();
+                return;
+            }
         }
 
         Location target = targetBlock.getLocation();
@@ -293,6 +304,8 @@ public class JEGPlayerWAILA extends PlayerWAILA {
     }
 
     public void actionbar(String facing) {
+        setVisible(false); // Hide the BossBar
+        if (facing.isEmpty()) return;
         if (PlatformUtil.isPaper()) {
             getPlayer().sendActionBar(LegacyComponentSerializer.legacySection().deserialize(facing));
         } else {

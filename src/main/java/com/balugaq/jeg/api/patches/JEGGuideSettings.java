@@ -27,18 +27,6 @@
 
 package com.balugaq.jeg.api.patches;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Range;
-import org.jspecify.annotations.NullMarked;
-
 import com.balugaq.jeg.api.objects.enums.PatchScope;
 import com.balugaq.jeg.implementation.option.delegate.FireworksOption;
 import com.balugaq.jeg.implementation.option.delegate.GuideModeOption;
@@ -62,6 +50,20 @@ import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Range;
+import org.jspecify.annotations.NullMarked;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author TheBusyBiscuit
@@ -75,15 +77,25 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 public class JEGGuideSettings {
     @Getter
     private static final List<SlimefunGuideOption<?>> patched = new ArrayList<>();
+    private static final Map<UUID, Integer> pages = new HashMap<>();
+
+    public static int getLastPage(Player p) {
+        return pages.getOrDefault(p.getUniqueId(), 1);
+    }
+
+    public static void setLastPage(Player p, int page) {
+        pages.put(p.getUniqueId(), page);
+    }
 
     public static void openSettings(final Player p, final ItemStack guide) {
-        openSettings(p, guide, 1);
+        openSettings(p, guide, getLastPage(p));
     }
 
     public static void openSettings(
             final Player p,
             final ItemStack guide,
             @Range(from = 1, to = Integer.MAX_VALUE) int page) {
+        setLastPage(p, page);
         ChestMenu menu = new ChestMenu(Slimefun.getLocalization().getMessage(p, "guide.title.settings"));
 
         menu.setEmptySlotsClickable(false);

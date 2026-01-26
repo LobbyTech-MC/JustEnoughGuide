@@ -27,10 +27,6 @@
 
 package com.balugaq.jeg.implementation.option;
 
-import static com.balugaq.jeg.api.recipe_complete.source.base.Source.RECIPE_DEPTH_THRESHOLD;
-
-import java.util.Optional;
-
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.KeyUtil;
@@ -47,27 +43,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.patches.JEGGuideSettings;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.KeyUtil;
-import com.balugaq.jeg.utils.compatibility.Converter;
-
-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
-import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
+import java.util.Optional;
 
 /**
  * @author balugaq
- * @since 1.9
+ * @since 2.0
  */
 @SuppressWarnings({"UnnecessaryUnicodeEscape", "SameReturnValue"})
 @NullMarked
-public class RecursiveRecipeFillingGuideOption implements SlimefunGuideOption<Integer> {
-    public static final RecursiveRecipeFillingGuideOption instance = new RecursiveRecipeFillingGuideOption();
+public class RecipeFillingWithNearbyContainerGuideOption implements SlimefunGuideOption<Integer> {
+    public static final RecipeFillingWithNearbyContainerGuideOption instance = new RecipeFillingWithNearbyContainerGuideOption();
+    public static final int MAX_REACH_LENGTH = 2; // 2*2+1=5, 5*5*5=125 blocks
 
-    public static RecursiveRecipeFillingGuideOption instance() {
+    public static RecipeFillingWithNearbyContainerGuideOption instance() {
         return instance;
     }
 
@@ -78,52 +66,49 @@ public class RecursiveRecipeFillingGuideOption implements SlimefunGuideOption<In
 
     @Override
     public Optional<ItemStack> getDisplayItem(Player p, ItemStack guide) {
-        int value = getSelectedOption(p, guide).orElse(1);
-        if (value > RECIPE_DEPTH_THRESHOLD) {
-            value = RECIPE_DEPTH_THRESHOLD;
+        int value = getSelectedOption(p, guide).orElse(2);
+        if (value > MAX_REACH_LENGTH) {
+            value = MAX_REACH_LENGTH;
             PersistentDataAPI.setInt(p, key0(), value);
         }
 
         ItemStack item = Converter.getItem(
-                Material.FURNACE,
-                "&a配方补全深度",
-                "&7配方补全深度越大，需要的时间越长",
-                "&7如果遇到一个材料不存在，会尝试补全",
-                "&7这个材料的材料，以此类推，此过程视为一层深度",
-                "&e&l此功能为实验性功能，谨慎使用",
-                "&c&l此功能容易造成错误",
-                "",
-                "&7当前深度: " + value + " (限制范围: 1~" + RECIPE_DEPTH_THRESHOLD + ")",
-                "&7\u21E8 &e点击设置深度"
+                Material.ENDER_CHEST,
+                "&a配方补全自动抓取",
+                "&7配方补全自动抓取，即在配方补全获取材料时",
+                "&7从周围的粘液容器中获取原材料",
+                "&e仅支持粘液容器",
+                "&7当前半径范围: " + value + " (限制范围: 0~" + MAX_REACH_LENGTH + ")",
+                "&7\u21E8 &e点击设置配方补全自动抓取范围"
         );
         return Optional.of(item);
     }
 
     public static NamespacedKey key0() {
-        return KeyUtil.newKey("recursive_recipe_filling");
+        return KeyUtil.newKey("recipe_filling_with_nearby_container");
     }
 
-    public static int getDepth(Player p) {
-        return PersistentDataAPI.getInt(p, key0(), 1);
+    public static int getRadiusDistance(Player p) {
+        return PersistentDataAPI.getInt(p, key0(), 2);
     }
 
     @Override
     public void onClick(Player p, ItemStack guide) {
         p.closeInventory();
-        p.sendMessage(ChatColors.color("&a请输入配方补全深度"));
+        p.sendMessage(ChatColors.color("&a请输入配方补全自动抓取范围"));
         ChatInput.waitForPlayer(
                 JustEnoughGuide.getInstance(), p, s -> {
                     try {
                         int value = Calculator.calculate(s).intValue();
-                        if (value < 1 || value > RECIPE_DEPTH_THRESHOLD) {
-                            p.sendMessage("请输入 1 ~ " + RECIPE_DEPTH_THRESHOLD + " 之间的正整数");
+                        if (value < 0 || value > MAX_REACH_LENGTH) {
+                            p.sendMessage("请输入 0 ~ " + MAX_REACH_LENGTH + " 之间的正整数");
                             return;
                         }
 
                         setSelectedOption(p, guide, value);
                         JEGGuideSettings.openSettings(p, guide);
                     } catch (NumberFormatException ignored) {
-                        p.sendMessage("请输入 1 ~ " + RECIPE_DEPTH_THRESHOLD + " 之间的正整数");
+                        p.sendMessage("请输入 0 ~ " + MAX_REACH_LENGTH + " 之间的正整数");
                     }
                 }
         );
@@ -136,7 +121,7 @@ public class RecursiveRecipeFillingGuideOption implements SlimefunGuideOption<In
 
     @Override
     public Optional<Integer> getSelectedOption(Player p, ItemStack guide) {
-        return Optional.of(getDepth(p));
+        return Optional.of(getRadiusDistance(p));
     }
 
     @Override
