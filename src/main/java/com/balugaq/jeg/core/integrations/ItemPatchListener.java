@@ -27,7 +27,6 @@
 
 package com.balugaq.jeg.core.integrations;
 
-import com.balugaq.jeg.utils.KeyUtil;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Listener;
@@ -36,6 +35,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.utils.KeyUtil;
 
 /**
  * @author balugaq

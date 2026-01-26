@@ -27,24 +27,14 @@
 
 package com.balugaq.jeg.core.integrations.networks;
 
-import java.util.List;
-
-import org.bukkit.Material;
-import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
-import com.balugaq.jeg.core.integrations.networksexpansion.NetworksExpansionIntegrationMain;
-import com.balugaq.jeg.utils.InventoryUtil;
 
-import io.github.sefiraat.networks.network.NetworkRoot;
-import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**

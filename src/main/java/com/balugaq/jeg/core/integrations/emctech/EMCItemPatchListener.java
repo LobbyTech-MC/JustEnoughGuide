@@ -27,11 +27,11 @@
 
 package com.balugaq.jeg.core.integrations.emctech;
 
-import com.balugaq.jeg.api.objects.enums.PatchScope;
-import com.balugaq.jeg.api.objects.events.PatchEvent;
-import com.balugaq.jeg.core.integrations.ItemPatchListener;
-import com.balugaq.jeg.utils.StackUtils;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,10 +40,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
+import com.balugaq.jeg.api.objects.events.PatchEvent;
+import com.balugaq.jeg.core.integrations.ItemPatchListener;
+import com.balugaq.jeg.utils.StackUtils;
+
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 
 /**
  * @author balugaq

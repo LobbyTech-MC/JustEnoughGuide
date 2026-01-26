@@ -27,9 +27,6 @@
 
 package com.balugaq.jeg.core.integrations.def;
 
-import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
-import com.balugaq.jeg.implementation.option.RecipeFillingWithNearbyContainerGuideOption;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -37,6 +34,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+import com.balugaq.jeg.implementation.option.RecipeFillingWithNearbyContainerGuideOption;
+
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**
  * @author balugaq

@@ -27,11 +27,6 @@
 
 package com.balugaq.jeg.core.integrations.slimehud;
 
-import com.balugaq.jeg.api.patches.JEGGuideSettings;
-import com.balugaq.jeg.core.integrations.Integration;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.MinecraftVersion;
-import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -63,6 +58,9 @@ import org.jspecify.annotations.NullMarked;
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.core.integrations.Integration;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.MinecraftVersion;
+
+import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
 
 /**
  * @author balugaq

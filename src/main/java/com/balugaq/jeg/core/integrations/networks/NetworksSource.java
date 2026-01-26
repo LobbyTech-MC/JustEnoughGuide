@@ -27,11 +27,6 @@
 
 package com.balugaq.jeg.core.integrations.networks;
 
-import com.balugaq.jeg.api.recipe_complete.source.base.Source;
-import io.github.sefiraat.networks.network.NetworkRoot;
-import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -41,6 +36,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.recipe_complete.source.base.Source;
+
+import io.github.sefiraat.networks.network.NetworkRoot;
+import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 /**
  * @author balugaq

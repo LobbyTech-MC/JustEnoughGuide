@@ -27,9 +27,10 @@
 
 package com.balugaq.jeg.core.integrations.networksexpansion;
 
-import com.balugaq.jeg.core.integrations.networks.NetworksSource;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.core.integrations.networks.NetworksSource;
 
 /**
  * @author balugaq

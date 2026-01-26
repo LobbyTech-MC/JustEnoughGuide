@@ -27,6 +27,8 @@
 
 package com.balugaq.jeg.utils.platform.scheduler;
 
+import java.util.function.Supplier;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
@@ -34,7 +36,6 @@ import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.platform.PlatformUtil;
-import java.util.function.Supplier;
 
 /**
  * @author balugaq

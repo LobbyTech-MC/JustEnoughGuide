@@ -27,11 +27,6 @@
 
 package com.balugaq.jeg.core.integrations.def;
 
-import java.util.List;
-
-import org.bukkit.Material;
-import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -40,9 +35,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.objects.events.GuideEvents;
-import com.balugaq.jeg.core.integrations.networksexpansion.NetworksExpansionIntegrationMain;
-import com.balugaq.jeg.utils.InventoryUtil;
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**
  * @author balugaq

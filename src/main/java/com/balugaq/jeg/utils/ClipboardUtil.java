@@ -27,7 +27,14 @@
 
 package com.balugaq.jeg.utils;
 
+import java.util.function.Consumer;
+
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.utils.platform.PlatformUtil;
+
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
@@ -36,11 +43,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.function.Consumer;
 
 /**
  * @author balugaq

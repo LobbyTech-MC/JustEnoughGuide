@@ -27,13 +27,6 @@
 
 package com.balugaq.jeg.api.recipe_complete.source.base;
 
-import com.balugaq.jeg.api.objects.events.GuideEvents;
-import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
-import com.balugaq.jeg.utils.GuideUtil;
-import com.balugaq.jeg.utils.InventoryUtil;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
@@ -41,6 +34,15 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.InventoryUtil;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 
 /**

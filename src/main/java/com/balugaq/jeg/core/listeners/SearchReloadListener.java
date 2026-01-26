@@ -27,14 +27,16 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import lombok.Getter;
 
 /**
  * @author balugaq
