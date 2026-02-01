@@ -25,22 +25,22 @@
  *
  */
 
-package com.balugaq.jeg.core.integrations.def;
+package com.balugaq.jeg.core.integrations.justenoughguide;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Range;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.recipe_complete.source.base.Source;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 /**
  * @author balugaq
- * @since 2.0
+ * @since 1.9
  */
 @NullMarked
-public interface JEGSource extends Source {
-    @Override
-    default JavaPlugin plugin() {
-        return JustEnoughGuide.getInstance();
-    }
+public class DefaultPlayerInventoryRecipeCompleteSlimefunSource implements SlimefunSource, PlayerInventorySource {
 }

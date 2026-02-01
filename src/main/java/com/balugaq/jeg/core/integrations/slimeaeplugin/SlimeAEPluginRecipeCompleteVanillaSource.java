@@ -31,6 +31,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Range;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
 import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
@@ -44,8 +46,7 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 @NullMarked
 public class SlimeAEPluginRecipeCompleteVanillaSource implements VanillaSource, SlimeAEPluginSource {
     @Override
-    @SuppressWarnings("deprecation")
-    public boolean handleable(final Block block, final Inventory inventory, final Player player, final ClickAction clickAction, @Range(from = 0, to = 53) final int[] ingredientSlots, final boolean unordered, final int recipeDepth) {
-        return SlimeAEPluginSource.super.handleable(block, inventory, player, clickAction, ingredientSlots, unordered, recipeDepth);
+    public boolean handleable(final RecipeCompleteSession session) {
+        return SlimeAEPluginSource.super.handleable(session);
     }
 }

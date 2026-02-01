@@ -55,7 +55,6 @@ import io.github.thebusybiscuit.slimefun4.api.researches.Research;
 import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import lombok.experimental.UtilityClass;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
@@ -673,7 +672,7 @@ public class SpecialMenuProvider {
                     return;
                 }
                 Object backEntry = constructorInfinityExpansion_BackEntry.newInstance(
-                        null, playerProfile, Slimefun.getRegistry().getSlimefunGuide(slimefunGuideMode));
+                        null, playerProfile, GuideUtil.getSlimefunGuide(slimefunGuideMode));
                 methodInfinityGroup_openInfinityRecipe.invoke(null, player, slimefunItem.getId(), backEntry);
                 /**
                  * Intentionally insert useless history twice to fix Back Button of InfinityGroup
@@ -705,7 +704,7 @@ public class SpecialMenuProvider {
                 return;
             }
             Object backEntry = constructorObsidianExpansion_BackEntry.newInstance(
-                    null, playerProfile, Slimefun.getRegistry().getSlimefunGuide(slimefunGuideMode));
+                    null, playerProfile, GuideUtil.getSlimefunGuide(slimefunGuideMode));
             methodObsidianExpansion_openFORGERecipe.invoke(null, player, slimefunItem.getId(), backEntry);
             insertUselessHistory(playerProfile);
         }
@@ -773,7 +772,7 @@ public class SpecialMenuProvider {
             PlayerProfile playerProfile,
             SlimefunGuideMode slimefunGuideMode,
             SlimefunItem slimefunItem) {
-        SlimefunGuideImplementation implementation = Slimefun.getRegistry().getSlimefunGuide(slimefunGuideMode);
+        SlimefunGuideImplementation implementation = GuideUtil.getSlimefunGuide(slimefunGuideMode);
         if (implementation instanceof JEGSlimefunGuideImplementation jeg) {
             jeg.displayItem(playerProfile, slimefunItem, true, false);
         } else {

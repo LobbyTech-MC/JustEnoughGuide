@@ -40,6 +40,7 @@ import com.balugaq.jeg.core.commands.GTEGCommand;
 import com.balugaq.jeg.core.commands.HelpCommand;
 import com.balugaq.jeg.core.commands.JEGCommands;
 import com.balugaq.jeg.core.commands.ReloadCommand;
+import com.balugaq.jeg.core.commands.ShareCommand;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 
 import lombok.Getter;
@@ -66,6 +67,7 @@ public class CommandManager extends AbstractManager {
         this.commands.addCommand(new GTEGCommand(plugin));
         this.commands.addCommand(new DisableCommand(plugin));
         this.commands.addCommand(new CategoriesCommand(plugin));
+        this.commands.addCommand(new ShareCommand(plugin));
     }
 
     public boolean registerCommands() {

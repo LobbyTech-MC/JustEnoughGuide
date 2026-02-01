@@ -25,12 +25,14 @@
  *
  */
 
-package com.balugaq.jeg.core.integrations.slimeaeplugin;
+package com.balugaq.jeg.core.integrations.justenoughguide;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Range;
 import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
-import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
@@ -38,14 +40,27 @@ import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
+
 /**
  * @author balugaq
- * @since 1.9
+ * @since 2.0
  */
 @NullMarked
-public class SlimeAEPluginRecipeCompleteSlimefunSource implements SlimefunSource, SlimeAEPluginSource {
+public interface PlayerInventorySource extends JEGSource {
     @Override
-    public boolean handleable(final RecipeCompleteSession session) {
-        return SlimeAEPluginSource.super.handleable(session);
+    default boolean handleable(RecipeCompleteSession session) {
+        // Always available
+        return true;
+    }
+
+    @Override
+    default int handleLevel() {
+        return RecipeCompleteProvider.PLAYER_INVENTORY_HANDLE_LEVEL;
+    }
+
+    @Override
+    @Nullable
+    default ItemStack getItemStack(RecipeCompleteSession session, ItemStack itemStack) {
+        return getItemStackFromPlayerInventory(session.getPlayer(), itemStack);
     }
 }

@@ -76,6 +76,19 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import lombok.SneakyThrows;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * @author balugaq
@@ -95,7 +108,7 @@ public class CERCalculator {
     @CallTimeSensitive(CallTimeSensitive.AfterIntegrationsLoaded)
     @ApiStatus.Internal
     private static void loadInternal() {
-        for (SlimefunItem sf : Slimefun.getRegistry().getEnabledSlimefunItems()) {
+        for (SlimefunItem sf : new ArrayList<>(Slimefun.getRegistry().getEnabledSlimefunItems())) {
             String className = sf.getClass().getName();
             MachineData wrapper = MachineData.get(sf);
             if (wrapper != null) {

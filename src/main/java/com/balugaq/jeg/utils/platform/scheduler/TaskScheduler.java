@@ -41,6 +41,7 @@ import com.balugaq.jeg.utils.platform.PlatformUtil;
  * @author balugaq
  * @since 2.0
  */
+@SuppressWarnings("unused")
 @NullMarked
 public interface TaskScheduler {
     static Server getServer() {

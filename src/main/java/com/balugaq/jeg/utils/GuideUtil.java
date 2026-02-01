@@ -89,6 +89,22 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.experimental.UtilityClass;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class contains utility methods for the guide system.
@@ -163,16 +179,21 @@ public final class GuideUtil {
      */
     public static SlimefunGuideImplementation getGuide(Player player, SlimefunGuideMode mode) {
         if (mode == SlimefunGuideMode.SURVIVAL_MODE) {
-            return Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE);
+            return GuideUtil.getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE);
         }
 
         // Player must be op or have the permission "slimefun.cheat.items" to access the cheat guide
         if ((player.isOp() || player.hasPermission("slimefun.cheat.items")) && mode == SlimefunGuideMode.CHEAT_MODE) {
-            return Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.CHEAT_MODE);
+            return GuideUtil.getSlimefunGuide(SlimefunGuideMode.CHEAT_MODE);
         }
 
         // Fallback to survival guide if no permission is given
-        return Slimefun.getRegistry().getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE);
+        return GuideUtil.getSlimefunGuide(SlimefunGuideMode.SURVIVAL_MODE);
+    }
+
+    @ApiStatus.Obsolete
+    public static SlimefunGuideImplementation getSlimefunGuide(SlimefunGuideMode mode) {
+        return Slimefun.getRegistry().getSlimefunGuide(mode);
     }
 
     public static void removeLastEntry(GuideHistory guideHistory) {
@@ -573,6 +594,7 @@ public final class GuideUtil {
         return GuideUtil.getGuide(player, mode == null ? SlimefunGuideMode.SURVIVAL_MODE : mode);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     public static void goBack(GuideHistory history) {
         goBack(ReflectionUtil.getValue(history, "profile", PlayerProfile.class));
     }
@@ -590,7 +612,7 @@ public final class GuideUtil {
             return;
         }
         var content = ReflectionUtil.invokeMethod(entry, "getIndexedObject");
-        int page = (int) ReflectionUtil.invokeMethod(entry, "getPage");
+        @SuppressWarnings("DataFlowIssue") int page = (int) ReflectionUtil.invokeMethod(entry, "getPage");
         if (content instanceof final ItemGroup group) {
             guide.openItemGroup(profile, group, page);
             return;

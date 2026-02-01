@@ -25,21 +25,23 @@
  *
  */
 
-package com.balugaq.jeg.core.integrations.networksexpansion;
+package com.balugaq.jeg.core.integrations.justenoughguide;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Range;
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.core.integrations.networks.NetworksSource;
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**
  * @author balugaq
- * @since 2.0
+ * @since 1.9
  */
 @NullMarked
-public interface NetworksExpansionSource extends NetworksSource {
-    @Override
-    default JavaPlugin plugin() {
-        return NetworksExpansionIntegrationMain.getPlugin();
-    }
+public class DefaultPlayerInventoryRecipeCompleteVanillaSource implements VanillaSource, PlayerInventorySource {
 }

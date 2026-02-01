@@ -29,8 +29,13 @@ package com.balugaq.jeg.core.integrations.slimeaeplugin;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.api.recipe_complete.source.base.Source;
+import me.ddggdd135.guguslimefunlib.items.ItemKey;
+import me.ddggdd135.slimeae.api.interfaces.IStorage;
+import me.ddggdd135.slimeae.api.items.ItemRequest;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -50,39 +55,26 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
  */
 @NullMarked
 public interface SlimeAEPluginSource extends Source {
-    @SuppressWarnings("deprecation")
-    default boolean handleable(
-            BlockMenu blockMenu,
-            Player player,
-            ClickAction clickAction,
-            int[] ingredientSlots,
-            boolean unordered,
-            int recipeDepth) {
-        return SlimeAEPluginIntegrationMain.findNearbyIStorage(blockMenu.getLocation()) != null;
+    default boolean handleable(RecipeCompleteSession session) {
+        return SlimeAEPluginIntegrationMain.findNearbyIStorage(session.getLocation()) != null;
     }
 
-    @SuppressWarnings("deprecation")
-    default boolean handleable(
-            Block block,
-            Inventory inventory,
-            Player player,
-            ClickAction clickAction,
-            int[] ingredientSlots,
-            boolean unordered,
-            int recipeDepth) {
-        return SlimeAEPluginIntegrationMain.findNearbyIStorage(block.getLocation()) != null;
+    @Override
+    default int handleLevel() {
+        return RecipeCompleteProvider.SLIME_AE_PLUGIN_HANDLE_LEVEL;
     }
 
+    @SuppressWarnings("unused")
+    @Override
     @Nullable
-    default ItemStack getItemStack(Player player, Location target, ItemStack itemStack) {
-        ItemStack i1 = getItemStackFromPlayerInventory(player, itemStack);
-        if (i1 != null) {
-            return i1;
-        }
-
-        IStorage networkStorage = SlimeAEPluginIntegrationMain.findNearbyIStorage(player.getLocation());
+    default ItemStack getItemStack(RecipeCompleteSession session, ItemStack itemStack) {
+        Player player = session.getPlayer();
+        IStorage networkStorage = session.getCache(this, IStorage.class);
         if (networkStorage == null) {
-            return null;
+            networkStorage = SlimeAEPluginIntegrationMain.findNearbyIStorage(session.getLocation());
+            if (networkStorage == null) return null;
+
+            session.setCache(this, networkStorage);
         }
 
         // get from networkStorage

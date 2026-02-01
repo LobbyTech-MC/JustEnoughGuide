@@ -58,7 +58,7 @@ public class KeyUtil {
     }
 
     public static NamespacedKey newKey(String key) {
-        return new NamespacedKey(JustEnoughGuide.getInstance(), key);
+        return customKey(JustEnoughGuide.getInstance(), key);
     }
 
     public static NamespacedKey customKey(Plugin plugin, String key) {
@@ -67,5 +67,9 @@ public class KeyUtil {
 
     public static NamespacedKey customKey(String namespace, String key) {
         return new NamespacedKey(namespace, key);
+    }
+
+    public static NamespacedKey append(NamespacedKey key, String append) {
+        return customKey(key.getNamespace(), key.getKey() + append);
     }
 }

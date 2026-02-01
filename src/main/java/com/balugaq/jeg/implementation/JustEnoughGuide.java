@@ -440,7 +440,6 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
                 if (SlimefunItems.ELECTRIC_INGOT_FACTORY_2.getItem() instanceof AContainer ac) {
                     ac.registerRecipe(114514, easterEgg, easterEgg);
                 }
-                ;
             } catch (Exception ignored) {
             }
         });
@@ -483,7 +482,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
                 }
             }
             JEGGuideSettings.unpatchSlimefun();
-            FinalTECHValueDisplayOption.unboot();
+            FinalTECHValueDisplayOption.setBooted(false);
         } catch (Exception ignored) {
         }
 

@@ -29,6 +29,14 @@ package com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon;
 
 import java.util.Optional;
 
+import com.balugaq.jeg.api.patches.JEGGuideSettings;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.compatibility.Converter;
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -51,24 +59,9 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.Persis
 @NullMarked
 public class FinalTECHValueDisplayOption implements SlimefunGuideOption<Boolean> {
     public static final FinalTECHValueDisplayOption instance = new FinalTECHValueDisplayOption();
+    @Setter
+    @Getter
     private static boolean booted = false;
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean booted() {
-        return booted;
-    }
-
-    public static void boot() {
-        setBooted(true);
-    }
-
-    private static void setBooted(boolean booted) {
-        FinalTECHValueDisplayOption.booted = booted;
-    }
-
-    public static void unboot() {
-        setBooted(false);
-    }
 
     public static FinalTECHValueDisplayOption instance() {
         return instance;

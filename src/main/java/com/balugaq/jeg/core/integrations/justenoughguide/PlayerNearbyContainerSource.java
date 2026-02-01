@@ -25,43 +25,42 @@
  *
  */
 
-package com.balugaq.jeg.core.integrations.def;
+package com.balugaq.jeg.core.integrations.justenoughguide;
 
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.implementation.option.RecipeFillingWithNearbyContainerGuideOption;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+import com.balugaq.jeg.implementation.option.RecipeFillingWithNearbyContainerGuideOption;
 
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 
 /**
  * @author balugaq
- * @since 1.9
+ * @since 2.0
  */
 @NullMarked
-public class DefaultPlayerInventoryRecipeCompleteVanillaSource implements VanillaSource, JEGSource {
-    @SuppressWarnings("deprecation")
+public interface PlayerNearbyContainerSource extends JEGSource {
     @Override
-    public boolean handleable(
-            Block block,
-            Inventory inventory,
-            Player player,
-            ClickAction clickAction,
-            int[] ingredientSlots,
-            boolean unordered,
-            int recipeDepth) {
-        // Always available
-        return true;
+    default boolean handleable(RecipeCompleteSession session) {
+        return RecipeFillingWithNearbyContainerGuideOption.getRadiusDistance(session.getPlayer()) > 0;
+    }
+
+    @Override
+    default int handleLevel() {
+        return RecipeCompleteProvider.PLAYER_NEARBY_CONTAINER_HANDLE_LEVEL;
     }
 
     @Override
     @Nullable
-    public ItemStack getItemStack(Player player, Location target, ItemStack itemStack) {
-        return getItemStackFromPlayerInventory(player, itemStack);
+    default ItemStack getItemStack(RecipeCompleteSession session, ItemStack itemStack) {
+        return getItemStackFromNearbyContainer(session.getPlayer(), session.getTarget(), itemStack);
     }
 }

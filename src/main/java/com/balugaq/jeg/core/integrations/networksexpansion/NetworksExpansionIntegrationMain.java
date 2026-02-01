@@ -30,6 +30,9 @@ package com.balugaq.jeg.core.integrations.networksexpansion;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
+import com.balugaq.jeg.core.integrations.Integration;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
@@ -44,7 +47,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  * @author balugaq
  * @since 1.9
  */
-@SuppressWarnings({"DataFlowIssue", "ConstantValue"})
+@SuppressWarnings({"DataFlowIssue", "ConstantValue", "unused"})
 @NullMarked
 public class NetworksExpansionIntegrationMain implements Integration {
     public static final int[] ENCODER_RECIPE_SLOTS = new int[] {12, 13, 14, 21, 22, 23, 30, 31, 32};
@@ -86,9 +89,6 @@ public class NetworksExpansionIntegrationMain implements Integration {
 
     @Override
     public void onEnable() {
-        RecipeCompleteProvider.addSource(new NetworksExpansionRecipeCompleteSlimefunSource());
-        RecipeCompleteProvider.addSource(new NetworksExpansionRecipeCompleteVanillaSource());
-
         rrc("NTW_EXPANSION_ANCIENT_ALTAR_RECIPE_ENCODER", ENCODER_RECIPE_SLOTS, false);
         rrc("NTW_EXPANSION_ARMOR_FORGE_RECIPE_ENCODER", ENCODER_RECIPE_SLOTS, false);
         rrc("NTW_EXPANSION_COMPRESSOR_RECIPE_ENCODER", ENCODER_RECIPE_SLOTS, false);

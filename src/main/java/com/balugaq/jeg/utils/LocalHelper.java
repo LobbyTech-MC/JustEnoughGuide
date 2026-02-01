@@ -409,7 +409,7 @@ public class LocalHelper {
 
     public static String getAddonName(String addonName, String itemId, String callback) {
         if (addonName == null) {
-            return callback;
+            return ChatColors.color(callback);
         }
 
         if ("RykenSlimefunCustomizer".equalsIgnoreCase(addonName)
@@ -424,7 +424,7 @@ public class LocalHelper {
     public static String getRSCLocalName(String itemId) {
         for (Map.Entry<String, Set<String>> entry : rscLocals.entrySet()) {
             if (entry.getValue().contains(itemId)) {
-                return entry.getKey();
+                return ChatColors.color(entry.getKey());
             }
         }
 
@@ -484,11 +484,11 @@ public class LocalHelper {
         for (Map.Entry<String, Map<String, SlimefunItemStack>> entry : rscItems.entrySet()) {
             Map<String, SlimefunItemStack> items = entry.getValue();
             if (items.containsKey(itemId)) {
-                return entry.getKey();
+                return ChatColors.color(entry.getKey());
             }
         }
 
-        return def;
+        return ChatColors.color(def);
     }
 
     public static String getOfficialAddonName(
@@ -516,7 +516,7 @@ public class LocalHelper {
 
     public static String getAddonName(@Nullable SlimefunAddon addon) {
         if (addon == null) return def;
-        return addonLocals.getOrDefault(addon.getName(), def);
+        return ChatColors.color(addonLocals.getOrDefault(addon.getName(), def));
     }
 
     public static String getAddonName(@Nullable SlimefunAddon addon, String itemId) {
