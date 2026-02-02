@@ -82,7 +82,7 @@ public class GuideModeOption implements SlimefunGuideOption<SlimefunGuideMode> {
 
                 ItemMeta meta = item.getItemMeta();
                 ChatColor var10001 = ChatColor.GRAY;
-                meta.setDisplayName(var10001 + "Slimefun 指南样式: " + ChatColor.YELLOW + selectedMode.getDisplayName());
+                meta.setDisplayName(var10001 + "粘液科技指南样式: " + ChatColor.YELLOW + selectedMode.getDisplayName());
                 List<String> lore = new ArrayList<>();
                 lore.add("");
                 var10001 = selectedMode == SlimefunGuideMode.SURVIVAL_MODE ? ChatColor.GREEN : ChatColor.GRAY;

@@ -76,7 +76,7 @@ public class HUDReachBlockGuideOption implements SlimefunGuideOption<Integer> {
 
         ItemStack item = Converter.getItem(
                 Material.REDSTONE_LAMP,
-                "&a粘液HUD显示距离",
+                "&a粘液科技方块信息显示距离",
                 "",
                 "&7当前距离: " + value + " (限制范围: 1~" + MAX_REACH_BLOCK + ")",
                 "&7\u21E8 &e点击设置距离"
@@ -95,7 +95,7 @@ public class HUDReachBlockGuideOption implements SlimefunGuideOption<Integer> {
     @Override
     public void onClick(Player p, ItemStack guide) {
         p.closeInventory();
-        p.sendMessage(ChatColors.color("&a请输入粘液HUD显示距离"));
+        p.sendMessage(ChatColors.color("&a请输入粘液科技方块信息显示距离"));
         ChatInput.waitForPlayer(
                 JustEnoughGuide.getInstance(), p, s -> {
                     try {

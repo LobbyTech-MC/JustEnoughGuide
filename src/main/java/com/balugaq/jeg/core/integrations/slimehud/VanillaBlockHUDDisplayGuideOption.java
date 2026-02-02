@@ -66,13 +66,12 @@ public class VanillaBlockHUDDisplayGuideOption implements SlimefunGuideOption<Bo
         boolean enabled = getSelectedOption(p, guide).orElse(false);
         ItemStack item = Converter.getItem(
                 isEnabled(p) ? Material.GRASS_BLOCK : Material.DIRT,
-                "&b原版方块HUD显示: &" + (enabled ? "a启用" : "4禁用"),
+                "&b原版方块信息显示: &" + (enabled ? "a启用" : "4禁用"),
                 "",
-                "&7你现在可以选择是否",
-                "&7在使用SlimeHUD显示方块信息时",
-                "&7允许显示原版方块的信息",
+                "&7你现在可以选择粘液科技方块信息",
+                "&7显示是否同时显示原版方块的信息",
                 "",
-                "&7\u21E8 &e点击 " + (enabled ? "禁用" : "启用") + " 原版方块HUD显示"
+                "&7\u21E8 &e点击 " + (enabled ? "禁用" : "启用") + " 原版方块信息显示"
         );
         return Optional.of(item);
     }
