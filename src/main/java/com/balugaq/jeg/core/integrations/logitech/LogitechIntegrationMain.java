@@ -48,17 +48,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jspecify.annotations.NullMarked;
-
-import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
-import com.balugaq.jeg.core.integrations.Integration;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.ItemStackUtil;
-
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetProvider;
-import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettings;
-
 /**
  * @author balugaq
  * @since 1.9

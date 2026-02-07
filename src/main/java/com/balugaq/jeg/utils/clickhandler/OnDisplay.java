@@ -27,20 +27,7 @@
 
 package com.balugaq.jeg.utils.clickhandler;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NullMarked;
-
+import city.norain.slimefun4.VaultIntegration;
 import com.balugaq.jeg.api.interfaces.CustomIconDisplay;
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
 import com.balugaq.jeg.api.interfaces.VanillaItemShade;
@@ -52,8 +39,6 @@ import com.balugaq.jeg.utils.JEGVersionedItemFlag;
 import com.balugaq.jeg.utils.LocalHelper;
 import com.balugaq.jeg.utils.StackUtils;
 import com.balugaq.jeg.utils.compatibility.Converter;
-
-import city.norain.slimefun4.VaultIntegration;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.LockedItemGroup;

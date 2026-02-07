@@ -101,11 +101,11 @@ public class ManualMachineAutoSelectListener implements Listener {
                             int delta = targetIndex - index;
                             if (delta > 0) {
                                 for (int i = 0; i < delta; i++)
-                                    mm.orderSearchRecipe(menu, me.matl114.logitech.utils.Settings.SEQUNTIAL);
+                                    mm.orderSearchRecipe(menu, me.matl114.logitech.utils.Settings.SEQUNTIAL, true);
                             }
                             if (delta < 0) {
                                 for (int i = 0; i < -delta; i++)
-                                    mm.orderSearchRecipe(menu, me.matl114.logitech.utils.Settings.REVERSE);
+                                    mm.orderSearchRecipe(menu, me.matl114.logitech.utils.Settings.REVERSE, true);
                             }
 
                             mm.updateMenu(menu, menu.getBlock(), me.matl114.logitech.utils.Settings.RUN);
