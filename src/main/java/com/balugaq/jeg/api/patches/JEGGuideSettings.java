@@ -47,6 +47,7 @@ import com.balugaq.jeg.implementation.option.delegate.FireworksOption;
 import com.balugaq.jeg.implementation.option.delegate.GuideModeOption;
 import com.balugaq.jeg.implementation.option.delegate.LearningAnimationOption;
 import com.balugaq.jeg.implementation.option.delegate.PlayerLanguageOption;
+import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.ReflectionUtil;
 import com.balugaq.jeg.utils.compatibility.Converter;
 import com.balugaq.jeg.utils.formatter.Formats;
@@ -105,7 +106,7 @@ public class JEGGuideSettings {
         ChestMenuUtils.drawBackground(
                 menu, Formats.settings.getChars('B').stream().mapToInt(i -> i).toArray());
 
-        addHeader(p, menu, guide);
+        addHeader(p, menu);
         addConfigurableOptions(p, menu, guide, page);
 
         Formats.settings.renderCustom(menu);
@@ -113,7 +114,7 @@ public class JEGGuideSettings {
     }
 
     private static void addHeader(
-            final Player p, final ChestMenu menu, final ItemStack guide) {
+            final Player p, final ChestMenu menu) {
         LocalizationService locale = Slimefun.getLocalization();
 
         // @formatter:off
@@ -127,7 +128,7 @@ public class JEGGuideSettings {
 
         for (int ss : Formats.settings.getChars('b')) {
             menu.addItem(ss, b, (pl, slot, item, action) -> {
-                SlimefunGuide.openGuide(pl, guide);
+                GuideUtil.openMainMenuAsync(pl);
                 return false;
             });
         }

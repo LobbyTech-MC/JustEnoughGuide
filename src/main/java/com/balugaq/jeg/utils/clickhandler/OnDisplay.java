@@ -50,6 +50,7 @@ import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.ItemStackUtil;
 import com.balugaq.jeg.utils.JEGVersionedItemFlag;
 import com.balugaq.jeg.utils.LocalHelper;
+import com.balugaq.jeg.utils.StackUtils;
 import com.balugaq.jeg.utils.compatibility.Converter;
 
 import city.norain.slimefun4.VaultIntegration;
@@ -60,6 +61,7 @@ import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.implementation.items.VanillaItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.ItemUtils;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
@@ -67,6 +69,21 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * OnDisplay.display(player, item, OnClick.Normal/ItemMark/Bookmark/Search).at(menu, slot, guide, page);
@@ -441,7 +458,10 @@ public interface OnDisplay {
                             JEGSlimefunGuideImplementation guide) {
             SlimefunItem slimefunItem = SlimefunItem.getByItem(itemStack);
             if (slimefunItem == null) {
-                return Vanilla(player, null, itemStack, guide);
+                slimefunItem = Vanilla.findSlimefunItem(itemStack);
+            }
+            if (slimefunItem == null) {
+                return Vanilla(player, slimefunItem, itemStack, guide);
             }
 
             return display(player, slimefunItem, itemStack, type, guide);
@@ -692,6 +712,16 @@ public interface OnDisplay {
         @RequiredArgsConstructor
         @Data
         class Vanilla implements Item {
+            private static final Set<VanillaItem> vanillaItems = new HashSet<>();
+
+            static {
+                for (SlimefunItem sf : new ArrayList<>(Slimefun.getRegistry().getAllSlimefunItems())) {
+                    if (sf instanceof VanillaItem vi) {
+                        vanillaItems.add(vi);
+                    }
+                }
+            }
+
             private final Player player;
             @Nullable
             private final SlimefunItem slimefunItem;
@@ -705,6 +735,17 @@ public interface OnDisplay {
                         PatchScope.VanillaItem.patch(player, itemStack),
                         OnClick.Item.Normal.create(guide, menu, page, slimefunItem)
                 );
+            }
+
+            @Nullable
+            public static SlimefunItem findSlimefunItem(ItemStack itemStack) {
+                for (var vi : vanillaItems) {
+                    if (StackUtils.itemsMatch(vi.getItem(), itemStack)) {
+                        return vi;
+                    }
+                }
+
+                return null;
             }
         }
 
