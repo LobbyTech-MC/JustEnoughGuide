@@ -28,12 +28,12 @@
 package com.balugaq.jeg.core.integrations.logitech;
 
 import com.balugaq.jeg.api.objects.events.RecipeCompleteEvents;
+import com.balugaq.jeg.core.integrations.ItemPatchListener;
 import com.balugaq.jeg.utils.ReflectionUtil;
 import com.balugaq.jeg.utils.StackUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.MachineRecipe;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
-import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +44,7 @@ import java.util.List;
  * @author balugaq
  * @since 2.0
  */
+@SuppressWarnings("ConstantValue")
 public class ManualMachineAutoSelectListener implements Listener {
     @EventHandler
     public void onComplete(RecipeCompleteEvents.SessionCompleteEvent event) {
@@ -55,12 +56,7 @@ public class ManualMachineAutoSelectListener implements Listener {
         SlimefunItem sf = menu.getPreset().getSlimefunItem();
         if (!sf.getAddon().equals(LogitechIntegrationMain.getPlugin())) return;
 
-        ItemStack dirty = event.getSession().getEvent().getClickedItem();
-        if (dirty == null || dirty.getType() == Material.AIR) {
-            return;
-        }
-        SlimefunItem sfi = SlimefunItem.getByItem(dirty);
-        ItemStack target = sfi == null ? new ItemStack(dirty.getType()) : sfi.getItem();
+        ItemStack target = ItemPatchListener.untag(event.getSession().getEvent().getClickedItem());
         try {
             // Logitech v1.0.3
             if (sf instanceof me.matl114.logitech.SlimefunItem.Machines.AbstractManual mm) {
@@ -70,19 +66,19 @@ public class ManualMachineAutoSelectListener implements Listener {
 
                 int index = me.matl114.logitech.Utils.DataCache.getLastRecipe(menu.getLocation());
                 if (index == -1) {
-                    mm.updateMenu(menu, menu.getBlock(),  me.matl114.logitech.Utils.Settings.RUN);
+                    mm.updateMenu(menu, menu.getBlock(), me.matl114.logitech.Utils.Settings.RUN);
                 } else {
                     int delta = targetIndex - index;
                     if (delta > 0) {
                         for (int i = 0; i < delta; i++)
-                            mm.orderSearchRecipe(menu,  me.matl114.logitech.Utils.Settings.SEQUNTIAL);
+                            mm.orderSearchRecipe(menu, me.matl114.logitech.Utils.Settings.SEQUNTIAL);
                     }
                     if (delta < 0) {
                         for (int i = 0; i < -delta; i++)
-                            mm.orderSearchRecipe(menu,  me.matl114.logitech.Utils.Settings.REVERSE);
+                            mm.orderSearchRecipe(menu, me.matl114.logitech.Utils.Settings.REVERSE);
                     }
 
-                    mm.updateMenu(menu, menu.getBlock(),  me.matl114.logitech.Utils.Settings.RUN);
+                    mm.updateMenu(menu, menu.getBlock(), me.matl114.logitech.Utils.Settings.RUN);
                 }
             }
         } catch (Throwable ignored) {

@@ -27,14 +27,11 @@
 
 package com.balugaq.jeg.utils;
 
-import java.lang.reflect.Field;
-
+import lombok.experimental.UtilityClass;
 import org.bukkit.inventory.ItemFlag;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-
-import lombok.experimental.UtilityClass;
+import java.lang.reflect.Field;
 
 /**
  * This class provides a way to access the ItemFlag constants that were added in different versions of Minecraft. Used
@@ -49,8 +46,7 @@ public class JEGVersionedItemFlag {
     public static final ItemFlag HIDE_ADDITIONAL_TOOLTIP;
 
     static {
-        MinecraftVersion version = JustEnoughGuide.getMinecraftVersion();
-        HIDE_ADDITIONAL_TOOLTIP = version.isAtLeast(MinecraftVersion.V1_20_5)
+        HIDE_ADDITIONAL_TOOLTIP = MinecraftVersion.current().isAtLeast(MinecraftVersion.V1_20_5)
                 ? getKey("HIDE_ADDITIONAL_TOOLTIP")
                 : getKey("HIDE_POTION_EFFECTS");
     }

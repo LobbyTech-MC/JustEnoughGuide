@@ -338,6 +338,7 @@ public interface OnDisplay {
      * @author balugaq
      * @since 2.0
      */
+    @SuppressWarnings("ConstantValue")
     interface Item extends OnDisplay {
         DisplayType Normal = DisplayType.Normal, ItemMark = DisplayType.ItemMark, Bookmark = DisplayType.Bookmark,
                 Search = DisplayType.Search;
@@ -713,15 +714,6 @@ public interface OnDisplay {
             private final ItemStack itemStack;
             private final JEGSlimefunGuideImplementation guide;
 
-            @Override
-            public void at(ChestMenu menu, int slot, int page) {
-                menu.addItem(
-                        slot,
-                        PatchScope.VanillaItem.patch(player, itemStack),
-                        OnClick.Item.Normal.create(guide, menu, page, slimefunItem)
-                );
-            }
-
             @Nullable
             public static SlimefunItem findSlimefunItem(ItemStack itemStack) {
                 for (var vi : vanillaItems) {
@@ -731,6 +723,15 @@ public interface OnDisplay {
                 }
 
                 return null;
+            }
+
+            @Override
+            public void at(ChestMenu menu, int slot, int page) {
+                menu.addItem(
+                        slot,
+                        PatchScope.VanillaItem.patch(player, itemStack),
+                        OnClick.Item.Normal.create(guide, menu, page, slimefunItem)
+                );
             }
         }
 

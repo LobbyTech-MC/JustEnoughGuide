@@ -50,7 +50,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.jspecify.annotations.NullMarked;
 
-@SuppressWarnings("removal")
+@SuppressWarnings({"removal", "ConstantValue"})
 @Getter
 @NullMarked
 public class VanillaInventoryWrapper extends BlockMenu {
@@ -68,7 +68,8 @@ public class VanillaInventoryWrapper extends BlockMenu {
     private static BlockMenuPreset createPreset(Inventory inv, BlockState blockState) {
         return new BlockMenuPreset("VANILLA_INVENTORY_WRAPPER", "VANILLA_INVENTORY_WRAPPER") {
             @Override // never called
-            public void init() {}
+            public void init() {
+            }
 
             @Override // never called
             public boolean canOpen(final Block block, final Player player) {
@@ -87,6 +88,7 @@ public class VanillaInventoryWrapper extends BlockMenu {
         };
     }
 
+    @SuppressWarnings("deprecation")
     private static int[] getSlotsAccessedByItemTransport(final Inventory inv, final BlockState blockState, final ItemTransportFlow flow, final ItemStack itemStack) {
         if (inv instanceof BrewerInventory) {
             if (flow == ItemTransportFlow.WITHDRAW) {
@@ -114,32 +116,26 @@ public class VanillaInventoryWrapper extends BlockMenu {
             } else {
                 // insert
                 if (itemStack.getType() == Material.BLAZE_POWDER) {
-                    return new int[]{4, 3}; // fuel and ingredient slot
+                    return new int[] {4, 3}; // fuel and ingredient slot
                 } else if (itemStack.getType() == Material.POTION || itemStack.getType() == Material.SPLASH_POTION || itemStack.getType() == Material.LINGERING_POTION) {
                     return generateArray(3); // potion slots
                 } else {
-                    return new int[]{4}; // ingredient slot
+                    return new int[] {4}; // ingredient slot
                 }
             }
-        }
-
-        else if (inv instanceof FurnaceInventory) {
+        } else if (inv instanceof FurnaceInventory) {
             if (flow == ItemTransportFlow.WITHDRAW) {
-                return new int[]{2}; // result slot
+                return new int[] {2}; // result slot
             } else {
                 if (itemStack.getType().isFuel()) {
-                    return new int[]{1, 0}; // fuel and smelting slot
+                    return new int[] {1, 0}; // fuel and smelting slot
                 } else {
                     return new int[] {0, 1}; // smelting and fuel slot
                 }
             }
-        }
-
-        else if (inv instanceof PlayerInventory) {
+        } else if (inv instanceof PlayerInventory) {
             return generateArray(36);
-        }
-
-        else {
+        } else {
             return generateArray(inv.getSize()); // all slot
         }
     }

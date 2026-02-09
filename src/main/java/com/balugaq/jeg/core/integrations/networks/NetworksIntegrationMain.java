@@ -58,6 +58,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
  * @author balugaq
  * @since 1.9
  */
+@SuppressWarnings("DataFlowIssue")
 @NullMarked
 public class NetworksIntegrationMain implements Integration {
     public static final int[] ENCODER_RECIPE_SLOTS = new int[] {12, 13, 14, 21, 22, 23, 30, 31, 32};

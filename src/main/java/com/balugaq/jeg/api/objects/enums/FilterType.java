@@ -174,6 +174,13 @@ public enum FilterType {
             (player, item, lowerFilterValue, pinyin) -> item.getItem().getType().name().toLowerCase().contains(lowerFilterValue)
     );
 
+    @Unmodifiable
+    private static final List<FilterType> lengthSortedValues;
+
+    static {
+        lengthSortedValues = Arrays.stream(values()).sorted(Comparator.comparingInt(e -> -e.symbol.length())).toList();
+    }
+
     private final String symbol;
     private final DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter;
 
@@ -190,6 +197,11 @@ public enum FilterType {
         this.filter = filter;
     }
 
+    @Unmodifiable
+    public static List<FilterType> lengthSortedValues() {
+        return lengthSortedValues;
+    }
+
     @Deprecated
     public String getFlag() {
         return symbol;
@@ -197,17 +209,5 @@ public enum FilterType {
 
     public interface DiFunction<A, B, C, D, R> {
         R apply(A a, B b, C c, D d);
-    }
-
-    @Unmodifiable
-    private static final List<FilterType> lengthSortedValues;
-
-    static {
-        lengthSortedValues = Arrays.stream(values()).sorted(Comparator.comparingInt(e -> -e.symbol.length())).toList();
-    }
-
-    @Unmodifiable
-    public static List<FilterType> lengthSortedValues() {
-        return lengthSortedValues;
     }
 }

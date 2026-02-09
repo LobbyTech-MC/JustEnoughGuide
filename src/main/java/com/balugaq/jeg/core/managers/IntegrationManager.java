@@ -140,6 +140,7 @@ public class IntegrationManager extends AbstractManager {
     private boolean enabledTsingshanTechnology_Fixed;
     private boolean enabledWilderNether;
 
+    // @formatter:off
     public IntegrationManager(JavaPlugin plugin) {
         this.plugin = plugin;
         JustEnoughGuide.runLater(() -> {
@@ -230,6 +231,7 @@ public class IntegrationManager extends AbstractManager {
             RecipeCompleteProvider.addSource(new DefaultPlayerInventoryRecipeCompleteVanillaSource());
         }, 1L);
     }
+    // @formatter:on
 
     public static boolean classExists(String className) {
         try {

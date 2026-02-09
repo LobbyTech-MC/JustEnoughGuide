@@ -35,6 +35,7 @@ import org.jspecify.annotations.NullMarked;
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import com.balugaq.jeg.core.integrations.Integration;
+import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTechDustRecipeCompletePrecheckListener;
 import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTechDustRecipeSettingsGuideOption;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 
@@ -101,6 +102,11 @@ public class FinalTechIntegrationMain implements Integration {
         if (!FinalTechDustRecipeSettingsGuideOption.isBooted()) {
             SlimefunGuideSettings.addOption(FinalTechDustRecipeSettingsGuideOption.instance());
         }
+
+        if (!FinalTechDustRecipeCompletePrecheckListener.isBooted()) {
+            JustEnoughGuide.getListenerManager().registerListener(new FinalTechDustRecipeCompletePrecheckListener());
+        }
+
         RecipeCompleteProvider.registerSpecialRecipeHandler((p, i, s) -> {
             if (s == null) return null;
 

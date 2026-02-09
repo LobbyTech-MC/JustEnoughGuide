@@ -43,13 +43,22 @@ import java.util.Optional;
  * @author balugaq
  * @since 2.0
  */
-@SuppressWarnings({"SameReturnValue", "deprecation"})
+@SuppressWarnings({"SameReturnValue"})
 @NullMarked
 public class MomotechNoneRecipeSettingsGuideOption extends ItemSettingsGuideOption {
     public static final MomotechNoneRecipeSettingsGuideOption instance = new MomotechNoneRecipeSettingsGuideOption();
 
     public static MomotechNoneRecipeSettingsGuideOption instance() {
         return instance;
+    }
+
+    public static @Nullable ItemStack[] getItems(Player player) {
+        @Nullable ItemStack[] items = new ItemStack[9];
+        for (int i = 9; i < 18; i++) {
+            ItemStack itemStack = ItemSettingsGuideOption.getItem(player, key0(), i);
+            items[i - 9] = itemStack;
+        }
+        return items;
     }
 
     @Override
@@ -83,14 +92,5 @@ public class MomotechNoneRecipeSettingsGuideOption extends ItemSettingsGuideOpti
     @Override
     public int[] getItemSlots() {
         return new int[] {9, 10, 11, 12, 13, 14, 15, 16, 17};
-    }
-
-    public static @Nullable ItemStack[] getItems(Player player) {
-        @Nullable ItemStack[] items = new ItemStack[9];
-        for (int i = 9; i < 18; i++) {
-            ItemStack itemStack = ItemSettingsGuideOption.getItem(player, key0(), i);
-            items[i - 9] = itemStack;
-        }
-        return items;
     }
 }

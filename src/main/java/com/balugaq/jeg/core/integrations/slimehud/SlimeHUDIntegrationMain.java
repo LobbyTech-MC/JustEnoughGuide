@@ -28,10 +28,7 @@
 package com.balugaq.jeg.core.integrations.slimehud;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.block.data.Openable;
@@ -55,7 +52,6 @@ import org.bukkit.block.data.type.TrialSpawner;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.Vault;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
@@ -72,28 +68,6 @@ import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
  */
 @NullMarked
 public class SlimeHUDIntegrationMain implements Integration {
-
-    @Override
-    public String getHookPlugin() {
-        return "SlimeHUD";
-    }
-
-    @Override
-    public void onEnable() {
-        JEGGuideSettings.addOption(HUDMachineInfoLocationGuideOption.instance());
-        JEGGuideSettings.addOption(VanillaBlockHUDDisplayGuideOption.instance());
-        JEGGuideSettings.addOption(HUDReachBlockGuideOption.instance());
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            JEGPlayerWAILA.wrap(player);
-        }
-
-        JustEnoughGuide.getListenerManager().registerListener(new PlayerWAILAUpdateListener());
-    }
-
-    @Override
-    public void onDisable() {
-        JEGPlayerWAILA.onDisable();
-    }
 
     @SuppressWarnings({"unused", "UnstableApiUsage"})
     public static String getVanillaBlockName(Player player, Block block) {
@@ -163,5 +137,27 @@ public class SlimeHUDIntegrationMain implements Integration {
             name += " (有眼睛)";
         }
         return name;
+    }
+
+    @Override
+    public String getHookPlugin() {
+        return "SlimeHUD";
+    }
+
+    @Override
+    public void onEnable() {
+        JEGGuideSettings.addOption(HUDMachineInfoLocationGuideOption.instance());
+        JEGGuideSettings.addOption(VanillaBlockHUDDisplayGuideOption.instance());
+        JEGGuideSettings.addOption(HUDReachBlockGuideOption.instance());
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            JEGPlayerWAILA.wrap(player);
+        }
+
+        JustEnoughGuide.getListenerManager().registerListener(new PlayerWAILAUpdateListener());
+    }
+
+    @Override
+    public void onDisable() {
+        JEGPlayerWAILA.onDisable();
     }
 }

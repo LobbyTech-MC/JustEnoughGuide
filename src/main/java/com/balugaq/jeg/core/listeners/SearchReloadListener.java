@@ -45,6 +45,7 @@ import lombok.Getter;
 public class SearchReloadListener implements Listener {
     private boolean scheduleReload = false;
 
+    // @formatter:off
     public SearchReloadListener() {
         JustEnoughGuide.runTimerAsync(() -> {
             if (scheduleReload) {
@@ -53,6 +54,7 @@ public class SearchReloadListener implements Listener {
             }
         }, 5000, 20 * 60 * 5);
     }
+    // @formatter:on
 
     @EventHandler
     public void onSlimefunAddonEnable(PluginEnableEvent event) {

@@ -64,7 +64,6 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -74,7 +73,6 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -82,7 +80,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
@@ -304,6 +301,10 @@ public class RecipeCompletableListener implements ItemPatchListener {
         DISPENSER_LISTENING.remove(player);
     }
 
+    public static NamespacedKey getKey0() {
+        return KeyUtil.newKey(RecipeCompletableListener.class.getSimpleName().toLowerCase());
+    }
+
     @EventHandler
     public void prepare(InventoryOpenEvent event) {
         if (event.getInventory().getHolder() instanceof BlockMenu blockMenu) {
@@ -421,13 +422,13 @@ public class RecipeCompletableListener implements ItemPatchListener {
                 .second();
     }
 
-    public static void exitSelectingItemStackToRecipeComplete(Player player) {
-        listening.remove(player);
-    }
-
     @EventHandler
     public void exit(RecipeCompleteEvents.SessionCancelEvent event) {
         exitSelectingItemStackToRecipeComplete(event.getPlayer());
+    }
+
+    public static void exitSelectingItemStackToRecipeComplete(Player player) {
+        listening.remove(player);
     }
 
     @EventHandler
@@ -738,9 +739,5 @@ public class RecipeCompletableListener implements ItemPatchListener {
     @SuppressWarnings("deprecation")
     @FunctionalInterface
     public interface RecipeCompletableClickHandler extends ChestMenu.MenuClickHandler, TaggedRecipeCompletable {
-    }
-
-    public static NamespacedKey getKey0() {
-        return KeyUtil.newKey(RecipeCompletableListener.class.getSimpleName().toLowerCase());
     }
 }

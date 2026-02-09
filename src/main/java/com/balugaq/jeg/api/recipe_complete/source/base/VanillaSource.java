@@ -34,7 +34,6 @@ import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.InventoryUtil;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
-import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -76,9 +75,9 @@ public interface VanillaSource extends Source {
 
         GuideUtil.openMainMenuAsync(player, SlimefunGuideMode.SURVIVAL_MODE, 1);
         RecipeCompletableListener.addCallback(
-                player.getUniqueId(), ((event, profile) -> {
-                    handleSession(session, event, event.getClickAction(), true, callback);
-                })
+                player.getUniqueId(), ((event, profile) ->
+                        handleSession(session, event, event.getClickAction(), true, callback)
+                )
         );
         RecipeCompletableListener.tagGuideOpen(player);
         return true;
@@ -93,7 +92,7 @@ public interface VanillaSource extends Source {
                 session,
                 inventory::getItem,
                 (received, i) ->
-                    InventoryUtil.pushItem(inventory, received, unordered ? ingredientSlots : new int[] {ingredientSlots[i]})
+                        InventoryUtil.pushItem(inventory, received, unordered ? ingredientSlots : new int[] {ingredientSlots[i]})
         );
     }
 
@@ -104,16 +103,17 @@ public interface VanillaSource extends Source {
             times = 64;
         }
 
+        if (!session.canStart()) {
+            if (reopenInventory) session.getPlayer().openInventory(session.getInventory());
+            if (callback != null) callback.run();
+            return;
+        }
         for (int i = 0; i < times; i++) {
             completeRecipeWithGuide(session);
         }
 
-        if (reopenInventory) {
-            session.getPlayer().openInventory(session.getInventory());
-        }
-        if (callback != null) {
-            callback.run();
-        }
+        if (reopenInventory) session.getPlayer().openInventory(session.getInventory());
+        if (callback != null) callback.run();
         RecipeCompleteSession.complete(session);
     }
 }
