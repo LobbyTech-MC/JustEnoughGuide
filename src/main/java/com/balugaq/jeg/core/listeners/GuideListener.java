@@ -104,7 +104,7 @@ public class GuideListener implements Listener {
     }
 
     @Internal
-    public void openGuide(Player player, SlimefunGuideMode mode) {
+    public static void openGuide(Player player, SlimefunGuideMode mode) {
         Optional<PlayerProfile> optional = PlayerProfile.find(player);
 
         if (optional.isPresent()) {
@@ -123,7 +123,7 @@ public class GuideListener implements Listener {
     }
 
     @Internal
-    public void openGuideAsync(Player player, SlimefunGuideMode mode) {
+    public static void openGuideAsync(Player player, SlimefunGuideMode mode) {
         JustEnoughGuide.runLaterAsync(
                 () -> {
                     Optional<PlayerProfile> optional = PlayerProfile.find(player);

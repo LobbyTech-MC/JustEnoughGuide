@@ -34,7 +34,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
@@ -46,6 +45,10 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import me.ddggdd135.slimeae.SlimeAEPlugin;
 import me.ddggdd135.slimeae.api.interfaces.IStorage;
 import me.ddggdd135.slimeae.core.NetworkInfo;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author balugaq
@@ -75,9 +78,8 @@ public class SlimeAEPluginIntegrationMain implements Integration {
         return plugin;
     }
 
-    @Nullable
-    public static IStorage findNearbyIStorage(Location location) {
-        IStorage networkStorage = null;
+    public static Set<IStorage> findNearbyIStorages(Location location) {
+        Set<IStorage> networkStorages = new HashSet<>();
 
         for (BlockFace blockFace : VALID_FACES) {
             Location clone = location.clone();
@@ -91,12 +93,11 @@ public class SlimeAEPluginIntegrationMain implements Integration {
             }
             NetworkInfo def2 = SlimeAEPlugin.getNetworkData().getNetworkInfo(clone);
             if (def2 != null) {
-                networkStorage = def2.getStorage();
-                break;
+                networkStorages.add(def2.getStorage());
             }
         }
 
-        return networkStorage;
+        return networkStorages;
     }
 
     @Override

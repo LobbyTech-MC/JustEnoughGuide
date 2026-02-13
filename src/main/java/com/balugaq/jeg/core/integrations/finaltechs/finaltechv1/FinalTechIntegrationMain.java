@@ -40,6 +40,7 @@ import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTechDus
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 
 import com.balugaq.jeg.implementation.option.ItemSettingsGuideOption;
+import com.balugaq.jeg.implementation.option.AbstractItemSettingsGuideOption;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettings;
 
@@ -112,9 +113,9 @@ public class FinalTechIntegrationMain implements Integration {
 
             return switch (s.getId()) {
                 case "FINALTECH_ORDERED_DUST" ->
-                        ItemSettingsGuideOption.generateChoices(FinalTechDustRecipeSettingsGuideOption.getItem(p), FINALTECH_ORDERED_DUST_AMOUNTS);
+                        AbstractItemSettingsGuideOption.generateChoices(FinalTechDustRecipeSettingsGuideOption.getItem(p), FINALTECH_ORDERED_DUST_AMOUNTS);
                 case "FINALTECH_UNORDERED_DUST" ->
-                        ItemSettingsGuideOption.generateChoices(FinalTechDustRecipeSettingsGuideOption.getItem(p), FINALTECH_UNORDERED_DUST_AMOUNTS);
+                        AbstractItemSettingsGuideOption.generateChoices(FinalTechDustRecipeSettingsGuideOption.getItem(p), FINALTECH_UNORDERED_DUST_AMOUNTS);
                 default -> null;
             };
         });

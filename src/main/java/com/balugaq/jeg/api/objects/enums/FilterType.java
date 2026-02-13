@@ -39,6 +39,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Unmodifiable;
 
 import com.balugaq.jeg.api.groups.SearchGroup;
+import com.balugaq.jeg.api.objects.collection.Pair;
 import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.LocalHelper;
 import com.balugaq.jeg.utils.SpecialMenuProvider;
@@ -49,6 +50,18 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.RecipeDisplayItem;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import lombok.Getter;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.lang.ref.Reference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author balugaq
@@ -62,7 +75,7 @@ public enum FilterType {
             SearchGroup::isFullNameApplicable
     ),
     BY_RECIPE_ITEM_NAME(
-            "#", (player, item, lowerFilterValue, pinyin) -> {
+            Set.of("#", "能做"), (player, item, lowerFilterValue, pinyin) -> {
         ItemStack[] recipe = item.getRecipe();
         if (recipe == null) {
             return false;
@@ -88,7 +101,7 @@ public enum FilterType {
     }
     ),
     BY_DISPLAY_ITEM_NAME(
-            "%",
+            Set.of("%", "产"),
             (player, item, lowerFilterValue, pinyin) -> {
                 List<ItemStack> display = null;
                 if (item instanceof AContainer ac) {
@@ -178,22 +191,37 @@ public enum FilterType {
     private static final List<FilterType> lengthSortedValues;
 
     static {
-        lengthSortedValues = Arrays.stream(values()).sorted(Comparator.comparingInt(e -> -e.symbol.length())).toList();
+        lengthSortedValues = Arrays.stream(values())
+                .map(type -> {
+                    List<Pair<String, FilterType>> list = new ArrayList<>();
+                    for (var symbol : type.getSymbols()) {
+                        list.add(new Pair<>(symbol, type));
+                    }
+                    return list;
+                })
+                .flatMap(Collection::stream)
+                .sorted(Comparator.comparingInt(e -> -e.first.length()))
+                .map(type -> type.second)
+                .toList();
     }
 
-    private final String symbol;
+    private final Set<String> symbols;
     private final DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter;
+
+    FilterType(String symbol, DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter) {
+        this(Set.of(symbol), filter);
+    }
 
     /**
      * Constructs a new FilterType instance with the specified flag and filter function.
      *
-     * @param symbol
-     *         The string symbol of the filter type.
+     * @param symbols
+     *         The string symbols that represent the filter type.
      * @param filter
      *         The filter function to determine whether an item matches the filter.
      */
-    FilterType(String symbol, DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter) {
-        this.symbol = symbol;
+    FilterType(Set<String> symbols, DiFunction<Player, SlimefunItem, String, Boolean, Boolean> filter) {
+        this.symbols = symbols;
         this.filter = filter;
     }
 
@@ -202,9 +230,18 @@ public enum FilterType {
         return lengthSortedValues;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public String getFlag() {
-        return symbol;
+        return getSymbol();
+    }
+
+    @Deprecated(forRemoval = true)
+    public String getSymbol() {
+        return getFirstSymbol();
+    }
+
+    public String getFirstSymbol() {
+        return getSymbols().stream().findFirst().get();
     }
 
     public interface DiFunction<A, B, C, D, R> {

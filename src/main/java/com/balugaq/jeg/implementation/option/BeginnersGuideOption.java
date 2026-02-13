@@ -29,8 +29,8 @@ package com.balugaq.jeg.implementation.option;
 
 import java.util.Optional;
 
+import com.balugaq.jeg.utils.compatibility.Converter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
@@ -52,22 +52,16 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.Persis
  */
 @SuppressWarnings({"UnnecessaryUnicodeEscape", "SameReturnValue"})
 @NullMarked
-public class BeginnersGuideOption implements SlimefunGuideOption<Boolean> {
-    public static final BeginnersGuideOption instance = new BeginnersGuideOption();
+public class BeginnersGuideOption extends AbstractBooleanGuideOption {
+    private static final BeginnersGuideOption instance = new BeginnersGuideOption();
 
     public static BeginnersGuideOption instance() {
         return instance;
     }
 
     @Override
-    public SlimefunAddon getAddon() {
-        return JustEnoughGuide.getInstance();
-    }
-
-    @Override
-    public Optional<ItemStack> getDisplayItem(Player p, ItemStack guide) {
-        boolean enabled = getSelectedOption(p, guide).orElse(true);
-        ItemStack item = Converter.getItem(
+    public ItemStack getDisplayItem(Player p, ItemStack guide, boolean enabled) {
+        return Converter.getItem(
                 isEnabled(p) ? Material.KNOWLEDGE_BOOK : Material.BOOK,
                 "&b新手指引: &" + (enabled ? "a启用" : "4禁用"),
                 "",
@@ -77,41 +71,9 @@ public class BeginnersGuideOption implements SlimefunGuideOption<Boolean> {
                 "",
                 "&7\u21E8 &e点击 " + (enabled ? "禁用" : "启用") + " 新手指引"
         );
-        return Optional.of(item);
     }
 
-    public static boolean isEnabled(Player p) {
-        return getSelectedOption(p);
-    }
-
-    @Override
-    public NamespacedKey getKey() {
-        return key0();
-    }
-
-    public static boolean getSelectedOption(Player p) {
-        return !PersistentDataAPI.hasByte(p, key0()) || PersistentDataAPI.getByte(p, key0()) == (byte) 1;
-    }
-
-    public static NamespacedKey key0() {
-        return KeyUtil.newKey("beginners_guide");
-    }
-
-    @Override
-    public void onClick(Player p, ItemStack guide) {
-        setSelectedOption(p, guide, !getSelectedOption(p, guide).orElse(true));
-        JEGGuideSettings.openSettings(p, guide);
-    }
-
-    @Override
-    public Optional<Boolean> getSelectedOption(Player p, ItemStack guide) {
-        NamespacedKey key = getKey();
-        boolean value = !PersistentDataAPI.hasByte(p, key) || PersistentDataAPI.getByte(p, key) == (byte) 1;
-        return Optional.of(value);
-    }
-
-    @Override
-    public void setSelectedOption(Player p, ItemStack guide, Boolean value) {
-        PersistentDataAPI.setByte(p, getKey(), value ? (byte) 1 : (byte) 0);
+    public String key0() {
+        return "beginners_guide";
     }
 }

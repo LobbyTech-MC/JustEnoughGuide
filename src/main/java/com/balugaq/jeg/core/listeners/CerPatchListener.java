@@ -59,7 +59,7 @@ public class CerPatchListener implements ItemPatchListener {
         }
 
         Player player = event.getPlayer();
-        if (!CerPatchGuideOption.isEnabled(player)) {
+        if (!CerPatchGuideOption.instance().isEnabled(player)) {
             return;
         }
 
