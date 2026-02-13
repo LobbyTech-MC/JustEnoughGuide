@@ -27,18 +27,20 @@
 
 package com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon;
 
-import com.balugaq.jeg.implementation.option.AbstractItemSettingsGuideOption;
-import com.balugaq.jeg.utils.KeyUtil;
-import com.balugaq.jeg.utils.compatibility.Converter;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Optional;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Optional;
+import com.balugaq.jeg.implementation.option.AbstractItemSettingsGuideOption;
+import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.compatibility.Converter;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author balugaq

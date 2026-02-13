@@ -27,18 +27,12 @@
 
 package com.balugaq.jeg.core.integrations.justenoughguide;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
-import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
-
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
-import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 
 
 /**

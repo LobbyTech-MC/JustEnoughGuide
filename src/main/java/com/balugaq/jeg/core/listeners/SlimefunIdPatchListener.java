@@ -31,12 +31,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.balugaq.jeg.api.objects.enums.PatchScope;
-import com.balugaq.jeg.api.objects.events.PatchEvent;
-import com.balugaq.jeg.core.integrations.ItemPatchListener;
-import com.balugaq.jeg.implementation.option.SlimefunIdDisplayGuideOption;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import com.balugaq.jeg.api.objects.enums.PatchScope;
 import com.balugaq.jeg.api.objects.events.PatchEvent;
 import com.balugaq.jeg.core.integrations.ItemPatchListener;
-import com.balugaq.jeg.implementation.option.SlimefunIdDisplayOption;
+import com.balugaq.jeg.implementation.option.SlimefunIdDisplayGuideOption;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;

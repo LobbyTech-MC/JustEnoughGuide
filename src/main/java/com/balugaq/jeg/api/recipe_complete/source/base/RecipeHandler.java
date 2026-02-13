@@ -27,13 +27,14 @@
 
 package com.balugaq.jeg.api.recipe_complete.source.base;
 
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import java.util.List;
+
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 
 /**
  * @author balugaq

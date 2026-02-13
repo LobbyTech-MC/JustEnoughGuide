@@ -27,11 +27,9 @@
 
 package com.balugaq.jeg.core.integrations.justenoughguide;
 
-import org.bukkit.plugin.java.JavaPlugin;
-import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.core.integrations.networks.NetworksSource;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
 
 /**
  * @author balugaq

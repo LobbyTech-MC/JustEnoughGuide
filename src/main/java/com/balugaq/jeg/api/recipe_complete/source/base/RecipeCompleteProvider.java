@@ -28,23 +28,19 @@
 package com.balugaq.jeg.api.recipe_complete.source.base;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import lombok.Getter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author balugaq

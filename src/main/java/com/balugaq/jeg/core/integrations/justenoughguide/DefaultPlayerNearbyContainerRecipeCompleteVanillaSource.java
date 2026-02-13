@@ -27,18 +27,9 @@
 
 package com.balugaq.jeg.core.integrations.justenoughguide;
 
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
 import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
-
-import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 
 /**
  * @author balugaq

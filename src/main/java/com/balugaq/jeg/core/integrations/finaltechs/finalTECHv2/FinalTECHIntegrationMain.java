@@ -40,9 +40,8 @@ import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTECHVal
 import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTechDustRecipeCompletePrecheckListener;
 import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTechDustRecipeSettingsGuideOption;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
-
-import com.balugaq.jeg.implementation.option.ItemSettingsGuideOption;
 import com.balugaq.jeg.implementation.option.AbstractItemSettingsGuideOption;
+
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideSettings;
 

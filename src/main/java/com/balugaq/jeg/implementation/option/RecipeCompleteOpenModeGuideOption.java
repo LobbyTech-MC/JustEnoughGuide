@@ -27,12 +27,13 @@
 
 package com.balugaq.jeg.implementation.option;
 
-import com.balugaq.jeg.api.objects.enums.RecipeCompleteOpenMode;
-import com.balugaq.jeg.utils.compatibility.Converter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.objects.enums.RecipeCompleteOpenMode;
+import com.balugaq.jeg.utils.compatibility.Converter;
 
 /**
  * @author balugaq

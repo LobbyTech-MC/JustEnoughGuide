@@ -27,8 +27,10 @@
 
 package com.balugaq.jeg.utils;
 
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import lombok.experimental.UtilityClass;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
@@ -60,9 +62,8 @@ import org.bukkit.inventory.meta.WritableBookMeta;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import lombok.experimental.UtilityClass;
 
 /**
  * @author Sefiraat

@@ -27,8 +27,6 @@
 
 package com.balugaq.jeg.core.integrations;
 
-import com.balugaq.jeg.utils.KeyUtil;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -39,6 +37,10 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.utils.KeyUtil;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 
 /**
  * @author balugaq
