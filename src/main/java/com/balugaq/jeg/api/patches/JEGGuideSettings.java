@@ -172,14 +172,12 @@ public class JEGGuideSettings {
                         ChatColor.GREEN + locale.getMessage(p, "guide.title.versions"),
                         "&7&o" + locale.getMessage(p, "guide.tooltips.versions-notice"),
                         "",
-                        "&f汉化 By StarWishsama",
-                        "&c请不要将此版本信息截图到 Discord/GitHub 反馈 Bug",
-                        "&c而是优先到汉化页面反馈",
+                        "&f汉化者 StarWishsama",
+                        "&c如遇到任何问题,请优先向服主(QQ1187755698)反馈",
+                        "&c或加入服务器官方QQ群672537579反馈您的问题",
                         "",
-                        "&cTHIS BUILD IS UNOFFICIAL BUILD, DO NOT REPORT TO SLIMEFUN DEV",
-                        "",
-                        "&fMinecraft: &a" + Bukkit.getBukkitVersion(),
-                        "&fSlimefun: &a" + Slimefun.getVersion()));
+                        "&f我的世界版本: &a" + Bukkit.getBukkitVersion(),
+                        "&f粘液科技版本: &a" + Slimefun.getVersion()));
         for (int ss : Formats.settings.getChars('v')) {
             menu.addItem(ss, v, ChestMenuUtils.getEmptyClickHandler());
         }
@@ -196,7 +194,7 @@ public class JEGGuideSettings {
                         "&7Forks: &e" + github.getForks(),
                         "&7Stars: &e" + github.getStars(),
                         "",
-                        "&7&oSlimefun 4 是一个由社区参与的项目,",
+                        "&7&o粘液科技是一个由社区参与的项目,",
                         "&7&o源代码可以在 GitHub 上找到",
                         "&7&o如果你想让这个项目持续下去",
                         "&7&o你可以考虑对项目做出贡献",
