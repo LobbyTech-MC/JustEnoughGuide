@@ -27,15 +27,17 @@
 
 package com.balugaq.jeg.core.integrations.justenoughguide;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.core.integrations.Integration;
+
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author balugaq

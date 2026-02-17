@@ -39,7 +39,6 @@ import com.balugaq.jeg.utils.GuideUtil;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 

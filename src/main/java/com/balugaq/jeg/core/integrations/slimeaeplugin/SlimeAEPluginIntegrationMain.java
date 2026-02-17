@@ -32,16 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
-import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
-import com.balugaq.jeg.core.integrations.Integration;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.ReflectionUtil;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import me.ddggdd135.slimeae.SlimeAEPlugin;
-import me.ddggdd135.slimeae.api.interfaces.IStorage;
-import me.ddggdd135.slimeae.api.items.StorageCollection;
-import me.ddggdd135.slimeae.core.NetworkInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -53,6 +43,7 @@ import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import com.balugaq.jeg.core.integrations.Integration;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.utils.ReflectionUtil;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import me.ddggdd135.slimeae.SlimeAEPlugin;
