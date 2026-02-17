@@ -48,9 +48,28 @@ import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 @SuppressWarnings({"unchecked", "unused"})
 @NullMarked
 public class RykenSlimefunCustomizerIntegrationMain implements Integration {
+    // @formatter:off
+    private static final int[] FVV_FAST_DEVINE_ALTAR_SLOTS = new int[] {
+            0,  1,  2,  3,  4,  5,  6,  7,  8,
+            9,  10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29,             33, 34, 35,
+            36, 37, 38,             42, 43, 44,
+            45, 46, 47,             51, 52, 53
+    };
+    private static final int[] FVV_FAST_LIQUEFACTION_BASIN_SLOTS = new int[] {
+            0,  1,  2,  3,  4,  5,  6,  7,  8,
+            9,  10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29,             33, 34, 35,
+            36, 37, 38,             42, 43, 44,
+            45, 46, 47,             51, 52, 53
+    };
+    // @formatter:on
     public static final List<SlimefunItem> handledSlimefunItems = new ArrayList<>();
     public static @Nullable Class<? extends SlimefunItem> classCustomWorkbench = null;
     public static @Nullable Class<? extends SlimefunItem> classCustomLinkedRecipeMachine = null;
+    public static @Nullable Class<? extends SlimefunItem> classCustomRecipeMachine = null;
 
     public static void rrc(String id, int[] slots, boolean unordered) {
         SlimefunItem slimefunItem = SlimefunItem.getById(id);
@@ -75,24 +94,29 @@ public class RykenSlimefunCustomizerIntegrationMain implements Integration {
         try {
             classCustomWorkbench = (Class<? extends SlimefunItem>)
                     Class.forName("org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomWorkbench");
-        } catch (Throwable ignored) {
+        } catch (Exception ignored) {
             classCustomWorkbench = null;
         }
         try {
             classCustomLinkedRecipeMachine = (Class<? extends SlimefunItem>) Class.forName(
                     "org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomLinkedRecipeMachine");
-        } catch (Throwable ignored) {
+        } catch (Exception ignored) {
             classCustomLinkedRecipeMachine = null;
         }
+        try {
+            classCustomRecipeMachine = (Class<? extends SlimefunItem>) Class.forName(
+                    "org.lins.mmmjjkx.rykenslimefuncustomizer.objects.customs.machine.CustomRecipeMachine");
+        } catch (Exception e) {
+            classCustomRecipeMachine = null;
+        }
 
-        if (classCustomWorkbench == null && classCustomLinkedRecipeMachine == null) {
+        if (classCustomWorkbench == null && classCustomLinkedRecipeMachine == null && classCustomRecipeMachine == null) {
             return;
         }
 
         for (SlimefunItem sf : new ArrayList<>(Slimefun.getRegistry().getAllSlimefunItems())) {
             Class<? extends SlimefunItem> clazz = sf.getClass();
-            if (!((classCustomWorkbench != null && clazz == classCustomWorkbench)
-                    || (classCustomLinkedRecipeMachine != null && clazz == classCustomLinkedRecipeMachine))) {
+            if (clazz != classCustomWorkbench && clazz != classCustomLinkedRecipeMachine && clazz != classCustomRecipeMachine) {
                 continue;
             }
 
@@ -108,6 +132,9 @@ public class RykenSlimefunCustomizerIntegrationMain implements Integration {
 
             rrc(sf, input, false);
         }
+
+        rrc("FVV_FAST_DEVINE_ALTAR", FVV_FAST_DEVINE_ALTAR_SLOTS, true);
+        rrc("FVV_FAST_LIQUEFACTION_BASIN", FVV_FAST_LIQUEFACTION_BASIN_SLOTS, true);
     }
 
     @Override

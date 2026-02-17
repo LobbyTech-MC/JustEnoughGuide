@@ -201,13 +201,13 @@ public class RecipeCompletableListener implements ItemPatchListener {
     }
 
     public static void tagGuideOpen(Player player) {
-        if (!isRecipeCompleting(player)) {
+        if (!isSelectingItemStackToRecipeComplete(player)) {
             return;
         }
 
         PlayerProfile profile = getPlayerProfile(player);
-        saveOriginGuideHistory(profile);
         if (RecipeCompleteOpenModeGuideOption.instance().get(player) == RecipeCompleteOpenMode.NEW) {
+            saveOriginGuideHistory(profile);
             clearGuideHistory(profile);
         }
     }
@@ -328,7 +328,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
                             return false;
                         }
 
-                        enterSelectingItemStackToRecipeComplete(player);
+                        allowSelectingItemStackToRecipeComplete(player);
                         int[] slots = getIngredientSlots(sf);
                         boolean unordered = isUnordered(sf);
                         var session = RecipeCompleteSession.create(blockMenu, player, clickAction, slots, unordered, 1);
@@ -391,8 +391,13 @@ public class RecipeCompletableListener implements ItemPatchListener {
         return listening.contains(player);
     }
 
-    public static void enterSelectingItemStackToRecipeComplete(Player player) {
+    public static void allowSelectingItemStackToRecipeComplete(Player player) {
         listening.add(player);
+    }
+
+    @Deprecated
+    public static void enterSelectingItemStackToRecipeComplete(Player player) {
+        allowSelectingItemStackToRecipeComplete(player);
     }
 
     public static int[] getIngredientSlots(SlimefunItem slimefunItem) {
@@ -468,7 +473,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
     @EventHandler
     public void onJEGItemClick(GuideEvents.ItemButtonClickEvent event) {
         Player player = event.getPlayer();
-        if (!isRecipeCompleting(player)) {
+        if (!isSelectingItemStackToRecipeComplete(player)) {
             return;
         }
 
@@ -477,9 +482,17 @@ public class RecipeCompletableListener implements ItemPatchListener {
         }
 
         PlayerProfile profile = RecipeCompletableListener.getPlayerProfile(player);
-        rollbackGuideHistory(profile);
-        RecipeCompletableListener.PROFILE_CALLBACKS.get(player).accept(event, profile);
-        RecipeCompletableListener.PROFILE_CALLBACKS.remove(player);
+        // try
+        if (RecipeCompleteOpenModeGuideOption.instance().get(player) == RecipeCompleteOpenMode.NEW) {
+            rollbackGuideHistory(profile);
+        }
+        // finally
+        GUIDE_HISTORY.remove(player);
+        var callback = RecipeCompletableListener.PROFILE_CALLBACKS.get(player);
+        if (callback != null) {
+            callback.accept(event, profile);
+            RecipeCompletableListener.PROFILE_CALLBACKS.remove(player);
+        }
         RecipeCompletableListener.LAST_EVENTS.put(player, event);
 
         ItemStack clickedItemStack = event.getClickedItem();
@@ -591,37 +604,39 @@ public class RecipeCompletableListener implements ItemPatchListener {
             return;
         }
 
-        if (isSelectingItemStackToRecipeComplete(event.getPlayer())) {
-            ItemStack old = event.getItemStack();
-            if (old == null || old.getType() == Material.AIR) {
-                return;
-            }
-
-            ItemMeta meta = old.getItemMeta();
-            if (meta == null) {
-                return;
-            }
-
-            if (isTagged(meta)) {
-                return;
-            }
-
-            List<String> lore = meta.getLore();
-            if (lore == null) {
-                lore = new ArrayList<>();
-            }
-
-            // Patch hint start
-            lore.add("");
-            lore.add(ChatColors.color(Models.RECIPE_COMPLETE_GUI_MECHANISM_1));
-            lore.add(ChatColors.color(Models.RECIPE_COMPLETE_GUI_MECHANISM_2));
-            // Patch hint end
-
-            meta.setLore(lore);
-            tagMeta(meta);
-            old.setItemMeta(meta);
-            event.setItemStack(old);
+        if (!isSelectingItemStackToRecipeComplete(event.getPlayer())) {
+            return;
         }
+
+        ItemStack old = event.getItemStack();
+        if (old == null || old.getType() == Material.AIR) {
+            return;
+        }
+
+        ItemMeta meta = old.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+
+        if (isTagged(meta)) {
+            return;
+        }
+
+        List<String> lore = meta.getLore();
+        if (lore == null) {
+            lore = new ArrayList<>();
+        }
+
+        // Patch hint start
+        lore.add("");
+        lore.add(ChatColors.color(Models.RECIPE_COMPLETE_GUI_MECHANISM_1));
+        lore.add(ChatColors.color(Models.RECIPE_COMPLETE_GUI_MECHANISM_2));
+        // Patch hint end
+
+        meta.setLore(lore);
+        tagMeta(meta);
+        old.setItemMeta(meta);
+        event.setItemStack(old);
     }
 
     @SuppressWarnings("deprecation")
