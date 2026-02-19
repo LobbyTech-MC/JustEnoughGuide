@@ -54,7 +54,8 @@ public abstract class AbstractBooleanGuideOption implements SlimefunGuideOption<
     }
 
     public boolean getSelectedOption(Player p) {
-        return !PersistentDataAPI.hasByte(p, getKey()) || PersistentDataAPI.getByte(p, getKey()) == (byte) 1;
+        return (defaultValue() && !PersistentDataAPI.hasByte(p, getKey())) ||
+                PersistentDataAPI.getByte(p, getKey()) == (defaultValue() ? 1 : 0);
     }
 
     @Override
@@ -90,9 +91,7 @@ public abstract class AbstractBooleanGuideOption implements SlimefunGuideOption<
 
     @Override
     public Optional<Boolean> getSelectedOption(Player p, ItemStack guide) {
-        NamespacedKey key = getKey();
-        boolean value = !PersistentDataAPI.hasByte(p, key) || PersistentDataAPI.getByte(p, key) == (byte) 1;
-        return Optional.of(value);
+        return Optional.of(getSelectedOption(p));
     }
 
     @Override

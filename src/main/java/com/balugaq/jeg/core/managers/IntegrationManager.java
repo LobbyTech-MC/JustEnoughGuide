@@ -37,6 +37,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.managers.AbstractManager;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import com.balugaq.jeg.core.integrations.Integration;
 import com.balugaq.jeg.core.integrations.alchimiavitae.AlchimiaVitaeIntegrationMain;
@@ -56,10 +57,13 @@ import com.balugaq.jeg.core.integrations.gastronomicon.GastronomiconIntegrationM
 import com.balugaq.jeg.core.integrations.infinitycompress.InfinityCompressIntegrationMain;
 import com.balugaq.jeg.core.integrations.infinityexpansion.InfinityExpansionIntegrationMain;
 import com.balugaq.jeg.core.integrations.infinityexpansion2.InfinityExpansion2IntegrationMain;
+import com.balugaq.jeg.core.integrations.justenoughguide.BundlePlayerInventoryItemGetter;
 import com.balugaq.jeg.core.integrations.justenoughguide.DefaultPlayerInventoryRecipeCompleteSlimefunSource;
 import com.balugaq.jeg.core.integrations.justenoughguide.DefaultPlayerInventoryRecipeCompleteVanillaSource;
 import com.balugaq.jeg.core.integrations.justenoughguide.DefaultPlayerNearbyContainerRecipeCompleteSlimefunSource;
 import com.balugaq.jeg.core.integrations.justenoughguide.DefaultPlayerNearbyContainerRecipeCompleteVanillaSource;
+import com.balugaq.jeg.core.integrations.justenoughguide.JustEnoughGuideIntegrationMain;
+import com.balugaq.jeg.core.integrations.justenoughguide.ShulkerBoxPlayerInventoryItemGetter;
 import com.balugaq.jeg.core.integrations.logitech.LogitechIntegrationMain;
 import com.balugaq.jeg.core.integrations.magicexpansion.MagicExpansionIntegrationMain;
 import com.balugaq.jeg.core.integrations.momotech.MomotechIntegrationMain;
@@ -78,6 +82,7 @@ import com.balugaq.jeg.core.integrations.wildernether.WilderNetherIntegrationMai
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.utils.Debug;
 
+import com.balugaq.jeg.utils.MinecraftVersion;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -222,13 +227,9 @@ public class IntegrationManager extends AbstractManager {
             addIntegration(enabledSlimeTinker, SlimeTinkerIntegrationMain::new);
             addIntegration(enabledTsingshanTechnology, TsingshanTechnologyIntegrationMain::new);
             addIntegration(enabledWilderNether, WilderNetherIntegrationMain::new);
+            addIntegration(true, JustEnoughGuideIntegrationMain::new);
 
             startupIntegrations();
-
-            RecipeCompleteProvider.addSource(new DefaultPlayerNearbyContainerRecipeCompleteSlimefunSource());
-            RecipeCompleteProvider.addSource(new DefaultPlayerNearbyContainerRecipeCompleteVanillaSource());
-            RecipeCompleteProvider.addSource(new DefaultPlayerInventoryRecipeCompleteSlimefunSource());
-            RecipeCompleteProvider.addSource(new DefaultPlayerInventoryRecipeCompleteVanillaSource());
         }, 1L);
     }
     // @formatter:on

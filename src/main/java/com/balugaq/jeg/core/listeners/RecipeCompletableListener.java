@@ -38,6 +38,38 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
+import com.balugaq.jeg.api.objects.collection.Pair;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
+import com.balugaq.jeg.api.objects.enums.RecipeCompleteOpenMode;
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.api.objects.events.PatchEvent;
+import com.balugaq.jeg.api.objects.events.RecipeCompleteEvents;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+import com.balugaq.jeg.api.recipe_complete.source.base.Source;
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+import com.balugaq.jeg.core.integrations.ItemPatchListener;
+import com.balugaq.jeg.core.integrations.justenoughguide.BundlePlayerInventoryItemGetter;
+import com.balugaq.jeg.core.integrations.justenoughguide.ShulkerBoxPlayerInventoryItemGetter;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.implementation.items.ItemsSetup;
+import com.balugaq.jeg.implementation.option.RecipeCompleteOpenModeGuideOption;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.Models;
+import com.balugaq.jeg.utils.ReflectionUtil;
+import com.balugaq.jeg.utils.StackUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import lombok.SneakyThrows;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
+import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -54,7 +86,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 
@@ -109,6 +143,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
     public static final ConcurrentHashMap<Player, Location> DISPENSER_LISTENING = new ConcurrentHashMap<>();
     public static final NamespacedKey LAST_RECIPE_COMPLETE_KEY = KeyUtil.newKey("last_recipe_complete");
     public static final ConcurrentHashMap<Player, ArrayList<ItemStack>> missingMaterials = new ConcurrentHashMap<>();
+    public static final Map<NamespacedKey, PlayerInventoryItemGetter> PLAYER_INVENTORY_ITEM_GETTERS = new HashMap<>();
     private static @UnknownNullability ItemStack RECIPE_COMPLETABLE_BOOK_ITEM = null;
 
     static {
@@ -293,7 +328,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
     @EventHandler
     public void prepare(InventoryOpenEvent event) {
         if (event.getInventory().getHolder() instanceof BlockMenu blockMenu) {
-            tryAddClickHandler(blockMenu);
+            tryAddPlayerInventoryClickHandler(blockMenu);
         }
 
         if (event.getInventory().getHolder() instanceof Dispenser dispenser) {
@@ -302,7 +337,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
     }
 
     @SuppressWarnings("deprecation")
-    private static void tryAddClickHandler(BlockMenu blockMenu) {
+    private static void tryAddPlayerInventoryClickHandler(BlockMenu blockMenu) {
         SlimefunItem sf = blockMenu.getPreset().getSlimefunItem();
         if (!isApplicable(sf)) {
             return;
@@ -314,7 +349,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
 
         ChestMenu.MenuClickHandler old = blockMenu.getPlayerInventoryClickHandler();
         if (old instanceof TaggedRecipeCompletable) {
-            // Already added
+            // Already modified
             return;
         }
 
@@ -324,8 +359,14 @@ public class RecipeCompletableListener implements ItemPatchListener {
                     if (StackUtils.itemsMatch(itemStack, getRecipeCompletableBookItem(), false, false, false, false)
                             && blockMenu.isPlayerInventoryClickable()) {
                         if (isSelectingItemStackToRecipeComplete(player)) {
-                            GuideUtil.openGuide(player);
-                            return false;
+                            var session = RecipeCompleteSession.getSession(player);
+                            if (session == null) return false;
+                            if (session.getMenu() != null && session.getMenu().getLocation().equals(blockMenu.getLocation())) {
+                                GuideUtil.openGuide(player);
+                                return false;
+                            } else {
+                                session.cancel();
+                            }
                         }
 
                         allowSelectingItemStackToRecipeComplete(player);
@@ -456,6 +497,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
             // Strategy mode
             // Default strategy see {@link DefaultPlayerInventoryRecipeCompleteVanillaSource}
             if (source.handleable(session)) {
+                allowSelectingItemStackToRecipeComplete(player);
                 source.openGuide(session);
                 break;
             }
@@ -721,11 +763,20 @@ public class RecipeCompletableListener implements ItemPatchListener {
         event.getPlayer().updateInventory();
     }
 
+    public static void registerPlayerInventoryItemGetter(PlayerInventoryItemGetter itemGetter) {
+        PLAYER_INVENTORY_ITEM_GETTERS.put(itemGetter.getKey(), itemGetter);
+    }
+
+    public static void unregisterPlayerInventoryItemGetter(NamespacedKey key) {
+        PLAYER_INVENTORY_ITEM_GETTERS.remove(key);
+    }
+
     /**
      * @author balugaq
      * @see RecipeCompletableListener#addNotApplicableItem(SlimefunItem)
      * @since 1.9
      */
+    @NullMarked
     public interface NotApplicable {
     }
 
@@ -733,6 +784,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
      * @author balugaq
      * @since 1.9
      */
+    @NullMarked
     public interface TaggedRecipeCompletable {
     }
 
@@ -741,7 +793,28 @@ public class RecipeCompletableListener implements ItemPatchListener {
      * @since 1.9
      */
     @SuppressWarnings("deprecation")
+    @NullMarked
     @FunctionalInterface
     public interface RecipeCompletableClickHandler extends ChestMenu.MenuClickHandler, TaggedRecipeCompletable {
+    }
+
+    /**
+     * @author balugaq
+     * @since 2.1
+     *
+     * @see ShulkerBoxPlayerInventoryItemGetter
+     * @see Source#getItemStackFromPlayerInventory(RecipeCompleteSession, ItemStack, int)
+     */
+    @NullMarked
+    public interface PlayerInventoryItemGetter extends Keyed {
+        /**
+         * @param session The session
+         * @param target The target item
+         * @param item The item to be checked or handled
+         * @param need The requested amount
+         * @return gotten item stack amount
+         */
+        @NonNegative
+        int getItemStack(RecipeCompleteSession session, ItemStack target, ItemStack item, int need);
     }
 }

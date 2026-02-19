@@ -260,7 +260,7 @@ public interface OnDisplay {
                                 lore.toArray(new String[0])
                         )
                 );
-                menu.addItem(slot, icon, OnClick.ClickHandler.deny());
+                menu.addItem(slot, icon, OnClick.BaseClickHandler.deny());
             }
         }
 
@@ -283,7 +283,7 @@ public interface OnDisplay {
                                         ChestMenuUtils.getNoPermissionItem(),
                                         ItemStackHelper.getDisplayName(itemGroup.getItem(player))
                                 )
-                        ), OnClick.ClickHandler.deny()
+                        ), OnClick.BaseClickHandler.deny()
                 );
             }
         }
@@ -760,7 +760,7 @@ public interface OnDisplay {
                                         message.toArray(new String[0])
                                 )
                         ),
-                        OnClick.ClickHandler.deny()
+                        OnClick.BaseClickHandler.deny()
                 );
             }
         }

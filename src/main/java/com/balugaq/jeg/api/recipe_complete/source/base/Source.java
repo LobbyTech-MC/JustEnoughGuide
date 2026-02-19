@@ -33,12 +33,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.balugaq.jeg.api.objects.SimpleRecipeChoice;
+import com.balugaq.jeg.api.objects.menu.VanillaInventoryWrapper;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
+import com.balugaq.jeg.implementation.option.NoticeMissingMaterialGuideOption;
+import com.balugaq.jeg.implementation.option.RecipeFillingWithNearbyContainerGuideOption;
+import com.balugaq.jeg.implementation.option.RecursiveRecipeFillingGuideOption;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.ReflectionUtil;
+import com.balugaq.jeg.utils.StackUtils;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -79,6 +98,15 @@ import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
 @SuppressWarnings("unused")
 @NullMarked
 public interface Source {
+    // @formatter:off
+    int[] PLAYER_INVENTORY_AVAILABLE_SLOTS = new int[] {
+            0,  1,  2,  3,  4,  5,  6,  7,  8, // storage slots
+            9,  10, 11, 12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23, 24, 25, 26,
+            27, 28, 29, 30, 31, 32, 33, 34, 35,
+            40 // offhand slot
+    };
+    // @formatter:on
     int RECIPE_DEPTH_THRESHOLD = 8;
 
     static boolean depthInRange(Player player, int depth) {
@@ -120,8 +148,8 @@ public interface Source {
     }
 
     @SuppressWarnings("ConstantValue")
-    default @Nullable List<@Nullable RecipeChoice> getRecipe(Player player, ItemStack itemStack) {
-        SlimefunItem sf = SlimefunItem.getByItem(itemStack);
+    default @Nullable List<@Nullable RecipeChoice> getRecipe(Player player, @Nullable SlimefunItem origin, ItemStack itemStack) {
+        SlimefunItem sf = origin == null ? SlimefunItem.getByItem(itemStack) : origin;
         var r = getSpecialRecipe(player, itemStack, sf);
         if (r != null) return r;
         if (sf != null) {
@@ -173,109 +201,46 @@ public interface Source {
         return null;
     }
 
-    default @Nullable ItemStack getItemStackFromPlayerInventory(Player player, ItemStack itemStack) {
-        return getItemStackFromPlayerInventory(player, itemStack, Math.max(1, Math.min(itemStack.getAmount(), itemStack.getMaxStackSize())));
+    default @Nullable ItemStack getItemStackFromPlayerInventory(RecipeCompleteSession session, ItemStack itemStack) {
+        return getItemStackFromPlayerInventory(session, itemStack, Math.max(1, Math.min(itemStack.getAmount(), itemStack.getMaxStackSize())));
     }
 
-    default @Nullable ItemStack getItemStackFromPlayerInventory(Player player, ItemStack itemStack, int amount) {
-        int total = amount;
+    default @Nullable ItemStack getItemStackFromPlayerInventory(RecipeCompleteSession session, ItemStack target, int need) {
+        Player player = session.getPlayer();
+        int total = need;
 
         // get from player inventory
-        for (int i = 0; i < player.getInventory().getSize(); i++) {
-            ItemStack itemStack1 = player.getInventory().getItem(i);
+        for (int i : PLAYER_INVENTORY_AVAILABLE_SLOTS) {
+            ItemStack existingStack = player.getInventory().getItem(i);
 
-            if (itemStack1 != null && itemStack1.getType() != Material.AIR) {
-                if (StackUtils.itemsMatch(itemStack1, itemStack)) {
+            if (existingStack != null && existingStack.getType() != Material.AIR) {
+                if (StackUtils.itemsMatch(existingStack, target)) {
 
-                    int existing = itemStack1.getAmount();
+                    int existingAmount = existingStack.getAmount();
 
-                    if (existing <= amount) {
-                        amount -= existing;
+                    if (existingAmount <= need) {
+                        need -= existingAmount;
                         player.getInventory().clear(i);
                     } else {
-                        itemStack1.setAmount(existing - amount);
-                        player.getInventory().setItem(i, itemStack1);
-                        amount = 0;
+                        existingStack.setAmount(existingAmount - need);
+                        player.getInventory().setItem(i, existingStack);
+                        need = 0;
                     }
 
-                    if (amount <= 0) {
-                        ItemStack clone = itemStack.clone();
+                    if (need <= 0) {
+                        ItemStack clone = target.clone();
                         clone.setAmount(total);
                         return clone;
                     }
-                }
-
-                else if (itemStack1.getType().name().contains("SHULKER_BOX")) {
-                    var meta = itemStack1.getItemMeta();
-                    if (meta instanceof BlockStateMeta blockStateMeta) {
-                        var blockState = blockStateMeta.getBlockState();
-                        if (blockState instanceof Container container) {
-                            Inventory shulker = container.getInventory();
-                            for (int idx = 0; idx < shulker.getSize(); idx++) {
-                                ItemStack item = shulker.getItem(idx);
-
-                                if (item != null && item.getType() != Material.AIR) {
-                                    if (StackUtils.itemsMatch(item, itemStack)) {
-
-                                        int existing = item.getAmount();
-
-                                        if (existing <= amount) {
-                                            amount -= existing;
-                                            shulker.clear(idx);
-                                        } else {
-                                            item.setAmount(existing - amount);
-                                            shulker.setItem(idx, item);
-                                            amount = 0;
-                                        }
-
-                                        if (amount <= 0) {
-                                            ItemStack clone = itemStack.clone();
-                                            clone.setAmount(total);
-                                            blockStateMeta.setBlockState(blockState);
-                                            itemStack1.setItemMeta(blockStateMeta);
-                                            return clone;
-                                        }
-                                    }
-                                }
-                            }
-                            blockStateMeta.setBlockState(blockState);
-                            itemStack1.setItemMeta(blockStateMeta);
+                } else {
+                    for (var itemGetter : RecipeCompletableRegistry.getPlayerInventoryItemGetters()) {
+                        int gotten = itemGetter.getItemStack(session, target, existingStack, need);
+                        need -= gotten;
+                        if (need <= 0) {
+                            ItemStack clone = target.clone();
+                            clone.setAmount(total);
+                            return clone;
                         }
-                    }
-                }
-
-                else if (itemStack1.getType().name().contains("BUNDLE")) {
-                    var meta = itemStack1.getItemMeta();
-                    if (MinecraftVersion.current().isAtLeast(MinecraftVersion.V1_17) && meta instanceof BundleMeta bundle) {
-                        var origin = bundle.getItems();
-                        if (origin == null || origin.isEmpty()) continue;
-                        var items = new ArrayList<>(origin);
-                        for (int idx = 0; idx < items.size(); idx++) {
-                            ItemStack item = items.get(idx);
-                            if (item != null && item.getType() != Material.AIR &&
-                                    StackUtils.itemsMatch(item, itemStack)) {
-
-                                int existing = item.getAmount();
-
-                                if (existing <= amount) {
-                                    amount -= existing;
-                                    items.set(idx, null);
-                                } else {
-                                    item.setAmount(existing - amount);
-                                    amount = 0;
-                                }
-
-                                if (amount <= 0) {
-                                    ItemStack clone = itemStack.clone();
-                                    clone.setAmount(total);
-                                    bundle.setItems(trimItems(items));
-                                    itemStack1.setItemMeta(meta);
-                                    return clone;
-                                }
-                            }
-                        }
-                        bundle.setItems(trimItems(items));
-                        itemStack1.setItemMeta(meta);
                     }
                 }
             }
@@ -284,7 +249,7 @@ public interface Source {
         return null;
     }
 
-    default List<ItemStack> trimItems(List<@Nullable ItemStack> origin) {
+    static List<ItemStack> trimItems(List<@Nullable ItemStack> origin) {
         List<ItemStack> list = new ArrayList<>();
         for (ItemStack item : origin) {
             if (item != null && item.getType() != Material.AIR) {
@@ -421,7 +386,7 @@ public interface Source {
             return false;
         }
 
-        List<@Nullable RecipeChoice> choices = getRecipe(player, clickedItem);
+        List<@Nullable RecipeChoice> choices = getRecipe(player, session.getSlimefunItem(), clickedItem);
         if (choices == null) {
             sendMissingMaterial(player, clickedItem);
             return false;

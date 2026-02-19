@@ -50,7 +50,7 @@ public interface PlayerInventorySource extends JEGSource {
     @Override
     @Nullable
     default ItemStack getItemStack(RecipeCompleteSession session, ItemStack itemStack) {
-        return getItemStackFromPlayerInventory(session.getPlayer(), itemStack);
+        return getItemStackFromPlayerInventory(session, itemStack);
     }
 
     @Override

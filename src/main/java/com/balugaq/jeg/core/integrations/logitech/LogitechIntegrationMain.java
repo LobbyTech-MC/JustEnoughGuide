@@ -255,8 +255,6 @@ public class LogitechIntegrationMain implements Integration {
             SlimefunGuideSettings.addOption(MachineStackableDisplayGuideOption.instance());
             JustEnoughGuide.getListenerManager().registerListener(new LogitechItemPatchListener());
         }
-
-        JustEnoughGuide.getListenerManager().registerListener(new ManualMachineAutoSelectListener());
     }
 
     public static void rrc(SlimefunItem slimefunItem, int[] slots) {

@@ -56,8 +56,10 @@ import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you
 import com.balugaq.jeg.api.editor.GroupResorter;
 import com.balugaq.jeg.api.groups.SearchGroup;
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
 import com.balugaq.jeg.core.integrations.finaltechs.finalTECHCommon.FinalTECHValueDisplayOption;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
 import com.balugaq.jeg.core.managers.BookmarkManager;
 import com.balugaq.jeg.core.managers.CommandManager;
 import com.balugaq.jeg.core.managers.ConfigManager;
@@ -89,6 +91,7 @@ import com.balugaq.jeg.utils.platform.PlatformUtil;
 import com.balugaq.jeg.utils.platform.scheduler.TaskScheduler;
 
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.core.guide.options.SlimefunGuideOption;
@@ -465,24 +468,6 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             }
             getLogger().info("物品组加载完毕！");
 
-            if (getConfigManager().isBeginnerOption()) {
-                getLogger().info("正在加载指南选项...");
-                JEGGuideSettings.patchSlimefun();
-                if (JustEnoughGuide.getConfigManager().isSlimefunIdDisplay()) {
-                    JEGGuideSettings.addOption(SlimefunIdDisplayGuideOption.instance());
-                }
-                JEGGuideSettings.addOption(KeybindsSettingsGuideOption.instance());
-                JEGGuideSettings.addOption(BeginnersGuideOption.instance());
-                JEGGuideSettings.addOption(CerPatchGuideOption.instance());
-                JEGGuideSettings.addOption(ShareInGuideOption.instance());
-                JEGGuideSettings.addOption(ShareOutGuideOption.instance());
-                JEGGuideSettings.addOption(RecursiveRecipeFillingGuideOption.instance());
-                JEGGuideSettings.addOption(NoticeMissingMaterialGuideOption.instance());
-                JEGGuideSettings.addOption(RecipeFillingWithNearbyContainerGuideOption.instance());
-                JEGGuideSettings.addOption(RecipeCompleteOpenModeGuideOption.instance());
-                getLogger().info("指南选项加载完毕！");
-            }
-
             if (getConfigManager().isCerPatch()) {
                 CERCalculator.load();
             }
@@ -498,7 +483,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             try {
                 serverUUID = UUID.nameUUIDFromBytes(Files.readAllBytes(Path.of(uuidFile.getPath())));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                Debug.warn(e);
             }
         } else {
             serverUUID = UUID.randomUUID();
@@ -507,7 +492,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
                 uuidFile.createNewFile();
                 Files.write(Path.of(uuidFile.getPath()), UUIDUtils.toByteArray(serverUUID));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                Debug.warn(e);
             }
         }
 
@@ -516,20 +501,6 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
 
         SpecialMenuProvider.loadConfiguration();
         ThirdPartyWarnings.check();
-
-        runNextTick(() -> {
-            try {
-                ItemStack easterEgg = new CustomItemStack(
-                        Material.GLOWSTONE_DUST,
-                        "&6&l彩蛋",
-                        "&6&l爱来自 JustEnoughGuide"
-                );
-                if (SlimefunItems.ELECTRIC_INGOT_FACTORY_2.getItem() instanceof AContainer ac) {
-                    ac.registerRecipe(114514, easterEgg, easterEgg);
-                }
-            } catch (Exception ignored) {
-            }
-        });
 
         getLogger().info("成功启用此附属");
     }
