@@ -27,10 +27,6 @@
 
 package com.balugaq.jeg.core.integrations.justenoughguide;
 
-import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
-import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
-import com.balugaq.jeg.utils.KeyUtil;
-import com.balugaq.jeg.utils.StackUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Container;
@@ -40,6 +36,11 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
+import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.StackUtils;
 
 /**
  * @author balugaq

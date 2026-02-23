@@ -53,8 +53,8 @@ import com.balugaq.jeg.core.listeners.SlimefunIdPatchListener;
 import com.balugaq.jeg.core.listeners.SpecialMenuFixListener;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
 import com.balugaq.jeg.implementation.WatchdogHandler;
-
 import com.balugaq.jeg.utils.MinecraftVersion;
+
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import lombok.Getter;
 

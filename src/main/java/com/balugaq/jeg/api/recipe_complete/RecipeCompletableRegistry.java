@@ -27,14 +27,16 @@
 
 package com.balugaq.jeg.api.recipe_complete;
 
-import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import java.util.Collection;
+
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Collection;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 
 /**
  * @author balugaq

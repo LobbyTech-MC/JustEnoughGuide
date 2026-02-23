@@ -29,6 +29,8 @@ package com.balugaq.jeg.utils.clickhandler;
 
 import static com.balugaq.jeg.utils.clickhandler.OnClick.merge;
 import static com.balugaq.jeg.utils.clickhandler.OnClick.share;
+import static com.balugaq.jeg.utils.clickhandler.OnClick.Item.withItem;
+import static com.balugaq.jeg.utils.clickhandler.OnClick.ItemGroup.withGroup;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
@@ -76,7 +78,6 @@ import com.balugaq.jeg.utils.platform.PlatformUtil;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
