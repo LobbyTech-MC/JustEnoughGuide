@@ -62,6 +62,12 @@
     </pluginRepositories>
 
     <properties>
+        <SlimeAE-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\SlimeAE.jar</SlimeAE-systemPath>
+        <EMCTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\EMCTech.jar</EMCTech-systemPath>
+        <SlimeHUD-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib/SlimeHUD-Build 16.jar</SlimeHUD-systemPath>
+        <NetworksExpansion-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion vS63.jar</NetworksExpansion-systemPath>
+        <LogiTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\LogiTech.jar</LogiTech-systemPath>
+        <LogiTech1-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</LogiTech1-systemPath>
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -295,7 +301,7 @@
             <artifactId>LogiTech1</artifactId>
             <version>1.0.3</version>
             <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</systemPath>
+            <systemPath>${LogiTech1-systemPath}</systemPath>
         </dependency>
 
         <!-- Special Menu Provider me.matl114.logitech.utils.UtilClass.MenuClass.CustomMenu -->
@@ -304,7 +310,7 @@
             <artifactId>LogiTech</artifactId>
             <version>1.0.4</version>
             <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\LogiTech.jar</systemPath>
+            <systemPath>${LogiTech-systemPath}</systemPath>
         </dependency>
         
         
@@ -314,7 +320,7 @@
             <artifactId>NetworksExpansion</artifactId>
             <version>Special-Version-63</version>
             <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion vS63.jar</systemPath>
+            <systemPath>${NetworksExpansion-systemPath}</systemPath>
         </dependency>
 
         <!-- Recipe Completable compatible -->
@@ -323,7 +329,7 @@
             <artifactId>SlimeAE</artifactId>
             <version>Build-72</version>
             <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\SlimeAE.jar</systemPath>
+            <systemPath>${SlimeAE-systemPath}</systemPath>
         </dependency>
 
         <!-- Custom Icon Color API -->
@@ -346,7 +352,7 @@
             <artifactId>EMCTech</artifactId>
             <version>Build-8</version>
             <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\EMCTech.jar</systemPath>
+            <systemPath>${EMCTech-systemPath}</systemPath>
         </dependency>
 
         <dependency>
@@ -354,7 +360,7 @@
             <artifactId>SlimeHUD</artifactId>
             <version>Build-16</version>
             <scope>system</scope>
-            <systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib/SlimeHUD-Build 16.jar</systemPath>
+            <systemPath>${SlimeHUD-systemPath}</systemPath>
         </dependency>
 
         <!-- AnvilGUI 1.16+ -->
