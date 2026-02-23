@@ -36,10 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;

@@ -29,11 +29,6 @@ package com.balugaq.jeg.core.integrations.justenoughguide;
 
 import java.util.ArrayList;
 
-import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
-import com.balugaq.jeg.api.recipe_complete.source.base.Source;
-import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
-import com.balugaq.jeg.utils.KeyUtil;
-import com.balugaq.jeg.utils.StackUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
