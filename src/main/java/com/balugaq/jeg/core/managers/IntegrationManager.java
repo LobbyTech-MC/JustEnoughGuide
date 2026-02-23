@@ -66,6 +66,7 @@ import com.balugaq.jeg.core.integrations.obsidianexpansion.ObsidianExpansionInte
 import com.balugaq.jeg.core.integrations.rykenslimefuncustomizer.RykenSlimefunCustomizerIntegrationMain;
 import com.balugaq.jeg.core.integrations.simpleutils.SimpleUtilsIntegrationMain;
 import com.balugaq.jeg.core.integrations.slimeaeplugin.SlimeAEPluginIntegrationMain;
+import com.balugaq.jeg.core.integrations.slimefun.SlimefunIntegrationMain;
 import com.balugaq.jeg.core.integrations.slimefuntranslation.SlimefunTranslationIntegrationMain;
 import com.balugaq.jeg.core.integrations.slimehud.SlimeHUDIntegrationMain;
 import com.balugaq.jeg.core.integrations.slimetinker.SlimeTinkerIntegrationMain;
@@ -218,6 +219,7 @@ public class IntegrationManager extends AbstractManager {
             addIntegration(enabledSlimeTinker, SlimeTinkerIntegrationMain::new);
             addIntegration(enabledTsingshanTechnology, TsingshanTechnologyIntegrationMain::new);
             addIntegration(enabledWilderNether, WilderNetherIntegrationMain::new);
+            addIntegration(true, SlimefunIntegrationMain::new);
             addIntegration(true, JustEnoughGuideIntegrationMain::new);
 
             startupIntegrations();

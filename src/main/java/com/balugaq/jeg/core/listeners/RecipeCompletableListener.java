@@ -38,6 +38,36 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
+import com.balugaq.jeg.api.objects.collection.Pair;
+import com.balugaq.jeg.api.objects.enums.PatchScope;
+import com.balugaq.jeg.api.objects.enums.RecipeCompleteOpenMode;
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.api.objects.events.PatchEvent;
+import com.balugaq.jeg.api.objects.events.RecipeCompleteEvents;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.api.recipe_complete.source.base.SlimefunSource;
+import com.balugaq.jeg.api.recipe_complete.source.base.Source;
+import com.balugaq.jeg.api.recipe_complete.source.base.VanillaSource;
+import com.balugaq.jeg.core.integrations.ItemPatchListener;
+import com.balugaq.jeg.core.integrations.justenoughguide.ShulkerBoxPlayerInventoryItemSeeker;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.implementation.items.ItemsSetup;
+import com.balugaq.jeg.implementation.option.RecipeCompleteOpenModeGuideOption;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.Models;
+import com.balugaq.jeg.utils.ReflectionUtil;
+import com.balugaq.jeg.utils.StackUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import lombok.SneakyThrows;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -113,7 +143,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
     public static final ConcurrentHashMap<Player, Location> DISPENSER_LISTENING = new ConcurrentHashMap<>();
     public static final NamespacedKey LAST_RECIPE_COMPLETE_KEY = KeyUtil.newKey("last_recipe_complete");
     public static final ConcurrentHashMap<Player, ArrayList<ItemStack>> missingMaterials = new ConcurrentHashMap<>();
-    public static final Map<NamespacedKey, PlayerInventoryItemGetter> PLAYER_INVENTORY_ITEM_GETTERS = new HashMap<>();
+    public static final Map<NamespacedKey, PlayerInventoryItemSeeker> PLAYER_INVENTORY_ITEM_GETTERS = new HashMap<>();
     private static @UnknownNullability ItemStack RECIPE_COMPLETABLE_BOOK_ITEM = null;
 
     static {
@@ -733,7 +763,7 @@ public class RecipeCompletableListener implements ItemPatchListener {
         event.getPlayer().updateInventory();
     }
 
-    public static void registerPlayerInventoryItemGetter(PlayerInventoryItemGetter itemGetter) {
+    public static void registerPlayerInventoryItemGetter(PlayerInventoryItemSeeker itemGetter) {
         PLAYER_INVENTORY_ITEM_GETTERS.put(itemGetter.getKey(), itemGetter);
     }
 
@@ -772,11 +802,11 @@ public class RecipeCompletableListener implements ItemPatchListener {
      * @author balugaq
      * @since 2.1
      *
-     * @see ShulkerBoxPlayerInventoryItemGetter
+     * @see ShulkerBoxPlayerInventoryItemSeeker
      * @see Source#getItemStackFromPlayerInventory(RecipeCompleteSession, ItemStack, int)
      */
     @NullMarked
-    public interface PlayerInventoryItemGetter extends Keyed {
+    public interface PlayerInventoryItemSeeker extends Keyed {
         /**
          * @param session The session
          * @param target The target item

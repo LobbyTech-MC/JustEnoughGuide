@@ -64,7 +64,6 @@ import lombok.Getter;
  * @author balugaq
  * @since 1.0
  */
-@SuppressWarnings("DuplicatedCode")
 @Getter
 @NullMarked
 public class GuideListener implements Listener {

@@ -527,12 +527,13 @@ public class SpecialMenuProvider {
         return false;
     }
 
+    @SuppressWarnings("RedundantThrows")
     public static boolean open(
             Player player,
             PlayerProfile playerProfile,
             SlimefunGuideMode slimefunGuideMode,
             SlimefunItem slimefunItem)
-            throws InvocationTargetException, IllegalAccessException, InstantiationException {
+            throws IllegalAccessException, InstantiationException, InvocationTargetException {
         if (player == null) {
             return false;
         }

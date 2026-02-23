@@ -27,6 +27,12 @@
 
 package com.balugaq.jeg.api.recipe_complete.source.base;
 
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
+import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
+import com.balugaq.jeg.utils.GuideUtil;
+import com.balugaq.jeg.utils.InventoryUtil;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

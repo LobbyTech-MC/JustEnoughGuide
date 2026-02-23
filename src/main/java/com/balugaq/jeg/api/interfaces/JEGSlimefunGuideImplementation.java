@@ -68,6 +68,19 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.tasks.AsyncRecipeChoiceTask;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Range;
+import org.jspecify.annotations.NullMarked;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author balugaq

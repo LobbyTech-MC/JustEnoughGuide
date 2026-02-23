@@ -111,6 +111,7 @@ public class BlockMenuUtil {
             if (leftAmount <= 0) {
                 break;
             }
+            if (slot >= blockMenu.getSize()) continue;
 
             final ItemStack existing = blockMenu.getItemInSlot(slot);
 
@@ -153,6 +154,7 @@ public class BlockMenuUtil {
 
         int incoming = item.getAmount();
         for (final int slot : slots) {
+            if (slot >= blockMenu.getSize()) continue;
             final ItemStack stack = blockMenu.getItemInSlot(slot);
 
             if (stack == null || stack.getType() == Material.AIR) {
@@ -201,6 +203,7 @@ public class BlockMenuUtil {
         }
 
         for (final int slot : slots) {
+            if (slot >= blockMenu.getSize()) continue;
             final ItemStack stack = blockMenu.getItemInSlot(slot);
             if (stack != null && stack.getType() != Material.AIR) {
                 cloneMenu.set(slot, stack.clone());
@@ -270,6 +273,7 @@ public class BlockMenuUtil {
             return;
         }
 
+        if (slot >= blockMenu.getSize()) return;
         final ItemStack item = blockMenu.getItemInSlot(slot);
         if (item != null && item.getType() != Material.AIR) {
             if (replaceConsumables

@@ -46,7 +46,7 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.Persis
  * @author balugaq
  * @since 1.9
  */
-@SuppressWarnings({"UnnecessaryUnicodeEscape", "SameReturnValue"})
+@SuppressWarnings({"SameReturnValue"})
 @NullMarked
 public abstract class AbstractBooleanGuideOption implements SlimefunGuideOption<Boolean> {
     public boolean isEnabled(Player p) {
@@ -70,6 +70,7 @@ public abstract class AbstractBooleanGuideOption implements SlimefunGuideOption<
         return Optional.of(item);
     }
 
+    @SuppressWarnings("unused")
     public abstract ItemStack getDisplayItem(Player player, ItemStack guide, boolean enabled);
 
     @Override

@@ -47,7 +47,7 @@ import com.balugaq.jeg.utils.StackUtils;
  * @since 2.1
  */
 @NullMarked
-public class ShulkerBoxPlayerInventoryItemGetter implements RecipeCompletableListener.PlayerInventoryItemGetter {
+public class ShulkerBoxPlayerInventoryItemSeeker implements RecipeCompletableListener.PlayerInventoryItemSeeker {
     @Override
     public @NonNegative int getItemStack(final RecipeCompleteSession session, final ItemStack target, final ItemStack item, int amount) {
         if (!item.getType().name().contains("SHULKER_BOX")) {

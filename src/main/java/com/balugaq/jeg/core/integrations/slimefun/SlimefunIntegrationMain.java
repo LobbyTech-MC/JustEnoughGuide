@@ -25,7 +25,7 @@
  *
  */
 
-package com.balugaq.jeg.core.integrations.justenoughguide;
+package com.balugaq.jeg.core.integrations.slimefun;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
  * @since 2.1
  */
 @NullMarked
-public class SlimefunRecipeCompleteSupportMain implements Integration {
+public class SlimefunIntegrationMain implements Integration {
     public static final List<SlimefunItem> handledSlimefunItems = new ArrayList<>();
 
     public static void rrc(String id, int[] slots, boolean unordered) {

@@ -29,6 +29,10 @@ package com.balugaq.jeg.core.integrations.logitech;
 
 import java.util.Optional;
 
+import com.balugaq.jeg.implementation.option.AbstractItemSettingsGuideOption;
+import com.balugaq.jeg.utils.KeyUtil;
+import com.balugaq.jeg.utils.compatibility.Converter;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;

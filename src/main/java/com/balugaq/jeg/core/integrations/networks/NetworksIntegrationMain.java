@@ -32,6 +32,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
+import com.balugaq.jeg.api.recipe_complete.source.base.RecipeCompleteProvider;
+import com.balugaq.jeg.core.integrations.Integration;
+import io.github.sefiraat.networks.NetworkStorage;
+import io.github.sefiraat.networks.network.NetworkRoot;
+import io.github.sefiraat.networks.network.NodeDefinition;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -127,7 +134,7 @@ public class NetworksIntegrationMain implements Integration {
         rrc("NTW_BESTPUSHER", PUSHER_SLOTS, true);
         rrc("NTW_IMPORTER", PUSHER_SLOTS, true);
 
-        RecipeCompletableRegistry.registerPlayerInventoryItemGetter(new QuantumStoragePlayerInventoryItemGetter());
+        RecipeCompletableRegistry.registerPlayerInventoryItemGetter(new QuantumStoragePlayerInventoryItemSeeker());
     }
 
     public static void rrc(String id, int[] slots, boolean unordered) {

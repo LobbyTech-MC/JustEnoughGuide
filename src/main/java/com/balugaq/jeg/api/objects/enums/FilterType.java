@@ -230,6 +230,7 @@ public enum FilterType {
         return getFirstSymbol();
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public String getFirstSymbol() {
         return getSymbols().stream().findFirst().get();
     }

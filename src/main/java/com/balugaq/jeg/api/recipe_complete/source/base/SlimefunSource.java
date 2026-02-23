@@ -134,10 +134,7 @@ public interface SlimefunSource extends Source {
             session.cancel();
             return;
         }
-        for (int i = 0; i < session.getTimes(); i++) {
-            completeRecipeWithGuide(session);
-        }
-
+        completeRecipeWithGuide(session);
         if (reopenMenu) actualMenu.open(session.getPlayer());
         if (callback != null) callback.run();
         session.complete();
