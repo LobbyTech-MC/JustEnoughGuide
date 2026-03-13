@@ -64,8 +64,8 @@
     <properties>
         <SlimeAE-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\SlimeAE.jar</SlimeAE-systemPath>
         <EMCTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\EMCTech.jar</EMCTech-systemPath>
-        <SlimeHUD-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib/SlimeHUD-Build 16.jar</SlimeHUD-systemPath>
-        <NetworksExpansion-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion vS63.jar</NetworksExpansion-systemPath>
+        <SlimeHUD-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib\SlimeHUD-Build 16.jar</SlimeHUD-systemPath>
+        <NetworksExpansion-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion.jar</NetworksExpansion-systemPath>
         <LogiTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\LogiTech.jar</LogiTech-systemPath>
         <LogiTech1-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</LogiTech1-systemPath>
         <java.version>21</java.version>
