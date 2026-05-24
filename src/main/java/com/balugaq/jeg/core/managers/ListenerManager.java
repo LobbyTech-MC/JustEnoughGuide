@@ -47,7 +47,6 @@ import com.balugaq.jeg.core.listeners.GuideListener;
 import com.balugaq.jeg.core.listeners.MenuListener;
 import com.balugaq.jeg.core.listeners.RTSListener;
 import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
-import com.balugaq.jeg.core.listeners.SearchReloadListener;
 import com.balugaq.jeg.core.listeners.SlimefunGuideOptionPatchFixListener;
 import com.balugaq.jeg.core.listeners.SlimefunIdPatchListener;
 import com.balugaq.jeg.core.listeners.SlimefunRegistryFinalizeListener;

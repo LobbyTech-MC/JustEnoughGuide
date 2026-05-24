@@ -28,6 +28,7 @@
 package com.balugaq.jeg.api.recipe_complete;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus;
@@ -37,8 +38,6 @@ import org.jspecify.annotations.NullMarked;
 import com.balugaq.jeg.core.listeners.RecipeCompletableListener;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * @author balugaq

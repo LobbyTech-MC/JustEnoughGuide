@@ -27,11 +27,12 @@
 
 package com.balugaq.jeg.implementation.items;
 
-import com.balugaq.jeg.api.groups.MixedGroup;
-import com.balugaq.jeg.api.interfaces.DontShowInSearch;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+
+import com.balugaq.jeg.api.groups.MixedGroup;
+import com.balugaq.jeg.api.interfaces.DontShowInSearch;
 
 
 /**

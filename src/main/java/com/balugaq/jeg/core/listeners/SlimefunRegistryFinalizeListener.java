@@ -27,13 +27,14 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinalizedEvent;
-import lombok.Getter;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinalizedEvent;
+import lombok.Getter;
 
 /**
  * @author balugaq
