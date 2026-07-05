@@ -92,13 +92,14 @@
     </distributionManagement>
 
     <properties>
-        <GuguSlimefunLib-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\GuguSlimefunLib.jar</GuguSlimefunLib-systemPath>
-        <SlimeAE-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\SlimeAE.jar</SlimeAE-systemPath>
-        <EMCTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\EMCTech.jar</EMCTech-systemPath>
-        <SlimeHUD-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide/lib\SlimeHUD-Build 16.jar</SlimeHUD-systemPath>
-        <NetworksExpansion-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion.jar</NetworksExpansion-systemPath>
-        <LogiTech-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\LogiTech.jar</LogiTech-systemPath>
-        <LogiTech1-systemPath>C:\Users\11877\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</LogiTech1-systemPath>
+        <Slimefun4-systempath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\Slimefun.jar</Slimefun4-systempath>
+        <GuguSlimefunLib-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\GuguSlimefunLib.jar</GuguSlimefunLib-systemPath>
+        <SlimeAE-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\SlimeAE.jar</SlimeAE-systemPath>
+        <EMCTech-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\EMCTech.jar</EMCTech-systemPath>
+        <SlimeHUD-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide/lib\SlimeHUD-Build 16.jar</SlimeHUD-systemPath>
+        <NetworksExpansion-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion.jar</NetworksExpansion-systemPath>
+        <LogiTech-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\LogiTech.jar</LogiTech-systemPath>
+        <LogiTech1-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</LogiTech1-systemPath>
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -330,7 +331,8 @@
             <groupId>com.github.SlimefunGuguProject</groupId>
             <artifactId>Slimefun4</artifactId>
             <version>master-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${Slimefun4-systempath}</systemPath>
         </dependency>
 
         <dependency>
@@ -443,31 +445,6 @@
             <artifactId>CMILib</artifactId>
             <version>1.5.6.3</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.TimetownDev</groupId>
-            <artifactId>GuguSlimefunLib</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${GuguSlimefunLib-systemPath}</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.balugaq</groupId>
-            <artifactId>EMCTech</artifactId>
-            <version>Build-8</version>
-            <scope>system</scope>
-            <systemPath>${EMCTech-systemPath}</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.balugaq</groupId>
-            <artifactId>SlimeHUD</artifactId>
-            <version>Build-16</version>
-            <scope>system</scope>
-            <systemPath>${SlimeHUD-systemPath}</systemPath>
-
         </dependency>
 
         <dependency>
