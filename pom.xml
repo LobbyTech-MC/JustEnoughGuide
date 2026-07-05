@@ -92,6 +92,7 @@
     </distributionManagement>
 
     <properties>
+        <SlimeHUD-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\SlimeHUD.jar</SlimeHUD-systemPath>
         <GuguSlimefunLib-systemPath46>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\GuguSlimefunLib.jar</GuguSlimefunLib-systemPath46>
         <Slimefun4-systempath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\Slimefun.jar</Slimefun4-systempath>
         <SlimeAE-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\SlimeAE.jar</SlimeAE-systemPath>
@@ -407,6 +408,14 @@
         </dependency>
 
         <!-- Special Menu Provider me.matl114.logitech.Utils.UtilClass.MenuClass.CustomMenu -->
+         <dependency>
+            <groupId>com.github.balugaq</groupId>
+            <artifactId>EMCTech</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${EMCTech-systemPath}</systemPath>
+        </dependency>
+        
         <dependency>
             <groupId>me.matl114</groupId>
             <artifactId>LogiTech1</artifactId>
@@ -460,6 +469,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.balugaq</groupId>
+            <artifactId>SlimeHUD</artifactId>
+            <version>Build-18</version>
+            <scope>system</scope>
+            <systemPath>${SlimeHUD-systemPath}</systemPath>
+        </dependency>
         <dependency>
             <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
