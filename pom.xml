@@ -92,11 +92,10 @@
     </distributionManagement>
 
     <properties>
+        <GuguSlimefunLib-systemPath46>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\GuguSlimefunLib.jar</GuguSlimefunLib-systemPath46>
         <Slimefun4-systempath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\Slimefun.jar</Slimefun4-systempath>
-        <GuguSlimefunLib-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\GuguSlimefunLib.jar</GuguSlimefunLib-systemPath>
         <SlimeAE-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\SlimeAE.jar</SlimeAE-systemPath>
         <EMCTech-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\EMCTech.jar</EMCTech-systemPath>
-        <SlimeHUD-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide/lib\SlimeHUD-Build 16.jar</SlimeHUD-systemPath>
         <NetworksExpansion-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\original-NetworksExpansion.jar</NetworksExpansion-systemPath>
         <LogiTech-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\LogiTech.jar</LogiTech-systemPath>
         <LogiTech1-systemPath>C:\Users\Baby\Documents\GitHub\JustEnoughGuide\lib\original-LogiTech v1.0.3.jar</LogiTech1-systemPath>
@@ -447,6 +446,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.TimetownDev</groupId>
+            <artifactId>GuguSlimefunLib</artifactId>
+            <version>45627c6f8e</version>
+            <scope>system</scope>
+            <systemPath>${GuguSlimefunLib-systemPath46}</systemPath>
+        </dependency>
         <dependency>
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
