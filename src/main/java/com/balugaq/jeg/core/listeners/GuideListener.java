@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -46,7 +45,6 @@ import org.jspecify.annotations.NullMarked;
 import com.balugaq.jeg.api.objects.annotations.PatchCode;
 import com.balugaq.jeg.api.patches.JEGGuideSettings;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.GuideUtil;
 
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;

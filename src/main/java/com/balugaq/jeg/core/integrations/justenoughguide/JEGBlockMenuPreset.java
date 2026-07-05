@@ -27,8 +27,18 @@
 
 package com.balugaq.jeg.core.integrations.justenoughguide;
 
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableAdapter;
 import com.balugaq.jeg.utils.ReflectionUtil;
+
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import lombok.Data;
@@ -37,14 +47,6 @@ import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
-import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.Set;
 
 /**
  * @author balugaq

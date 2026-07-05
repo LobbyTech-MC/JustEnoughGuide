@@ -28,18 +28,10 @@
 package com.balugaq.jeg.core.integrations.placeholderapi;
 
 
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-
-import com.balugaq.jeg.utils.StackUtils;
-import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
-import com.balugaq.jeg.core.integrations.Integration;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.balugaq.jeg.core.integrations.Integration;
 
 /**
  * @author balugaq

@@ -27,9 +27,10 @@
 
 package com.balugaq.jeg.implementation;
 
-import lombok.Data;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+
+import lombok.Data;
 
 /**
  * @author balugaq
