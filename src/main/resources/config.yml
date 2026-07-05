@@ -28,6 +28,9 @@ disable-bundle-interaction: true
 # 是否对来自不同附属的物品替换卡进行互通处理
 adapt-replacement-cards: true
 
+# 是否在配方补全适配的机器中自动添加配方补全按钮
+auto-add-recipe-complete-button: true
+
 # 禁止搜索非限定词时出现名字包含以下任意词的物品
 blacklist:
   - "快捷"
@@ -75,6 +78,10 @@ shared-chars:
   - "竿杆"
   - "鱼渔"
   - "沙砂"
+  - "携捷"
+  - "红赤绯"
+  - "翡翠绿"
+  - "蓝青靛"
 
 # 是否注册配方补全书
 recipe-complete: true
@@ -593,8 +600,12 @@ local-translate:
   AeroDragonTech: "飞龙科技"
   REGS: "沐莱物语"
   FengQi_Tech: "风起科技"
-  YINGMO: "樱沫科技"
+  YINGMO: "樱沫科技" # Same as SakuraLoveTech
   PandaTech: "熊猫科技"
+  GLTC121: "GLTC联合协议"
+  SLTech: "SL科技"
+  EpoTech_Branch: "EpoTech分支版"
+  SakuraLoveTech: "樱沫科技" # Same as YINGMO
 
 # Do not change this value unless you know what you are doing.
 debug: false

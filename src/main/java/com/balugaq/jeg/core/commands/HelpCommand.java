@@ -47,16 +47,10 @@ import lombok.Getter;
  * @author balugaq
  * @since 1.1
  */
-@SuppressWarnings({"ClassCanBeRecord", "deprecation", "SwitchStatementWithTooFewBranches"})
+@SuppressWarnings({"deprecation", "SwitchStatementWithTooFewBranches"})
 @Getter
 @NullMarked
 public class HelpCommand implements JEGCommand {
-    private final Plugin plugin;
-
-    public HelpCommand(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public List<String> onTabCompleteRaw(CommandSender sender, String[] args) {
         switch (args.length) {

@@ -59,8 +59,7 @@ public class FinalTechItemPatchListener implements ItemPatchListener {
             PatchScope.SlimefunItem,
             PatchScope.ItemMarkItem,
             PatchScope.BookMarkItem,
-            PatchScope.SearchItem,
-            PatchScope.ItemRecipeIngredient
+            PatchScope.SearchItem
     );
     public static final String DEFAULT_INPUT_VALUE = "0";
     public static final String DEFAULT_OUTPUT_VALUE = "INFINITY";
@@ -101,8 +100,7 @@ public class FinalTechItemPatchListener implements ItemPatchListener {
             return;
         }
 
-        if (scope == PatchScope.ItemRecipeIngredient
-                && StackUtils.itemsMatch(itemStack, new ItemStack(itemStack.getType()))) {
+        if (StackUtils.itemsMatch(itemStack, new ItemStack(itemStack.getType()))) {
             // Do not process vanilla item
             return;
         }

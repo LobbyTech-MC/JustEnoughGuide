@@ -38,7 +38,6 @@ import com.balugaq.jeg.utils.platform.PlatformUtil;
 
 import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
 
-@SuppressWarnings("UnstableApiUsage")
 public class ThirdPartyWarnings {
     @CallTimeSensitive(CallTimeSensitive.AfterIntegrationsLoaded)
     public static void check() {

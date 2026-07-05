@@ -25,25 +25,40 @@
  *
  */
 
-package com.balugaq.jeg.api.objects.ids;
+package com.balugaq.jeg.core.integrations.placeholderapi;
 
-import java.util.UUID;
 
-import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
+
+import com.balugaq.jeg.utils.StackUtils;
+import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
+import com.balugaq.jeg.core.integrations.Integration;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import org.jetbrains.annotations.UnknownNullability;
 import org.jspecify.annotations.NullMarked;
 
-@SuppressWarnings("unused")
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author balugaq
+ * @since 2.1
+ */
 @NullMarked
-public class PlayerUUID extends CustomID {
-    public PlayerUUID(UUID uuid) {
-        super(uuid);
+public class PlaceholderAPIIntegrationMain implements Integration {
+    private @UnknownNullability JEGPlaceholderExpansion expansion;
+    public String getHookPlugin() {
+        return "PlaceholderAPI";
     }
 
-    public static PlayerUUID warp(Player player) {
-        return warp(player.getUniqueId());
+    @Override
+    public void onEnable() {
+        expansion = new JEGPlaceholderExpansion();
+        expansion.register();
     }
-
-    public static PlayerUUID warp(UUID uuid) {
-        return new PlayerUUID(uuid);
+    @Override
+    public void onDisable() {
+        expansion.unregister();
     }
 }

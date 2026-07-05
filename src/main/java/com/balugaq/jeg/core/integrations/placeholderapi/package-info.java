@@ -25,17 +25,4 @@
  *
  */
 
-package com.balugaq.jeg.api.objects.ids;
-
-import java.util.UUID;
-
-import org.jspecify.annotations.NullMarked;
-
-import lombok.Data;
-
-@SuppressWarnings("unused")
-@Data
-@NullMarked
-public class CustomID {
-    private final UUID uuid;
-}
+package com.balugaq.jeg.core.integrations.placeholderapi;

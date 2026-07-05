@@ -33,6 +33,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.UnknownNullability;
@@ -58,6 +59,7 @@ import com.balugaq.jeg.utils.MinecraftVersion;
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import lombok.Getter;
 
+
 /**
  * This class is responsible for managing the listeners of the plugin.
  *
@@ -69,10 +71,10 @@ import lombok.Getter;
 public class ListenerManager extends AbstractManager {
     private final List<Listener> listeners = new ArrayList<>();
 
-    private final JavaPlugin plugin;
+    private final Plugin plugin;
     private @UnknownNullability RegisteredListener slimefunGuideListener;
 
-    public ListenerManager(JavaPlugin plugin) {
+    public ListenerManager(Plugin plugin) {
         this.plugin = plugin;
         listeners.add(new GuideListener());
         listeners.add(new SpecialMenuFixListener());

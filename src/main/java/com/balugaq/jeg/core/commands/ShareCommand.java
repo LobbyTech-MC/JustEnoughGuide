@@ -50,16 +50,10 @@ import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
  * @author balugaq
  * @since 2.0
  */
-@SuppressWarnings({"ClassCanBeRecord", "SwitchStatementWithTooFewBranches"})
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 @Getter
 @NullMarked
 public class ShareCommand implements JEGCommand {
-    private final Plugin plugin;
-
-    public ShareCommand(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
     @Override
     public List<String> onTabCompleteRaw(CommandSender sender, String[] args) {
         switch (args.length) {

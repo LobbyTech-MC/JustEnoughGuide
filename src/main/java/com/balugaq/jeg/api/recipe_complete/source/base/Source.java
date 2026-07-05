@@ -47,7 +47,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.objects.SimpleRecipeChoice;
 import com.balugaq.jeg.api.objects.menu.VanillaInventoryWrapper;
 import com.balugaq.jeg.api.recipe_complete.RecipeCompletableRegistry;
 import com.balugaq.jeg.api.recipe_complete.RecipeCompleteSession;
@@ -133,7 +132,7 @@ public interface Source {
         if (sf != null) {
             List<@Nullable RecipeChoice> raw = new ArrayList<>(
                     Arrays.stream(sf.getRecipe())
-                            .map(item -> item == null ? null : new SimpleRecipeChoice(item))
+                            .map(item -> item == null ? null : new RecipeChoice.ExactChoice(item))
                             .toList()
             );
             for (int i = raw.size(); i < 9; i++) {

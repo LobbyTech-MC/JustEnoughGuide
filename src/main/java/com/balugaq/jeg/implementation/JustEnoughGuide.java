@@ -75,6 +75,7 @@ import com.balugaq.jeg.utils.ReflectionUtil;
 import com.balugaq.jeg.utils.SlimefunRegistryUtil;
 import com.balugaq.jeg.utils.SpecialMenuProvider;
 import com.balugaq.jeg.utils.UUIDUtils;
+import com.balugaq.jeg.utils.formatter.Formats;
 import com.balugaq.jeg.utils.platform.PlatformUtil;
 import com.balugaq.jeg.utils.platform.scheduler.TaskScheduler;
 
@@ -87,6 +88,9 @@ import io.github.thebusybiscuit.slimefun4.implementation.guide.CheatSheetSlimefu
 import io.github.thebusybiscuit.slimefun4.implementation.guide.SurvivalSlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import lombok.Getter;
+import net.byteflux.libby.BukkitLibraryManager;
+import net.byteflux.libby.Library;
+import net.byteflux.libby.LibraryManager;
 import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
 
 /**
@@ -114,7 +118,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     private static UUID serverUUID = null;
 
     @Getter
-    private final String username;
+    private final String author;
 
     @Getter
     private final String repo;
@@ -155,10 +159,14 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     private TaskScheduler scheduler = null;
 
     @Getter
+    @UnknownNullability
+    private JEGMetrics metrics = null;
+
+    @Getter
     private int javaVersion = 0;
 
     public JustEnoughGuide() {
-        this.username = "balugaq";
+        this.author = "balugaq";
         this.repo = "JustEnoughGuide";
         this.branch = "master";
     }
@@ -274,7 +282,7 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     @Nullable
     @Override
     public String getBugTrackerURL() {
-        return MessageFormat.format("https://github.com/{0}/{1}/issues/", this.username, this.repo);
+        return MessageFormat.format("https://github.com/{0}/{1}/issues/", this.author, this.repo);
     }
 
     /**
@@ -298,8 +306,6 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     public void onDisable() {
         CustomGroupConfigurations.unload();
         GroupResorter.rollback();
-
-        getIntegrationManager().shutdownIntegrations();
 
         GroupSetup.shutdown();
         RecipeCompleteProvider.shutdown();
@@ -356,6 +362,10 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
             this.rtsBackpackManager.unload();
         }
 
+        if (this.metrics != null) {
+            this.metrics.shutdown();
+        }
+
         if (this.configManager != null) {
             this.configManager.unload();
         }
@@ -366,6 +376,8 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         this.integrationManager = null;
         this.commandManager = null;
         this.listenerManager = null;
+        this.rtsBackpackManager = null;
+        this.metrics = null;
         this.configManager = null;
         Debug.setPlugin(null);
 
@@ -402,17 +414,14 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         saveDefaultConfig();
         this.configManager = new ConfigManager(this);
         this.configManager.load();
+        Formats.load();
 
-        getLogger().info("正在适配其他插件...");
-        this.integrationManager = new IntegrationManager(this);
-        this.integrationManager.load();
+//        getLogger().info("正在加载前置...");
+//        loadLibraries();
 
         getLogger().info("正在注册监听器...");
         this.listenerManager = new ListenerManager(this);
         this.listenerManager.load();
-
-        getLogger().info("尝试自动更新...");
-        tryUpdate();
 
         getLogger().info("正在注册指令");
         this.commandManager = new CommandManager(this);
@@ -491,6 +500,16 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
         ReplacementCardAdapter.load();
         ThirdPartyWarnings.check();
 
+        getLogger().info("正在适配其他插件...");
+        this.integrationManager = new IntegrationManager(this);
+        this.integrationManager.load();
+
+        getLogger().info("尝试自动更新...");
+        tryUpdate();
+
+        getLogger().info("正在加载 Metrics...");
+        metrics = new JEGMetrics();
+
         getLogger().info("成功启用此附属");
     }
 
@@ -545,14 +564,28 @@ public class JustEnoughGuide extends JavaPlugin implements SlimefunAddon {
     /**
      * Attempts to update the plugin if auto-update is enabled.
      */
-    public void tryUpdate() {
+    private void tryUpdate() {
         try {
             if (configManager.isAutoUpdate() && getDescription().getVersion().startsWith("Build")) {
-                GuizhanUpdater.start(this, getFile(), username, repo, branch);
+                GuizhanUpdater.start(this, getFile(), author, repo, branch);
             }
         } catch (NoClassDefFoundError | NullPointerException | UnsupportedClassVersionError e) {
             getLogger().info("自动更新失败: " + e.getMessage());
             Debug.trace(e);
         }
+    }
+
+    private void loadLibraries() {
+        LibraryManager libraryManager = new BukkitLibraryManager(this);
+        libraryManager.addMavenCentral();
+        libraryManager.addRepository("https://mvn.wesjd.net/");
+
+        getLogger().info("正在加载 AnvilGUI");
+        Library anvilgui = Library.builder()
+                .groupId("net{}wesjd")
+                .artifactId("anvilgui")
+                .version("1.10.12-SNAPSHOT")
+                .build();
+        libraryManager.loadLibrary(anvilgui);
     }
 }

@@ -25,42 +25,28 @@
  *
  */
 
-package com.balugaq.jeg.api.objects;
+package com.balugaq.jeg.implementation;
 
-import java.util.List;
-
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.jspecify.annotations.NullMarked;
-
-import com.balugaq.jeg.utils.StackUtils;
+import lombok.Data;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 
 /**
  * @author balugaq
- * @since 1.9
+ * @since 2.1
  */
-@SuppressWarnings("unused")
-@NullMarked
-public class SimpleRecipeChoice extends RecipeChoice.ExactChoice implements RecipeChoice {
-    public SimpleRecipeChoice(ItemStack choice) {
-        super(choice);
+@Data
+public class JEGMetrics {
+    private final Metrics metrics;
+
+    public JEGMetrics() {
+        this.metrics = new Metrics(JustEnoughGuide.getInstance(), 32108);
+        metrics.addCustomChart(
+                new SimplePie("chart_id", () -> "My value")
+        );
     }
 
-    public SimpleRecipeChoice(ItemStack... choices) {
-        super(choices);
-    }
-
-    public SimpleRecipeChoice(List<ItemStack> choices) {
-        super(choices);
-    }
-
-    public boolean test(ItemStack other) {
-        for (ItemStack choice : this.getChoices()) {
-            if (StackUtils.itemsMatch(choice, other, true, false)) {
-                return true;
-            }
-        }
-
-        return false;
+    public void shutdown() {
+        metrics.shutdown();
     }
 }

@@ -59,16 +59,10 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
  * @author balugaq
  * @since 1.8
  */
-@SuppressWarnings({"ClassCanBeRecord", "SwitchStatementWithTooFewBranches"})
+@SuppressWarnings("SwitchStatementWithTooFewBranches")
 @Getter
 @NullMarked
 public class CategoriesCommand implements JEGCommand {
-    private final Plugin plugin;
-
-    public CategoriesCommand(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
     /**
      * Populates the category gui. 45 items per page.
      *

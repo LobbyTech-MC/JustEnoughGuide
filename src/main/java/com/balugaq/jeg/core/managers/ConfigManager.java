@@ -50,12 +50,7 @@ import com.balugaq.jeg.utils.Debug;
 import com.github.houbb.opencc4j.support.data.impl.OpenccDatas;
 
 /**
- * This class is responsible for managing the configuration of the plugin. Includes the following features'
- * configuration: - Auto-update: Whether the plugin should check for updates and download them automatically. - Debug:
- * Whether the plugin should print debug messages to the console. - Survival Improvements: Whether the plugin should
- * include survival improvements in the guide. - Cheat Improvements: Whether the plugin should include cheat
- * improvements in the guide. - Pinyin Search: Whether the plugin should enable pinyin search in the guide. - Bookmark:
- * Whether the plugin should enable bookmark in the guide.
+ * This class is responsible for managing the configuration of the plugin.
  *
  * @author balugaq
  * @since 1.0
@@ -103,6 +98,7 @@ public class ConfigManager extends AbstractManager {
     private final boolean LOGITECH_MACHINE_STACKABLE_DISPLAY;
     private final boolean SLIMEFUN_ID_DISPLAY;
     private final boolean ADAPT_REPLACEMENT_CARDS;
+    private final boolean AUTO_ADD_RECIPE_COMPLETE_BUTTON;
 
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -350,6 +346,7 @@ public class ConfigManager extends AbstractManager {
         this.LOGITECH_MACHINE_STACKABLE_DISPLAY = cfg.getBoolean("improvements.logitech-machine-stackable-display", true);
         this.SLIMEFUN_ID_DISPLAY = cfg.getBoolean("improvements.slimefun-id-display", true);
         this.ADAPT_REPLACEMENT_CARDS = cfg.getBoolean("adapt-replacement-cards", true);
+        this.AUTO_ADD_RECIPE_COMPLETE_BUTTON = cfg.getBoolean("auto-add-recipe-complete-button", true);
     }
 
     private void setupDefaultConfig() {
@@ -554,5 +551,9 @@ public class ConfigManager extends AbstractManager {
 
     public boolean isAdaptReplacementCards() {
         return ADAPT_REPLACEMENT_CARDS;
+    }
+
+    public boolean isAutoAddRecipeCompleteButton() {
+        return AUTO_ADD_RECIPE_COMPLETE_BUTTON;
     }
 }

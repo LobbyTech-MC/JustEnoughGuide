@@ -42,6 +42,8 @@ import com.balugaq.jeg.core.commands.JEGCommands;
 import com.balugaq.jeg.core.commands.ReloadCommand;
 import com.balugaq.jeg.core.commands.ShareCommand;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.Getter;
 
@@ -55,19 +57,19 @@ import lombok.Getter;
 @NullMarked
 public class CommandManager extends AbstractManager {
 
-    private final JustEnoughGuide plugin;
+    private final JavaPlugin plugin;
     private final JEGCommands commands;
 
-    public CommandManager(JustEnoughGuide plugin) {
+    public CommandManager(JavaPlugin plugin) {
         this.plugin = plugin;
         this.commands = new JEGCommands(plugin);
-        this.commands.addCommand(new HelpCommand(plugin));
+        this.commands.addCommand(new HelpCommand());
         this.commands.addCommand(new ReloadCommand(plugin));
-        this.commands.addCommand(new CacheCommand(plugin));
-        this.commands.addCommand(new GTEGCommand(plugin));
+        this.commands.addCommand(new CacheCommand());
+        this.commands.addCommand(new GTEGCommand());
         this.commands.addCommand(new DisableCommand(plugin));
-        this.commands.addCommand(new CategoriesCommand(plugin));
-        this.commands.addCommand(new ShareCommand(plugin));
+        this.commands.addCommand(new CategoriesCommand());
+        this.commands.addCommand(new ShareCommand());
     }
 
     public boolean registerCommands() {
