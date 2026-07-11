@@ -27,23 +27,21 @@
 
 package com.balugaq.jeg.core.commands;
 
+import java.util.List;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
+
 import com.balugaq.jeg.api.interfaces.JEGCommand;
 import com.balugaq.jeg.utils.GuideUtil;
-import com.balugaq.jeg.utils.clickhandler.OnClick;
+
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import lombok.Getter;
-import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NullMarked;
-
-import java.util.List;
-import java.util.Locale;
 
 /**
  * This is the implementation of the "/jeg viewitem" command.

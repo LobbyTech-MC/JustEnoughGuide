@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.balugaq.jeg.utils.ItemStackUtil;
-import com.google.common.base.Preconditions;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -46,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
+import com.balugaq.jeg.utils.ItemStackUtil;
 import com.google.common.base.Preconditions;
 
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;

@@ -30,10 +30,9 @@ package com.balugaq.jeg.core.integrations.nexcavate;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
-import com.balugaq.jeg.api.groups.NexcavateItemsGroup;
-import com.balugaq.jeg.implementation.groups.NexcavateItemsGroup;
 import com.balugaq.jeg.core.integrations.Integration;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.implementation.groups.NexcavateItemsGroup;
 import com.balugaq.jeg.utils.KeyUtil;
 import com.balugaq.jeg.utils.Models;
 import com.balugaq.jeg.utils.SlimefunRegistryUtil;

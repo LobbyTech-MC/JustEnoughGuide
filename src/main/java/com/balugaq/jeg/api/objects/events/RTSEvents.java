@@ -27,10 +27,6 @@
 
 package com.balugaq.jeg.api.objects.events;
 
-import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
-import lombok.Getter;
-import lombok.Setter;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -42,6 +38,7 @@ import org.jspecify.annotations.NullMarked;
 
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import lombok.Getter;
+import lombok.Setter;
 import net.wesjd.anvilgui.AnvilGUI;
 
 /**

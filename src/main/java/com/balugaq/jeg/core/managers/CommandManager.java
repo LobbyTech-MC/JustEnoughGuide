@@ -42,13 +42,7 @@ import com.balugaq.jeg.core.commands.HelpCommand;
 import com.balugaq.jeg.core.commands.JEGCommands;
 import com.balugaq.jeg.core.commands.ReloadCommand;
 import com.balugaq.jeg.core.commands.ShareCommand;
-import com.balugaq.jeg.core.commands.*;
-import com.balugaq.jeg.implementation.JustEnoughGuide;
-import lombok.Getter;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jspecify.annotations.NullMarked;
+import com.balugaq.jeg.core.commands.ViewItemCommand;
 
 import lombok.Getter;
 

@@ -27,14 +27,10 @@
 
 package com.balugaq.jeg.core.listeners;
 
-import com.balugaq.jeg.implementation.items.ReplacementCardAdapter;
-import com.balugaq.jeg.utils.ClipboardUtil;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
-import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -46,9 +42,15 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import com.balugaq.jeg.implementation.items.ReplacementCardAdapter;
+import com.balugaq.jeg.utils.ClipboardUtil;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import io.github.thebusybiscuit.slimefun4.libraries.paperlib.PaperLib;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
  * @author balugaq

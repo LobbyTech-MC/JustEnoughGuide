@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,14 +47,10 @@ import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this.CERCalculator;
 import com.balugaq.jeg.api.editor.GroupResorter;
-import com.balugaq.jeg.implementation.groups.ActionSelectGroup;
 import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.implementation.groups.KeybindItemsGroup;
-import com.balugaq.jeg.implementation.groups.KeybindsItemsGroup;
 import com.balugaq.jeg.api.groups.MixedGroup;
 import com.balugaq.jeg.api.groups.RTSSearchGroup;
 import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.implementation.groups.SubKeybindsItemsGroup;
 import com.balugaq.jeg.api.interfaces.BookmarkRelocation;
 import com.balugaq.jeg.api.interfaces.DisplayInCheatMode;
 import com.balugaq.jeg.api.interfaces.DisplayInSurvivalMode;
@@ -68,6 +65,10 @@ import com.balugaq.jeg.api.objects.events.RTSEvents;
 import com.balugaq.jeg.core.listeners.GuideListener;
 import com.balugaq.jeg.core.listeners.RTSListener;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
+import com.balugaq.jeg.implementation.groups.ActionSelectGroup;
+import com.balugaq.jeg.implementation.groups.KeybindItemsGroup;
+import com.balugaq.jeg.implementation.groups.KeybindsItemsGroup;
+import com.balugaq.jeg.implementation.groups.SubKeybindsItemsGroup;
 import com.balugaq.jeg.utils.clickhandler.BaseAction;
 import com.balugaq.jeg.utils.clickhandler.OnClick;
 import com.balugaq.jeg.utils.compatibility.Converter;
@@ -92,25 +93,7 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.experimental.UtilityClass;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import net.wesjd.anvilgui.AnvilGUI;
-
 import net.wesjd.anvilgui.version.VersionMatcher;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NullMarked;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class contains utility methods for the guide system.

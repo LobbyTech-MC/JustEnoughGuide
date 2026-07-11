@@ -27,10 +27,12 @@
 
 package com.balugaq.jeg.implementation.groups;
 
-import com.balugaq.jeg.api.interfaces.NotDisplayInSurvivalMode;
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+
+import com.balugaq.jeg.api.interfaces.NotDisplayInSurvivalMode;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 
 /**
  * @author balugaq
