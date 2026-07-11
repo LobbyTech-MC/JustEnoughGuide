@@ -25,37 +25,22 @@
  *
  */
 
-package com.balugaq.jeg.api.groups;
+package com.balugaq.jeg.implementation.groups;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jspecify.annotations.NullMarked;
-
+import com.balugaq.jeg.api.groups.BaseGroup;
 import com.balugaq.jeg.api.interfaces.JEGSlimefunGuideImplementation;
-import com.balugaq.jeg.api.interfaces.NotDisplayInCheatMode;
-import com.balugaq.jeg.api.interfaces.VanillaItemShade;
+import com.balugaq.jeg.api.interfaces.NotDisplayInSurvivalMode;
+import com.balugaq.jeg.api.objects.annotations.CallTimeSensitive;
 import com.balugaq.jeg.api.objects.enums.PatchScope;
 import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.implementation.JustEnoughGuide;
-import com.balugaq.jeg.implementation.items.GroupSetup;
-import com.balugaq.jeg.utils.Debug;
 import com.balugaq.jeg.utils.EventUtil;
 import com.balugaq.jeg.utils.GuideUtil;
 import com.balugaq.jeg.utils.clickhandler.OnClick;
 import com.balugaq.jeg.utils.clickhandler.OnDisplay;
 import com.balugaq.jeg.utils.formatter.Formats;
-import com.google.common.base.Preconditions;
-
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.guide.GuideHistory;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuide;
 import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideImplementation;
@@ -63,97 +48,37 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.chat.ChatInput;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
-import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.NullMarked;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This class used to create groups to display all the vanilla items in the guide. Display for JEG recipe complete in
- * NetworksExpansion / SlimeAEPlugin
- *
  * @author balugaq
- * @since 1.7
+ * @since 2.1
  */
-@SuppressWarnings({"deprecation", "unused", "ConstantValue"})
-@NotDisplayInCheatMode
+@SuppressWarnings({"deprecation", "unused"})
+@NotDisplayInSurvivalMode
 @NullMarked
-public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
-    public static final List<SlimefunItem> slimefunItems = new ArrayList<>();
+public class BannedItemsGroup extends BaseGroup<BannedItemsGroup> {
+    private final List<SlimefunItem> slimefunItemList;
 
-    private static final JavaPlugin JAVA_PLUGIN = JustEnoughGuide.getInstance();
-
-    static {
-        JustEnoughGuide.runLater(
-                () -> {
-                    boolean before = JustEnoughGuide.disableAutomaticallyLoadItems();
-                    try {
-                        for (Material material : Material.values()) {
-                            if (!material.isAir() && material.isItem() && !material.isLegacy()) {
-                                slimefunItems.add(createSlimefunItem(material));
-                            }
-                        }
-                    } catch (Exception e) {
-                        Debug.trace(e);
-                    } finally {
-                        JustEnoughGuide.setAutomaticallyLoadItems(before);
-                    }
-                }, 1L
-        );
-    }
-
-    public VanillaItemsGroup(NamespacedKey key, ItemStack icon) {
-        super(key, icon, Integer.MAX_VALUE);
+    @CallTimeSensitive(CallTimeSensitive.AfterSlimefunLoaded)
+    public BannedItemsGroup(NamespacedKey key, ItemStack icon) {
+        super(key, icon);
         this.page = 1;
+        List<SlimefunItem> slimefunItemList = new ArrayList<>();
+        for (SlimefunItem item : new ArrayList<>(Slimefun.getRegistry().getAllSlimefunItems())) {
+            if (item.isDisabled()) {
+                slimefunItemList.add(item);
+            }
+        }
+        this.slimefunItemList = slimefunItemList;
         this.pageMap.put(1, this);
-    }
-
-    private static VanillaItem createSlimefunItem(Material material) {
-        Preconditions.checkArgument(material != null, "The material cannot be null.");
-        Preconditions.checkArgument(!material.isAir(), "The material cannot be air.");
-        Preconditions.checkArgument(material.isItem(), "The material must be an item.");
-        Preconditions.checkArgument(!material.isLegacy(), "The material cannot be legacy.");
-
-        VanillaItem vi = VanillaItem.create(material);
-        vi.register(JustEnoughGuide.getInstance());
-        return vi;
-    }
-
-    /**
-     * Always returns false.
-     *
-     * @param player
-     *         The player who opened the group.
-     * @param playerProfile
-     *         The player's profile.
-     * @param slimefunGuideMode
-     *         The Slimefun guide mode.
-     *
-     * @return false.
-     */
-    @Override
-    public boolean isVisible(
-            final Player player,
-            final PlayerProfile playerProfile,
-            final SlimefunGuideMode slimefunGuideMode) {
-        return true;
-    }
-
-    /**
-     * Opens the group for the player.
-     *
-     * @param player
-     *         The player who opened the group.
-     * @param playerProfile
-     *         The player's profile.
-     * @param slimefunGuideMode
-     *         The Slimefun guide mode.
-     */
-    @Override
-    public void open(
-            final Player player,
-            final PlayerProfile playerProfile,
-            final SlimefunGuideMode slimefunGuideMode) {
-        playerProfile.getGuideHistory().add(this, this.page);
-        this.generateMenu(player, playerProfile, slimefunGuideMode).open(player);
     }
 
     @Override
@@ -161,9 +86,10 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
             final Player player,
             final PlayerProfile playerProfile,
             final SlimefunGuideMode slimefunGuideMode) {
-        ChestMenu chestMenu = new ChestMenu("原版物品");
+        ChestMenu chestMenu = new ChestMenu("已禁用的物品");
 
         OnClick.preset(chestMenu);
+
         SlimefunGuideImplementation implementation = GuideUtil.getSlimefunGuide(slimefunGuideMode);
 
         for (int ss : Formats.sub.getChars('b')) {
@@ -197,7 +123,7 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
 
                                 Slimefun.getLocalization().sendMessage(pl, "guide.search.message");
                                 ChatInput.waitForPlayer(
-                                        JAVA_PLUGIN,
+                                        JustEnoughGuide.getInstance(),
                                         pl,
                                         msg -> implementation.openSearch(
                                                 playerProfile,
@@ -219,7 +145,7 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
                             ChestMenuUtils.getPreviousButton(
                                     player,
                                     this.page,
-                                    (slimefunItems.size() - 1)
+                                    (this.slimefunItemList.size() - 1)
                                             / Formats.sub.getChars('i').size()
                                             + 1
                             )
@@ -233,7 +159,7 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
                                     ))
                             .ifSuccess(() -> {
                                 GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
-                                VanillaItemsGroup hiddenItemsGroup = this.getByPage(Math.max(this.page - 1, 1));
+                                BannedItemsGroup hiddenItemsGroup = this.getByPage(Math.max(this.page - 1, 1));
                                 hiddenItemsGroup.open(player, playerProfile, slimefunGuideMode);
                                 return false;
                             })
@@ -248,7 +174,7 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
                             ChestMenuUtils.getNextButton(
                                     player,
                                     this.page,
-                                    (slimefunItems.size() - 1)
+                                    (this.slimefunItemList.size() - 1)
                                             / Formats.sub.getChars('i').size()
                                             + 1
                             )
@@ -262,9 +188,9 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
                                     ))
                             .ifSuccess(() -> {
                                 GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
-                                VanillaItemsGroup hiddenItemsGroup = this.getByPage(Math.min(
+                                BannedItemsGroup hiddenItemsGroup = this.getByPage(Math.min(
                                         this.page + 1,
-                                        (slimefunItems.size() - 1)
+                                        (this.slimefunItemList.size() - 1)
                                                 / Formats.sub.getChars('i').size()
                                                 + 1
                                 ));
@@ -282,8 +208,8 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
         List<Integer> contentSlots = Formats.sub.getChars('i');
         for (int i = 0; i < contentSlots.size(); i++) {
             int index = i + this.page * contentSlots.size() - contentSlots.size();
-            if (index < slimefunItems.size()) {
-                SlimefunItem slimefunItem = slimefunItems.get(index);
+            if (index < this.slimefunItemList.size()) {
+                SlimefunItem slimefunItem = slimefunItemList.get(index);
                 OnDisplay.Item.display(player, slimefunItem, OnDisplay.Item.Normal, implementation)
                         .at(chestMenu, contentSlots.get(i), page);
             }
@@ -299,50 +225,13 @@ public class VanillaItemsGroup extends BaseGroup<VanillaItemsGroup> {
         return chestMenu;
     }
 
-    /**
-     * Reopens the menu for the player.
-     *
-     * @param player
-     *         The player who opened the group.
-     * @param playerProfile
-     *         The player's profile.
-     * @param slimefunGuideMode
-     *         The Slimefun guide mode.
-     */
-    public void refresh(
-            final Player player,
-            final PlayerProfile playerProfile,
-            final SlimefunGuideMode slimefunGuideMode) {
-        GuideUtil.removeLastEntry(playerProfile.getGuideHistory());
-        this.open(player, playerProfile, slimefunGuideMode);
-    }
-
     @Override
     public int getTier() {
         return Integer.MAX_VALUE;
     }
 
-    /**
-     * @author balugaq
-     * @since 1.7
-     */
-    @Getter
-    public static class VanillaItem extends SlimefunItem implements VanillaItemShade {
-        private final ItemStack customIcon;
-
-        public VanillaItem(SlimefunItemStack item, ItemStack customIcon) {
-            super(GroupSetup.vanillaItemsGroup, item, RecipeType.NULL, new ItemStack[0], customIcon);
-            this.customIcon = customIcon.clone();
-        }
-
-        public static VanillaItem create(Material material) {
-            ItemStack icon = new ItemStack(material);
-            try {
-                // against ID machine
-                return new VanillaItem(new SlimefunItemStack("αJEG_VANILLA_" + material.name(), icon.clone()), icon);
-            } catch (Exception ignored) {
-                return new VanillaItem(new SlimefunItemStack("JEG_VANILLA_" + material.name(), icon.clone()), icon);
-            }
-        }
+    @Override
+    public boolean isCrossAddonItemGroup() {
+        return true;
     }
 }

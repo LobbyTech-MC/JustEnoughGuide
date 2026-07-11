@@ -25,11 +25,12 @@
  *
  */
 
-package com.balugaq.jeg.api.groups;
+package com.balugaq.jeg.implementation.groups;
 
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
+import com.balugaq.jeg.api.groups.BaseGroup;
 import com.balugaq.jeg.api.objects.enums.PatchScope;
 import com.balugaq.jeg.api.objects.events.GuideEvents;
 import com.balugaq.jeg.utils.EventUtil;
@@ -52,12 +53,13 @@ import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
  */
 @SuppressWarnings({"deprecation", "unused"})
 @NullMarked
-public class KeybindsItemsGroup extends BaseGroup<KeybindsItemsGroup> {
-    private final ObjectImmutableList<? extends OnClick> keybindsSet = OnClick.keybindSets();
+public class SubKeybindsItemsGroup extends BaseGroup<SubKeybindsItemsGroup> {
+    private final ObjectImmutableList<? extends OnClick> subKeybindsSet;
 
-    public KeybindsItemsGroup() {
+    public SubKeybindsItemsGroup(OnClick keybinds) {
         super();
         this.page = 1;
+        this.subKeybindsSet = keybinds.subKeybinds();
         this.pageMap.put(1, this);
     }
 
@@ -66,7 +68,7 @@ public class KeybindsItemsGroup extends BaseGroup<KeybindsItemsGroup> {
             final Player player,
             final PlayerProfile playerProfile,
             final SlimefunGuideMode slimefunGuideMode) {
-        ChestMenu menu = new ChestMenu("&6选择你要编辑的按键控制集");
+        ChestMenu menu = new ChestMenu("&6选择你要编辑的按键控制子集");
 
         OnClick.preset(menu);
 
@@ -99,17 +101,13 @@ public class KeybindsItemsGroup extends BaseGroup<KeybindsItemsGroup> {
         int i = 0;
         for (int s : Formats.keybinds.getChars('i')) {
             int k = Formats.keybinds.getChars('i').size() * (page - 1) + i++;
-            if (k < OnClick.keybindSets().size()) {
-                OnClick keybinds = OnClick.keybindSets().get(k);
-                menu.addItem(s, PatchScope.KeybindsSet.patch(player, GuideUtil.getKeybindIcon(keybinds)));
+            if (k < subKeybindsSet.size()) {
+                OnClick keybinds = subKeybindsSet.get(k);
+                menu.addItem(s, PatchScope.SubKeybindsSet.patch(player, GuideUtil.getKeybindIcon(keybinds)));
                 menu.addMenuClickHandler(
                         s,
-                        (pl, slot, item, action) -> EventUtil.callEvent(new GuideEvents.KeybindsButtonClickEvent(
-                                pl,
-                                item
-                                , slot, action, menu, GuideUtil.getGuide(player, SlimefunGuideMode.SURVIVAL_MODE)
-                        )).ifSuccess(() -> {
-                            GuideUtil.openSubKeybindsGui(player, keybinds);
+                        (pl, slot, item, action) -> EventUtil.callEvent(new GuideEvents.SubKeybindsButtonClickEvent(pl, item, slot, action, menu, GuideUtil.getGuide(player, SlimefunGuideMode.SURVIVAL_MODE))).ifSuccess(() -> {
+                            GuideUtil.openKeybindGui(player, keybinds);
                             return false;
                         })
                 );

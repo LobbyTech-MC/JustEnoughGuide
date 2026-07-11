@@ -33,6 +33,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.balugaq.jeg.api.objects.events.GuideEvents;
+import com.balugaq.jeg.api.objects.events.RecipeCompleteEvents;
+import com.balugaq.jeg.api.recipe_complete.source.base.Source;
+import com.balugaq.jeg.utils.Debug;
+import com.balugaq.jeg.utils.GuideUtil;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -99,6 +112,7 @@ public class RecipeCompleteSession {
         session.ingredientSlots = ingredientSlots;
         session.unordered = unordered;
         session.recipeDepth = recipeDepth;
+        Debug.debug(session + " is created");
         return fireEvent(session);
     }
 
@@ -127,6 +141,7 @@ public class RecipeCompleteSession {
         session.ingredientSlots = ingredientSlots;
         session.unordered = unordered;
         session.recipeDepth = recipeDepth;
+        Debug.debug(session + " is created");
         return fireEvent(session);
     }
 
@@ -137,6 +152,7 @@ public class RecipeCompleteSession {
     }
 
     public static void complete(RecipeCompleteSession session) {
+        Debug.debug(session + " is completed");
         Bukkit.getPluginManager().callEvent(new RecipeCompleteEvents.SessionCompleteEvent(session));
         session.setExpired(true);
     }
@@ -148,6 +164,7 @@ public class RecipeCompleteSession {
     }
 
     public static void cancel(RecipeCompleteSession session) {
+        Debug.debug(session + " is cancelled");
         Bukkit.getPluginManager().callEvent(new RecipeCompleteEvents.SessionCancelEvent(session));
         session.setExpired(true);
     }
@@ -192,6 +209,7 @@ public class RecipeCompleteSession {
     public void setExpired(boolean expired) {
         this.expired = expired;
         if (expired) {
+            Debug.debug(this + " is expired");
             SESSIONS.remove(getPlayer());
         } else {
             SESSIONS.put(getPlayer(), this);
@@ -242,10 +260,16 @@ public class RecipeCompleteSession {
         var event = new RecipeCompleteEvents.SessionStartEvent(session);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() || session.isExpired()) {
-            cancel(session);
             String reason = event.getCancelReason();
+            Debug.debug(session + " cannot start for the reason: " + reason);
+            cancel(session);
             session.player.sendMessage(ChatColors.color("&c[配方补全] 此次配方补全被取消，原因：" + (reason == null ? "未知" : reason)));
         }
         return !event.isCancelled() && !session.isExpired();
+    }
+
+    @Override
+    public String toString() {
+        return "RecipeCompleteSession{type=" + (inventory == null ? "sf" : "vanilla") + ", player=" + player.getName() + "}";
     }
 }

@@ -95,7 +95,7 @@ public abstract class AbstractItemSettingsGuideOption implements SlimefunGuideOp
     private static ItemStack getIconOrDefault(Player p, NamespacedKey k, int index) {
         ItemStack ri = getItem(p, k, index);
         if (ri == null) {
-            ri = DEFAULT_ICON;
+            return DEFAULT_ICON;
         }
 
         ItemStack item = ri.clone();

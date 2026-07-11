@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.balugaq.jeg.utils.ItemStackUtil;
+import com.google.common.base.Preconditions;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
@@ -271,7 +274,7 @@ public class CustomItemStack implements Cloneable {
      *         the amount of the item
      */
     public CustomItemStack(ItemStack itemStack, @Range(from = 1, to = Integer.MAX_VALUE) int amount) {
-        this.delegate = itemStack.clone();
+        this.delegate = ItemStackUtil.getCleanItem(itemStack);
         this.delegate.setAmount(amount);
     }
 
@@ -284,7 +287,7 @@ public class CustomItemStack implements Cloneable {
      *         the Material of the item
      */
     public CustomItemStack(ItemStack itemStack, Material material) {
-        this.delegate = itemStack.clone();
+        this.delegate = ItemStackUtil.getCleanItem(itemStack);
         this.delegate.setType(material);
     }
 
@@ -376,7 +379,7 @@ public class CustomItemStack implements Cloneable {
      * @return the Bukkit ItemStack
      */
     public ItemStack asBukkit() {
-        return delegate.clone();
+        return ItemStackUtil.getCleanItem(delegate);
     }
 
     /**
@@ -412,8 +415,8 @@ public class CustomItemStack implements Cloneable {
      * @return the cloned CustomItemStack
      */
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public CustomItemStack clone() {
-        return new CustomItemStack(getDelegate());
+    public ItemStack clone() {
+        return ItemStackUtil.getCleanItem(delegate);
     }
 
     /**

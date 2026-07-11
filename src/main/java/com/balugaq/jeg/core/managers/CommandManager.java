@@ -42,6 +42,13 @@ import com.balugaq.jeg.core.commands.HelpCommand;
 import com.balugaq.jeg.core.commands.JEGCommands;
 import com.balugaq.jeg.core.commands.ReloadCommand;
 import com.balugaq.jeg.core.commands.ShareCommand;
+import com.balugaq.jeg.core.commands.*;
+import com.balugaq.jeg.implementation.JustEnoughGuide;
+import lombok.Getter;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.NullMarked;
 
 import lombok.Getter;
 
@@ -68,6 +75,7 @@ public class CommandManager extends AbstractManager {
         this.commands.addCommand(new DisableCommand(plugin));
         this.commands.addCommand(new CategoriesCommand());
         this.commands.addCommand(new ShareCommand());
+        this.commands.addCommand(new ViewItemCommand());
     }
 
     public boolean registerCommands() {

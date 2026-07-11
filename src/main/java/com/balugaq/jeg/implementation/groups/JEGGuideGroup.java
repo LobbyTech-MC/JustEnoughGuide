@@ -25,7 +25,7 @@
  *
  */
 
-package com.balugaq.jeg.implementation.items;
+package com.balugaq.jeg.implementation.groups;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;

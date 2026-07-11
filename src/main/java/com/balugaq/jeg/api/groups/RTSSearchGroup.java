@@ -66,6 +66,7 @@ import io.github.thebusybiscuit.slimefun4.core.guide.SlimefunGuideMode;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.wesjd.anvilgui.AnvilGUI;
 
 /**
@@ -92,6 +93,7 @@ public class RTSSearchGroup extends FlexItemGroup {
             (player) -> ChestMenuUtils.getBackButton(player, "", "&f左键: &7返回上一页", "&fShift + 左键: &7返回主菜单");
     // Cache AnvilView class for 1.21+ compatibility
     private static @UnknownNullability Class<?> anvilViewClass = null;
+    @Setter @Getter
     private static boolean rtsAvailable = true;
 
     static {
@@ -281,6 +283,9 @@ public class RTSSearchGroup extends FlexItemGroup {
                 RTSEvents.OpenRTSEvent event =
                         new RTSEvents.OpenRTSEvent(player, anvilInventory, guideMode, presetSearchTerm);
                 Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return null;
+                }
             }
             return inventory;
         } catch (Exception | NoClassDefFoundError e) {

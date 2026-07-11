@@ -46,14 +46,14 @@ import org.jspecify.annotations.NullMarked;
 
 import com.balugaq.jeg.api.cost.please_set_cer_patch_to_false_in_config_when_you_see_this.CERCalculator;
 import com.balugaq.jeg.api.editor.GroupResorter;
-import com.balugaq.jeg.api.groups.ActionSelectGroup;
+import com.balugaq.jeg.implementation.groups.ActionSelectGroup;
 import com.balugaq.jeg.api.groups.CERRecipeGroup;
-import com.balugaq.jeg.api.groups.KeybindItemsGroup;
-import com.balugaq.jeg.api.groups.KeybindsItemsGroup;
+import com.balugaq.jeg.implementation.groups.KeybindItemsGroup;
+import com.balugaq.jeg.implementation.groups.KeybindsItemsGroup;
 import com.balugaq.jeg.api.groups.MixedGroup;
 import com.balugaq.jeg.api.groups.RTSSearchGroup;
 import com.balugaq.jeg.api.groups.SearchGroup;
-import com.balugaq.jeg.api.groups.SubKeybindsItemsGroup;
+import com.balugaq.jeg.implementation.groups.SubKeybindsItemsGroup;
 import com.balugaq.jeg.api.interfaces.BookmarkRelocation;
 import com.balugaq.jeg.api.interfaces.DisplayInCheatMode;
 import com.balugaq.jeg.api.interfaces.DisplayInSurvivalMode;
@@ -93,6 +93,25 @@ import lombok.experimental.UtilityClass;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import net.wesjd.anvilgui.AnvilGUI;
 
+import net.wesjd.anvilgui.version.VersionMatcher;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * This class contains utility methods for the guide system.
  *
@@ -120,6 +139,7 @@ public final class GuideUtil {
                     "JEG_CER_BUTTON", Material.EMERALD,
                     "&e&l性价比界面（仅供参考）"
             )));
+    private static boolean rtsLoad = false;
 
     public static void openMainMenuAsync(Player player) {
         openMainMenuAsync(player, getLastGuide(player).getMode());
@@ -172,6 +192,40 @@ public final class GuideUtil {
         }
     }
 
+    public boolean checkRTS(Player pl) {
+        try {
+            if (!rtsLoad) {
+                try {
+                    rtsLoad = true;
+                    new VersionMatcher().match();
+                    RTSSearchGroup.setRtsAvailable(true);
+                } catch (Exception e) {
+                    RTSSearchGroup.setRtsAvailable(false);
+                }
+            }
+
+            if (!RTSSearchGroup.isRtsAvailable()) {
+                MinecraftVersion maxVersion = MinecraftVersion.of(0, 0, 0);
+                Map<String, String> v2r = ReflectionUtil.getStaticValue(VersionMatcher.class, "VERSION_TO_REVISION", Map.class);
+                if (v2r != null) {
+                    for (MinecraftVersion v : v2r.keySet().stream().map(MinecraftVersion::of).toList()) {
+                        maxVersion = MinecraftVersion.max(maxVersion, v);
+                    }
+                } else {
+                    maxVersion = MinecraftVersion.UNKNOWN;
+                }
+                pl.sendMessage(ChatColors.color("&c实时搜索在当前服务器版本 " + MinecraftVersion.current().humanize() + " 无法使用，实时搜索支持库最高支持版本为 " + maxVersion));
+                return false;
+            }
+        } catch (Exception e) {
+            Debug.trace(e);
+            pl.sendMessage(ChatColors.color("&c无法检查实时搜索，相关功能已禁用"));
+            return false;
+        }
+
+        return true;
+    }
+
     @SuppressWarnings("deprecation")
     public static void addRTSButton(
             ChestMenu menu,
@@ -188,6 +242,11 @@ public final class GuideUtil {
                         (pl, slot, itemstack, action) -> EventUtil.callEvent(new GuideEvents.RTSButtonClickEvent(
                                         pl, itemstack, slot, action, menu, implementation))
                                 .ifSuccess(() -> {
+                                    // check version
+                                    if (!checkRTS(pl)) {
+                                        return false;
+                                    }
+
                                     try {
                                         RTSSearchGroup.newRTSInventoryFor(
                                                 pl,
